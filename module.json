@@ -18,5 +18,6 @@
   "dependencies": {
     "microbit-dal": "jamesadevine/microbit-dal#master"
   },
-  "targetDependencies": {}
+  "targetDependencies": {},
+  "bin": "./source"
 }
