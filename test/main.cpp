@@ -1,5 +1,5 @@
 // mbed library revision:7:17dd2cfe0ff4
-#include "MicroBitTouchDevelop.h"
+#include "microbit-touchdevelop/MicroBitTouchDevelop.h"
 namespace micro_bit {
   namespace globals {
     Sprite led_x_index_legend;

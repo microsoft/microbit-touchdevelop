@@ -97,13 +97,17 @@ namespace micro_bit {
         a();
     }
     
-    void onButtonPressed(int button, Action a) {
+    void onButtonPressedExt(int button, int event, Action a) {
         if (a != NULL)
             uBit.MessageBus.listen(
                 button,
-                MICROBIT_BUTTON_EVT_CLICK,
+                event,
                 (void (*)(MicroBitEvent, void*)) callback,
                 (void*) a);
+    }
+    
+    void onButtonPressed(int button, Action a) {
+        onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, a);
     }
     
     void onPinPressed(int pin, Action a) {
@@ -246,6 +250,21 @@ namespace micro_bit {
             uBit.MessageBus.listen(id, MICROBIT_EVT_ANY, (void (*)(MicroBitEvent, void*))callback1, (void*)a);
     }
     
+    namespace events {
+        void remote_control(int event) {
+            micro_bit::generate_event(MES_REMOTE_CONTROL_ID,event);
+        }
+        void camera(int event) {
+            micro_bit::generate_event(MES_CAMERA_ID, event);
+        }
+        void audio_recorder(int event) {
+            micro_bit::generate_event(MES_AUDIO_RECORDER_ID, event);
+        }
+        void alert(int event) {
+            micro_bit::generate_event(MES_ALERTS_ID, event);
+        }
+    }
+    
     void pitch(MicroBitPin& p, int freq, int ms) {
         float dt = .5/freq;
         float t = 0;
@@ -351,6 +370,10 @@ namespace string {
     
     int to_character_code(ManagedString s) {
         return s.length() > 0 ? s.charAt(0) : '\0';
+    }
+    
+    int code_at(ManagedString s, int i) {
+        return i < s.length() && i >= 0 ? s.charAt(i) : '\0';
     }
     
     int to_number(ManagedString s) {

@@ -1,0 +1,22 @@
+{
+  "name": "microbit-touchdevelop",
+  "version": "0.0.1",
+  "description": "The glue layer that binds together TouchDevelop programs compiled to C++ and the micro:bit runtime system.",
+  "keywords": [],
+  "author": "Jonathan Protzenko <protz@microsoft.com>",
+  "repository": {
+    "url": "ssh://git@github.com:Microsoft/microbit-touchdevelop.git",
+    "type": "git"
+  },
+  "homepage": "https://github.com/microsoft/microbit-touchdevelop",
+  "licenses": [
+    {
+      "url": "https://spdx.org/licenses/Apache-2.0",
+      "type": "Apache-2.0"
+    }
+  ],
+  "dependencies": {
+    "microbit-dal": "jamesadevine/microbit-dal#master"
+  },
+  "targetDependencies": {}
+}
