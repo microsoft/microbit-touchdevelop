@@ -48,10 +48,13 @@ namespace micro_bit {
     }
     
     bool isButtonPressed(int button) {
-        if (button == 1)
+        if (button == MICROBIT_ID_BUTTON_A)
             return uBit.buttonA.isPressed();
-        else
+        else if (button == MICROBIT_ID_BUTTON_B)
             return uBit.buttonB.isPressed();
+        else if (button == MICROBIT_ID_BUTTON_AB)
+            return uBit.buttonAB.isPressed();            
+        return false;
     }
     
     bool isPinTouched(MicroBitPin pin) {
@@ -96,7 +99,7 @@ namespace micro_bit {
     void callback(MicroBitEvent e, Action a) {
         a();
     }
-    
+
     void onButtonPressedExt(int button, int event, Action a) {
         if (a != NULL)
             uBit.MessageBus.listen(
@@ -110,6 +113,7 @@ namespace micro_bit {
         onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, a);
     }
     
+
     void onPinPressed(int pin, Action a) {
         if (a != NULL) {
             // Forces the PIN to switch to makey-makey style detection.
@@ -149,7 +153,7 @@ namespace micro_bit {
     }
     
     void showAnimation(int w, int h, const uint8_t* bitmap, int ms) {
-      uBit.display.animateImage(MicroBitImage(w, h, bitmap), ms, 5);
+      uBit.display.animateImage(MicroBitImage(w, h, bitmap), ms, 5, 0);
     }
     
     void showLetter(ManagedString s) {
@@ -197,7 +201,7 @@ namespace micro_bit {
         if (i.getWidth() <= 5)
             showImage(i, 0);
         else
-            uBit.display.animateImage(i, delay, offset);
+            uBit.display.animateImage(i, delay, offset, 0);
     }
     
     void setImagePixel(MicroBitImage i, int x, int y, int value) {
