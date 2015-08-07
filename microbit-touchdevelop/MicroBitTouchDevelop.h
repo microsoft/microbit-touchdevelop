@@ -446,14 +446,20 @@ namespace number {
   ManagedString to_character(int x) { return ManagedString((char) x); }
 }
 
+/* http://blog.regehr.org/archives/1063 */
+uint32_t rotl32c (uint32_t x, uint32_t n)
+{
+  return (x<<n) | (x>>(-n&31));
+}
+
 namespace bits {
   int or_uint32(int x, int y) { return (uint32_t) x | (uint32_t) y; }
   int and_uint32(int x, int y) { return (uint32_t) x & (uint32_t) y; }
   int xor_uint32(int x, int y) { return (uint32_t) x ^ (uint32_t) y; }
   int shift_left_uint32(int x, int y) { return (uint32_t) x << y; }
   int shift_right_uint32(int x, int y) { return (uint32_t) x >> y; }
-  int rotate_right_uint32(int x, int y) { return __ror((uint32_t) x, y); }
-  int rotate_left_uint32(int x, int y) { return __ror((uint32_t) x, 32-y); }
+  int rotate_right_uint32(int x, int y) { return rotl32c((uint32_t) x, 32-y); }
+  int rotate_left_uint32(int x, int y) { return rotl32c((uint32_t) x, y); }
 }
 
 namespace boolean {
