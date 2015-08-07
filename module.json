@@ -19,7 +19,7 @@
     "mbed-classic": "~0.0.4",
     "ble": "jamesadevine/BLE_API#master",
     "ble-nrf51822": "jamesadevine/nrf51822#master",
-    "microbit-dal": "jamesadevine/microbit-dal#master"
+    "microbit-dal": "jamesadevine/microbit-dal#experimental"
   },
   "targetDependencies": {},
   "bin": "./source",
