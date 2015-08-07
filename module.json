@@ -22,5 +22,6 @@
     "microbit-dal": "jamesadevine/microbit-dal#master"
   },
   "targetDependencies": {},
-  "bin": "./source"
+  "bin": "./source",
+  "extraIncludes": [ "microbit-touchdevelop" ]
 }
