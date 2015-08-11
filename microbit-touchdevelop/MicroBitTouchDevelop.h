@@ -194,7 +194,7 @@ namespace micro_bit {
   }
 
   void showImage(MicroBitImage i, int offset) {
-    uBit.display.image.paste(i, -offset, 0, 0);
+    uBit.display.print(i, -offset, 0, 0);
   }
 
   void scrollImage(MicroBitImage i, int offset, int delay) {
