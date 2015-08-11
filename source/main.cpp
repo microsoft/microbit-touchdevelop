@@ -4,7 +4,7 @@ void app_main()
 {
   while (1)
   {
-	  uBit.display.scrollString("ZOMG HELLO! :)");
+	  uBit.display.scroll("ZOMG HELLO! :)");
 	  uBit.sleep(1000);
   }
 }

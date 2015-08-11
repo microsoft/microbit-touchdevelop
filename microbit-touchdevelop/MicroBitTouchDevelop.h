@@ -153,7 +153,7 @@ namespace micro_bit {
   }
 
   void showAnimation(int w, int h, const uint8_t* bitmap, int ms) {
-    uBit.display.animateImage(MicroBitImage(w, h, bitmap), ms, 5, 0);
+    uBit.display.animate(MicroBitImage(w, h, bitmap), ms, 5, 0);
   }
 
   void showLetter(ManagedString s) {
@@ -167,7 +167,7 @@ namespace micro_bit {
   void scrollNumber(int n, int delay) {
     ManagedString t(n);
     if (n < 0 || n >= 10) {
-      uBit.display.scrollString(t, delay);
+      uBit.display.scroll(t, delay);
     } else {
       uBit.display.print(t.charAt(0), delay * 5);
     }
@@ -175,7 +175,7 @@ namespace micro_bit {
 
   void scrollString(ManagedString s, int delay) {
     if (s.length() > 1)
-      uBit.display.scrollString(s, delay);
+      uBit.display.scroll(s, delay);
     else {
       uBit.display.print(s.charAt(0), delay * 5);
     }
@@ -201,7 +201,7 @@ namespace micro_bit {
     if (i.getWidth() <= 5)
       showImage(i, 0);
     else
-      uBit.display.animateImage(i, delay, offset, 0);
+      uBit.display.animate(i, delay, offset, 0);
   }
 
   void setImagePixel(MicroBitImage i, int x, int y, int value) {
