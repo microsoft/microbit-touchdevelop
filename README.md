@@ -30,4 +30,5 @@ yotta build
 
 Yotta doesn't clean up properly when: switching targets, switching branches in
 module.json. Always do `yotta clean` just to make sure. If you modified
-`module.json`, do `yotta clean` *and* `yotta update`.
+`module.json`, do `yotta clean` *and* `yotta update`. Also, blast away
+`yotta_modules` and `yotta_target`. Just to make sure.
