@@ -17,9 +17,9 @@
   ],
   "dependencies": {
     "mbed-classic": "~0.0.4",
-    "ble": "jamesadevine/BLE_API#touchdevelop",
-    "ble-nrf51822": "jamesadevine/nrf51822#touchdevelop",
-    "microbit-dal": "jamesadevine/microbit-dal#touchdevelop"
+    "ble": "lancaster-university/BLE_API#touchdevelop",
+    "ble-nrf51822": "lancaster-university/nRF51822#touchdevelop",
+    "microbit-dal": "lancaster-university/microbit-dal#touchdevelop"
   },
   "targetDependencies": {},
   "bin": "./source",
