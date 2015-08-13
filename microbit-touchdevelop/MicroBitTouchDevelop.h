@@ -151,11 +151,7 @@ namespace micro_bit {
   void setBrightness(int percentage) {
     uBit.display.setBrightness(percentage);
   }
-  
-  void plotImage(int w, int h, const uint8_t* bitmap) {
-    uBit.display.image.printImage(w,h,bitmap);
-  }
-  
+
   void showAnimation(int w, int h, const uint8_t* bitmap, int ms) {
     uBit.display.animate(MicroBitImage(w, h, bitmap), ms, 5, 0);
   }
@@ -199,6 +195,10 @@ namespace micro_bit {
 
   void showImage(MicroBitImage i, int offset) {
     uBit.display.print(i, -offset, 0, 0);
+  }
+
+  void plotImage(int w, int h, const uint8_t* bitmap) {
+    showImage(createImage(w,h,bitmap), 0);
   }
 
   void scrollImage(MicroBitImage i, int offset, int delay) {
