@@ -1,4 +1,5 @@
 #include <climits>
+#include <cmath>
 
 #include "MicroBit.h"
 #include "MicroBitImage.h"
@@ -432,6 +433,10 @@ namespace math {
 
   int clamp(int l, int h, int x) {
     return x < l ? l : x > h ? h : x;
+  }
+
+  int sqrt(int x) {
+    return sqrt(x);
   }
 }
 
