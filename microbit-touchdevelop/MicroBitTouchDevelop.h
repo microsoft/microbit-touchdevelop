@@ -292,7 +292,7 @@ namespace micro_bit {
     wait_ms(40);
   }
 
-  void disablePitch(MicroBitPin& p) {
+  void disablePitch() {
     pwm->free();
   }
 
