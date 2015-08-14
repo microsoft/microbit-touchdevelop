@@ -274,23 +274,28 @@ namespace micro_bit {
     }
   }
 
-  void pitch(MicroBitPin& p, int freq, int ms) {
-    float dt = .5/freq;
-    float t = 0;
-    bool up = false;
-    while (t < ((float)ms-50)/1000) {
-      if (up){
-        micro_bit::digitalWritePin(p, 1);
-      } else {
-        micro_bit::digitalWritePin(p, 0);
-      }
-      up = !up;
-      wait(dt);
-      t += dt;
+  DynamicPwm* pwm = NULL;
+
+  void enablePitch(MicroBitPin& p) {
+    pwm = DynamicPwm::allocate(p.name);
+    if (pwm == NULL) {
+      uBit.display.enable();
+      uBit.display.print("No pwm available");
     }
-    micro_bit::digitalWritePin(p, 0);
-    wait_ms(50);
   }
+
+  void pitch(MicroBitPin& p, int freq, int ms) {
+    pwm->setPeriodUs(1000000/freq);
+    pwm->write(.5f);
+    wait_ms(ms);
+    pwm->write(0);
+    wait_ms(40);
+  }
+
+  void disablePitch(MicroBitPin& p) {
+    pwm->free();
+  }
+
 }
 
 
