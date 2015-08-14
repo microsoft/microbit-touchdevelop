@@ -154,5 +154,5 @@ namespace piezzo_library {
 void app_main() {
   micro_bit::enablePitch(uBit.io.P0);
   piezzo_library::happyBirthday();
-  micro_bit::disablePitch(uBit.io.P0);
+  micro_bit::disablePitch();
 }
