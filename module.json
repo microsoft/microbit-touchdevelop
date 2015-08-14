@@ -21,7 +21,7 @@
     "ble-nrf51822": "lancaster-university/nRF51822#touchdevelop",
     "microbit-dal": "lancaster-university/microbit-dal#touchdevelop"
   },
-  "targetDependencies": {},
+  "targetDependencies": { },
   "bin": "./source",
   "extraIncludes": [ "microbit-touchdevelop" ]
 }
