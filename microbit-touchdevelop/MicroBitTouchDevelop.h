@@ -284,7 +284,7 @@ namespace micro_bit {
     }
   }
 
-  void pitch(MicroBitPin& p, int freq, int ms) {
+  void pitch(int freq, int ms) {
     pwm->setPeriodUs(1000000/freq);
     pwm->write(.5f);
     wait_ms(ms);
