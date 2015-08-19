@@ -36,11 +36,26 @@ namespace collection {
   template<typename T> void add(Collection_of<T> c, T x) {
     c->push_back(x);
   }
-  template<typename T> T at(Collection_of<T> c, int x) {
-    return c->at(x);
+
+  template<typename T> inline bool in_range(Collection_of<T> c, int x) {
+    return (0 <= x && x < c->size());
   }
+
+  template<typename T> T at(Collection_of<T> c, int x) {
+    if (in_range(c, x))
+      return c->at(x);
+    else
+      uBit.panic(MICROBIT_INVALID_VALUE);
+  }
+
+  template<typename T> void remove(Collection_of<T> c, int x) {
+    if (in_range(c, x))
+      c.erase(c.begin()+x);
+  }
+
   template<typename T> void set_at(Collection_of<T> c, int x, T y) {
-    c->at(x) = y;
+    if (in_range(c, x))
+      c->at(x) = y;
   }
 }
 
