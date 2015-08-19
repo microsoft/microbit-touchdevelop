@@ -1,15 +1,19 @@
 #include <climits>
 #include <cmath>
+#include <vector>
 
 #include "MicroBit.h"
 #include "MicroBitImage.h"
 #include "ManagedString.h"
+#include "ManagedType.h"
 
 // Base TouchDevelop types
 typedef int Number;
 typedef bool Boolean;
 typedef ManagedString String;
 typedef void (*Action)();
+template <typename T> using Collection_of = ManagedType<vector<T>>;
+template <typename T> using Collection = ManagedType<vector<T>>;
 
 // Types that correspond to libraries from the TouchDevelop runtime. We might
 // generate code that contains references to these types, as we can't tell if a
@@ -19,6 +23,12 @@ typedef void *Board, *DateTime, *Sprite_Set, *Color, *Sprite;
 namespace touch_develop {
   ManagedString mk_string(char* c) {
     return ManagedString(c);
+  }
+}
+
+namespace create {
+  template<typename T> Collection_of<T> collection_of() {
+    return ManagedType<vector<T>>();
   }
 }
 
@@ -482,3 +492,5 @@ namespace boolean {
   bool not_(bool x) { return !x; }
   bool equals(bool x, bool y) { return x == y; }
 }
+
+// vim: set ts=2 sw=2 sts=2:
