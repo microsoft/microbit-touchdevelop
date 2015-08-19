@@ -27,6 +27,15 @@ void app_main() {
   Collection<Number> coll2;
   coll2 = create::collection_of<Number>();
   collection::add(coll2, 1);
-  collection::at(coll2, 0);
+  collection::add(coll2, 2);
+  micro_bit::scrollNumber(collection::at(coll2, 0), 150);
+  micro_bit::pause(1000);
+  micro_bit::scrollNumber(collection::at(coll2, 0), 150);
+  micro_bit::pause(1000);
   collection::set_at(coll2, 0, 0);
+  micro_bit::scrollNumber(collection::at(coll2, 0), 150);
+  micro_bit::pause(1000);
+  collection::remove(coll2, 0);
+  micro_bit::scrollNumber(collection::at(coll2, 0), 150);
+  micro_bit::pause(1000);
 }
