@@ -24,6 +24,9 @@ namespace micro_bit {
   }
 }
 void app_main() {
-  Collection<Collection<Number>> coll2;
-  coll2 = create::collection_of<Collection_of<Number>>();
+  Collection<Number> coll2;
+  coll2 = create::collection_of<Number>();
+  collection::add(coll2, 1);
+  collection::at(coll2, 0);
+  collection::set_at(coll2, 0, 0);
 }

@@ -32,6 +32,18 @@ namespace create {
   }
 }
 
+namespace collection {
+  template<typename T> void add(Collection_of<T> c, T x) {
+    c->push_back(x);
+  }
+  template<typename T> T at(Collection_of<T> c, int x) {
+    return c->at(x);
+  }
+  template<typename T> void set_at(Collection_of<T> c, int x, T y) {
+    c->at(x) = y;
+  }
+}
+
 // These should be read along with the TouchDevelop library, to make sense of
 // the various constants. Same order as in the TouchDevelop library.
 namespace micro_bit {
