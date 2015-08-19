@@ -28,7 +28,7 @@ namespace touch_develop {
 
 namespace create {
   template<typename T> Collection_of<T> collection_of() {
-    return ManagedType<vector<T>>();
+    return ManagedType<vector<T>>(new vector<T>());
   }
 }
 
