@@ -1,6 +1,34 @@
 #include "MicroBitTouchDevelop.h"
+namespace scratchpadminuslibrary {
+  namespace user_types {
+    struct Thing_;
+    typedef ManagedType< Thing_> Thing;
+  }
+}
+namespace user_types {
+  struct point_;
+  typedef ManagedType< point_> point;
+}
+namespace scratchpadminuslibrary {
+  namespace user_types {
+    struct Thing_ {
+      String f;
+      micro_bit::user_types::Image f2;
+    };
+  }
+}
+namespace user_types {
+  struct point_ {
+    Number x;
+    Number y;
+    Number z;
+  };
+}
 namespace micro_bit {
   void calibrate();
+}
+namespace scratchpadminuslibrary {
+  user_types::Thing thing();
 }
 void app_main();
 namespace micro_bit {
@@ -15,7 +43,7 @@ namespace micro_bit {
     // {help:functions/calibrate}
     // {namespace:input}
     uBit.compass.calibrateStart();
-    Image img;
+    user_types::Image img;
     img = micro_bit::createImage(literals::bitmap0_w, literals::bitmap0_h, literals::bitmap0);
     for (Number i = 0; i < 10; ++i) {
       micro_bit::scrollImage(img, 5, 400);
@@ -23,19 +51,33 @@ namespace micro_bit {
     uBit.compass.calibrateEnd();
   }
 }
+namespace scratchpadminuslibrary {
+  user_types::Thing thing() {
+    user_types::Thing r;
+    return ManagedType<user_types::Thing_>(new user_types::Thing_());
+    return r;
+  }
+}
+namespace literals {
+  const int bitmap0_w = 5;
+  const int bitmap0_h = 6;
+  const uint8_t bitmap0[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+
+  const int bitmap1_w = 5;
+  const int bitmap1_h = 6;
+  const uint8_t bitmap1[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+}
+
 void app_main() {
-  Collection<Number> coll2;
-  coll2 = create::collection_of<Number>();
-  collection::add(coll2, 1);
-  micro_bit::scrollNumber(collection::at(coll2, 0), 150);
-  micro_bit::pause(1000);
-  collection::add(coll2, 2);
-  micro_bit::scrollNumber(collection::at(coll2, 1), 150);
-  micro_bit::pause(1000);
-  collection::set_at(coll2, 0, 0);
-  micro_bit::scrollNumber(collection::at(coll2, 0), 150);
-  micro_bit::pause(1000);
-  collection::remove(coll2, 0);
-  micro_bit::scrollNumber(collection::at(coll2, 0), 150);
-  micro_bit::pause(1000);
+  user_types::point point;
+  point = ManagedType<user_types::point_>(new user_types::point_());
+  micro_bit::scrollNumber(point->x, 150);
+  scratchpadminuslibrary::user_types::Thing t;
+  t = scratchpadminuslibrary::thing();
+  micro_bit::plotImage(literals::bitmap0_w, literals::bitmap0_h, literals::bitmap0);
+  micro_bit::user_types::Image img;
+  img = micro_bit::createImage(literals::bitmap1_w, literals::bitmap1_h, literals::bitmap1);
+
+  Collection_of<Number> c;
+  collection::add(c, 1);
 }

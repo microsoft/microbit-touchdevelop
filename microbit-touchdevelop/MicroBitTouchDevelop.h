@@ -15,11 +15,6 @@ typedef void (*Action)();
 template <typename T> using Collection_of = ManagedType<vector<T>>;
 template <typename T> using Collection = ManagedType<vector<T>>;
 
-// Types that correspond to libraries from the TouchDevelop runtime. We might
-// generate code that contains references to these types, as we can't tell if a
-// global is just meant for the simulator or not.
-typedef void *Board, *DateTime, *Sprite_Set, *Color, *Sprite;
-
 namespace touch_develop {
   ManagedString mk_string(char* c) {
     return ManagedString(c);
@@ -34,35 +29,50 @@ namespace create {
 
 namespace collection {
   template<typename T> void add(Collection_of<T> c, T x) {
-    c->push_back(x);
+    if (c.operator->() != NULL)
+      c->push_back(x);
+    else
+      uBit.panic(MICROBIT_INVALID_VALUE);
   }
 
   template<typename T> inline bool in_range(Collection_of<T> c, int x) {
-    return (0 <= x && x < c->size());
+    if (c.operator->() != NULL)
+      return (0 <= x && x < c->size());
+    else
+      uBit.panic(MICROBIT_INVALID_VALUE);
   }
 
   template<typename T> T at(Collection_of<T> c, int x) {
-    if (in_range(c, x))
+    if (c.operator->() != NULL && in_range(c, x))
       return c->at(x);
     else
       uBit.panic(MICROBIT_INVALID_VALUE);
   }
 
   template<typename T> void remove(Collection_of<T> c, int x) {
-    if (in_range(c, x))
+    if (c.operator->() != NULL && in_range(c, x))
       c->erase(c->begin()+x);
+    else
+      uBit.panic(MICROBIT_INVALID_VALUE);
   }
 
   template<typename T> void set_at(Collection_of<T> c, int x, T y) {
-    if (in_range(c, x))
+    if (c.operator->() != NULL && in_range(c, x))
       c->at(x) = y;
+    else
+      uBit.panic(MICROBIT_INVALID_VALUE);
   }
 }
 
 // These should be read along with the TouchDevelop library, to make sense of
 // the various constants. Same order as in the TouchDevelop library.
 namespace micro_bit {
+  // XXX remove once live and stage get the new compiler
   typedef MicroBitImage Image;
+
+  namespace user_types {
+    typedef MicroBitImage Image;
+  }
 
   int getAcceleration(int dimension) {
     if (dimension == 0)
