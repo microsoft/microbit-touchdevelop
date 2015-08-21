@@ -14,8 +14,10 @@ namespace touch_develop {
   typedef bool Boolean;
   typedef ManagedString String;
   typedef void (*Action)();
+#ifdef __GNUC__
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
+#endif
 
   namespace touch_develop {
     ManagedString mk_string(char* c) {
