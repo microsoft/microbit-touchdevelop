@@ -7,15 +7,15 @@
 #include "ManagedString.h"
 #include "ManagedType.h"
 
-// Base TouchDevelop types
-typedef int Number;
-typedef bool Boolean;
-typedef ManagedString String;
-typedef void (*Action)();
-template <typename T> using Collection_of = ManagedType<vector<T>>;
-template <typename T> using Collection = ManagedType<vector<T>>;
-
 namespace touch_develop {
+
+  // Base TouchDevelop types
+  typedef int Number;
+  typedef bool Boolean;
+  typedef ManagedString String;
+  typedef void (*Action)();
+  template <typename T> using Collection_of = ManagedType<vector<T>>;
+  template <typename T> using Collection = ManagedType<vector<T>>;
 
   namespace touch_develop {
     ManagedString mk_string(char* c) {
