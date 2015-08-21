@@ -1,38 +1,12 @@
 #include "MicroBitTouchDevelop.h"
 namespace touch_develop {
-  namespace scratchpadminuslibrary {
-    namespace user_types {
-      struct Thing_;
-      typedef ManagedType< Thing_> Thing;
-    }
-  }
-  namespace user_types {
-    struct point_;
-    typedef ManagedType< point_> point;
-  }
-  namespace scratchpadminuslibrary {
-    namespace user_types {
-      struct Thing_ {
-        String f;
-        micro_bit::user_types::Image f2;
-      };
-    }
-  }
-  namespace user_types {
-    struct point_ {
-      Number x;
-      Number y;
-      Number z;
-    };
-  }
   namespace micro_bit {
     void calibrate();
   }
-  namespace scratchpadminuslibrary {
-    user_types::Thing dathing();
-  }
-  void app_main();
-  void panic(user_types::point p);
+  namespace globals {
+    Number x = 0;
+  }  void app_main();
+  void _body_EmuyaQzpHTnrmJGF_l0();
   namespace micro_bit {
     namespace literals {
       const int bitmap0_w = 10;
@@ -53,21 +27,27 @@ namespace touch_develop {
       uBit.compass.calibrateEnd();
     }
   }
-  namespace scratchpadminuslibrary {
-    user_types::Thing dathing() {
-      user_types::Thing r;
-      return ManagedType<user_types::Thing_>(new user_types::Thing_());
-      return r;
-    }
-  }
   void app_main() {
-    Collection<Collection<scratchpadminuslibrary::user_types::Thing>> col2;
-    col2 = create::collection_of<Collection<scratchpadminuslibrary::user_types::Thing>>();
-    scratchpadminuslibrary::user_types::Thing r;
-    r = scratchpadminuslibrary::dathing();
+    Number x0 = 0;
+    x0 = 1;
+    auto _body__ = [=] () -> void {
+      Number y = 0;
+      y = 2;
+      y = number::plus(number::plus(y, globals::x), x0);
+    };
+    auto _body_ = new std::function<void ()>(_body__);
+    micro_bit::onButtonPressed(MICROBIT_ID_BUTTON_A, _body_);
+    auto _body_0_ = [=] () -> void {
+      micro_bit::scrollNumber(x0, 15);
+    };
+    auto _body_0 = new std::function<void ()>(_body_0_);
+    micro_bit::onButtonPressed(MICROBIT_ID_BUTTON_A, _body_0);
+    micro_bit::onButtonPressed(MICROBIT_ID_BUTTON_B, _body_EmuyaQzpHTnrmJGF_l0);
   }
-  void panic(user_types::point p) {
-    (p.operator->() != NULL ? p->x : (uBit.panic(MICROBIT_INVALID_VALUE), p->x)) = number::plus((p.operator->() != NULL ? p->x : (uBit.panic(MICROBIT_INVALID_VALUE), p->x)), 1);
+  void _body_EmuyaQzpHTnrmJGF_l0() {
+    Number y0 = 0;
+    y0 = 2;
+    y0 = number::plus(y0, 1);
   }
 }
 

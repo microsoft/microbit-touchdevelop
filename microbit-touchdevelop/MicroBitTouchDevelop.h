@@ -2,6 +2,10 @@
 #include <cmath>
 #include <vector>
 
+#ifdef __GNUC__
+#include <functional>
+#endif
+
 #include "MicroBit.h"
 #include "MicroBitImage.h"
 #include "ManagedString.h"
@@ -31,6 +35,7 @@ namespace touch_develop {
     }
   }
 
+#ifdef __GNUC__
   namespace collection {
     template<typename T> void add(Collection_of<T> c, T x) {
       if (c.operator->() != NULL)
@@ -67,6 +72,7 @@ namespace touch_develop {
         uBit.panic(MICROBIT_INVALID_VALUE);
     }
   }
+#endif
 
   // These should be read along with the TouchDevelop library, to make sense of
   // the various constants. Same order as in the TouchDevelop library.
@@ -163,6 +169,20 @@ namespace touch_develop {
       onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, a);
     }
 
+
+#ifdef __GNUC__
+    void callbackF(MicroBitEvent e, std::function<void()>* f) {
+      (*f)();
+    }
+
+    void onButtonPressed(int button, std::function<void()>* f) {
+      uBit.MessageBus.listen(
+        button,
+        MICROBIT_BUTTON_EVT_CLICK,
+        (void (*)(MicroBitEvent, void*)) callbackF,
+        (void*) f);
+    }
+#endif
 
     void onPinPressed(int pin, Action a) {
       if (a != NULL) {
