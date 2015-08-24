@@ -67,7 +67,7 @@ namespace touch_develop {
         uBit.panic(MICROBIT_INVALID_VALUE);
     }
 
-    template<typename T> void remove(Collection_of<T> c, int x) {
+    template<typename T> void remove_at(Collection_of<T> c, int x) {
       if (c.get() != NULL && in_range(c, x))
         c->erase(c->begin()+x);
       else
@@ -79,6 +79,18 @@ namespace touch_develop {
         c->at(x) = y;
       else
         uBit.panic(MICROBIT_INVALID_VALUE);
+    }
+
+    template<typename T> Number index_of(Collection_of<T> c, T x) {
+      int index = -1;
+      for (int i = 0; i < c->size(); ++i)
+        if (c->at(i) == x)
+          index = i;
+      return index;
+    }
+
+    template<typename T> void remove(Collection_of<T> c, T x) {
+      remove_at(c, index_of(c, x));
     }
   }
 
