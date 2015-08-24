@@ -21,6 +21,7 @@ namespace touch_develop {
 #if __cplusplus > 199711L
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
+  template <typename T> using Ref = ManagedType<T>;
 #endif
 
   namespace touch_develop {
@@ -34,6 +35,10 @@ namespace touch_develop {
     template<typename T> Collection_of<T> collection_of() {
       return ManagedType<vector<T>>(new vector<T>());
     }
+
+    template<typename T> Ref<T> ref_of() {
+      return ManagedType<T>(new T);
+    }
   }
 
   namespace collection {
@@ -42,38 +47,48 @@ namespace touch_develop {
     }
 
     template<typename T> void add(Collection_of<T> c, T x) {
-      if (c.operator->() != NULL)
+      if (c.get() != NULL)
         c->push_back(x);
       else
         uBit.panic(MICROBIT_INVALID_VALUE);
     }
 
     template<typename T> inline bool in_range(Collection_of<T> c, int x) {
-      if (c.operator->() != NULL)
+      if (c.get() != NULL)
         return (0 <= x && x < c->size());
       else
         uBit.panic(MICROBIT_INVALID_VALUE);
     }
 
     template<typename T> T at(Collection_of<T> c, int x) {
-      if (c.operator->() != NULL && in_range(c, x))
+      if (c.get() != NULL && in_range(c, x))
         return c->at(x);
       else
         uBit.panic(MICROBIT_INVALID_VALUE);
     }
 
     template<typename T> void remove(Collection_of<T> c, int x) {
-      if (c.operator->() != NULL && in_range(c, x))
+      if (c.get() != NULL && in_range(c, x))
         c->erase(c->begin()+x);
       else
         uBit.panic(MICROBIT_INVALID_VALUE);
     }
 
     template<typename T> void set_at(Collection_of<T> c, int x, T y) {
-      if (c.operator->() != NULL && in_range(c, x))
+      if (c.get() != NULL && in_range(c, x))
         c->at(x) = y;
       else
         uBit.panic(MICROBIT_INVALID_VALUE);
+    }
+  }
+
+  namespace ref {
+    template<typename T> T _get(Ref<T> x) {
+      return *(x.get());
+    }
+
+    template<typename T> void _set(Ref<T> x, T y) {
+      *(x.get()) = y;
     }
   }
 #endif
