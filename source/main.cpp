@@ -3,10 +3,10 @@ namespace touch_develop {
   namespace micro_bit {
     void calibrate();
   }
-  namespace globals {
-    Number x = 0;
-  }  void app_main();
-  void _body_EmuyaQzpHTnrmJGF_l0();
+  void app_main();
+  void _body_Hv41NKPqzo5vwrTQ_l0();
+  void _body_xPJLp2KR4Z6JwbfI_l0();
+  void _body_oAdtpoI2Ew2MywHp_l0();
   namespace micro_bit {
     namespace literals {
       const int bitmap0_w = 10;
@@ -27,27 +27,31 @@ namespace touch_develop {
       uBit.compass.calibrateEnd();
     }
   }
-  void app_main() {
-    Number x0 = 0;
-    x0 = 1;
-    auto _body__ = [=] () -> void {
-      Number y = 0;
-      y = 2;
-      y = number::plus(number::plus(y, globals::x), x0);
-    };
-    auto _body_ = new std::function<void ()>(_body__);
-    micro_bit::onButtonPressed(MICROBIT_ID_BUTTON_A, _body_);
-    auto _body_0_ = [=] () -> void {
-      micro_bit::scrollNumber(x0, 15);
-    };
-    auto _body_0 = new std::function<void ()>(_body_0_);
-    micro_bit::onButtonPressed(MICROBIT_ID_BUTTON_A, _body_0);
-    micro_bit::onButtonPressed(MICROBIT_ID_BUTTON_B, _body_EmuyaQzpHTnrmJGF_l0);
+  namespace literals {
+    const int bitmap0_w = 5;
+    const int bitmap0_h = 5;
+    const uint8_t bitmap0[] = { 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, };
   }
-  void _body_EmuyaQzpHTnrmJGF_l0() {
-    Number y0 = 0;
-    y0 = 2;
-    y0 = number::plus(y0, 1);
+
+  void app_main() {
+    micro_bit::onButtonPressed(MICROBIT_ID_BUTTON_AB, _body_Hv41NKPqzo5vwrTQ_l0);
+    micro_bit::onButtonPressed(MICROBIT_ID_BUTTON_A, _body_xPJLp2KR4Z6JwbfI_l0);
+    micro_bit::scrollNumber(1, 150);
+    micro_bit::clearScreen();
+    micro_bit::scrollString(touch_develop::mk_string("Hello world"), 100);
+    micro_bit::forever(_body_oAdtpoI2Ew2MywHp_l0);
+    if (micro_bit::isButtonPressed(MICROBIT_ID_BUTTON_AB)){
+      ;
+    }
+  }
+  void _body_Hv41NKPqzo5vwrTQ_l0() {
+    ;
+  }
+  void _body_xPJLp2KR4Z6JwbfI_l0() {
+    micro_bit::showImage(micro_bit::createImage(literals::bitmap0_w, literals::bitmap0_h, literals::bitmap0), 0);
+  }
+  void _body_oAdtpoI2Ew2MywHp_l0() {
+    ;
   }
 }
 

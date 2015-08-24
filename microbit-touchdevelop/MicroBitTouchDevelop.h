@@ -2,7 +2,7 @@
 #include <cmath>
 #include <vector>
 
-#ifdef __GNUC__
+#if __cplusplus > 199711L
 #include <functional>
 #endif
 
@@ -18,7 +18,7 @@ namespace touch_develop {
   typedef bool Boolean;
   typedef ManagedString String;
   typedef void (*Action)();
-#ifdef __GNUC__
+#if __cplusplus > 199711L
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
 #endif
@@ -29,14 +29,18 @@ namespace touch_develop {
     }
   }
 
+#if __cplusplus > 199711L
   namespace create {
     template<typename T> Collection_of<T> collection_of() {
       return ManagedType<vector<T>>(new vector<T>());
     }
   }
 
-#ifdef __GNUC__
   namespace collection {
+    template<typename T> Number count(Collection_of<T> c) {
+      return c->size();
+    }
+
     template<typename T> void add(Collection_of<T> c, T x) {
       if (c.operator->() != NULL)
         c->push_back(x);
@@ -170,7 +174,7 @@ namespace touch_develop {
     }
 
 
-#ifdef __GNUC__
+#if __cplusplus > 199711L
     void callbackF(MicroBitEvent e, std::function<void()>* f) {
       (*f)();
     }
