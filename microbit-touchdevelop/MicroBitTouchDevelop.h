@@ -53,6 +53,8 @@ namespace touch_develop {
         uBit.panic(MICROBIT_INVALID_VALUE);
     }
 
+    // First check that [c] is valid (panic if not), then proceed to check that
+    // [x] is within bounds.
     template<typename T> inline bool in_range(Collection_of<T> c, int x) {
       if (c.get() != NULL)
         return (0 <= x && x < c->size());
@@ -61,36 +63,35 @@ namespace touch_develop {
     }
 
     template<typename T> T at(Collection_of<T> c, int x) {
-      if (c.get() != NULL && in_range(c, x))
+      if (in_range(c, x))
         return c->at(x);
       else
         uBit.panic(MICROBIT_INVALID_VALUE);
     }
 
     template<typename T> void remove_at(Collection_of<T> c, int x) {
-      if (c.get() != NULL && in_range(c, x))
-        c->erase(c->begin()+x);
-      else
-        uBit.panic(MICROBIT_INVALID_VALUE);
+      if (!in_range(c, start))
+        return;
+
+      c->erase(c->begin()+x);
     }
 
     template<typename T> void set_at(Collection_of<T> c, int x, T y) {
-      if (c.get() != NULL && in_range(c, x))
-        c->at(x) = y;
-      else
-        uBit.panic(MICROBIT_INVALID_VALUE);
+      if (!in_range(c, start))
+        return;
+
+      c->at(x) = y;
     }
 
     template<typename T> Number index_of(Collection_of<T> c, T x, int start) {
-      if (c.get() != NULL && in_range(c, start)) {
-        int index = -1;
-        for (int i = start; i < c->size(); ++i)
-          if (c->at(i) == x)
-            index = i;
-        return index;
-      } else {
-        uBit.panic(MICROBIT_INVALID_VALUE);
-      }
+      if (!in_range(c, start))
+        return -1;
+
+      int index = -1;
+      for (int i = start; i < c->size(); ++i)
+        if (c->at(i) == x)
+          index = i;
+      return index;
     }
 
     template<typename T> void remove(Collection_of<T> c, T x) {
