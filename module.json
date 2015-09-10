@@ -19,7 +19,7 @@
     "mbed-classic": "~0.0.4",
     "ble": "lancaster-university/BLE_API#touchdevelop",
     "ble-nrf51822": "lancaster-university/nRF51822#touchdevelop",
-    "microbit-dal": "lancaster-university/microbit-dal#gcc"
+    "microbit-dal": "lancaster-university/microbit-dal#touchdevelop"
   },
   "targetDependencies": { },
   "bin": "./source",

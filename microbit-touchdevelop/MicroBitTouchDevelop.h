@@ -393,7 +393,7 @@ namespace touch_develop {
     }
 
     void disablePitch() {
-      pwm->free();
+      pwm->write(0);
     }
 
   }
