@@ -70,14 +70,14 @@ namespace touch_develop {
     }
 
     template<typename T> void remove_at(Collection_of<T> c, int x) {
-      if (!in_range(c, start))
+      if (!in_range(c, x))
         return;
 
       c->erase(c->begin()+x);
     }
 
     template<typename T> void set_at(Collection_of<T> c, int x, T y) {
-      if (!in_range(c, start))
+      if (!in_range(c, x))
         return;
 
       c->at(x) = y;
