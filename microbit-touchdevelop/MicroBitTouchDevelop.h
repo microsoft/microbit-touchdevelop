@@ -199,12 +199,17 @@ namespace touch_develop {
     }
 
     void onButtonPressedExt(int button, int event, Action a) {
-      if (a != NULL)
+      if (a != NULL) {
+        uBit.MessageBus.ignore(
+          button,
+          event,
+          (void (*)(MicroBitEvent, void*)) callback);
         uBit.MessageBus.listen(
           button,
           event,
           (void (*)(MicroBitEvent, void*)) callback,
           (void*) a);
+      }
     }
 
     void onButtonPressed(int button, Action a) {
@@ -213,11 +218,19 @@ namespace touch_develop {
 
 
 #if __cplusplus > 199711L
+    // Experimental support for closures compiled as C++ functions. Only works
+    // for closures passed to [onButtonPressed] (all other functions would have
+    // to be updated), along with [in_background]. Must figure out a way to
+    // limit code duplication.
     void callbackF(MicroBitEvent e, std::function<void()>* f) {
       (*f)();
     }
 
     void onButtonPressed(int button, std::function<void()>* f) {
+      uBit.MessageBus.ignore(
+        button,
+        MICROBIT_BUTTON_EVT_CLICK,
+        (void (*)(MicroBitEvent, void*)) callbackF);
       uBit.MessageBus.listen(
         button,
         MICROBIT_BUTTON_EVT_CLICK,
@@ -240,6 +253,10 @@ namespace touch_develop {
             uBit.io.P2.isTouched();
             break;
         }
+        uBit.MessageBus.ignore(
+          pin,
+          MICROBIT_BUTTON_EVT_CLICK,
+          (void (*)(MicroBitEvent, void*)) callback);
         uBit.MessageBus.listen(
           pin,
           MICROBIT_BUTTON_EVT_CLICK,
@@ -366,8 +383,17 @@ namespace touch_develop {
     }
 
     void on_event(int id, void (*a)(int)) {
-      if (a != NULL)
-        uBit.MessageBus.listen(id, MICROBIT_EVT_ANY, (void (*)(MicroBitEvent, void*))callback1, (void*)a);
+      if (a != NULL) {
+        uBit.MessageBus.ignore(
+          id,
+          MICROBIT_EVT_ANY,
+          (void (*)(MicroBitEvent, void*)) callback1);
+        uBit.MessageBus.listen(
+          id,
+          MICROBIT_EVT_ANY,
+          (void (*)(MicroBitEvent, void*)) callback1,
+          (void*) a);
+      }
     }
 
     namespace events {
