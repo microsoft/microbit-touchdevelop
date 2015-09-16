@@ -17,9 +17,9 @@
   ],
   "dependencies": {
     "mbed-classic": "~0.0.4",
-    "ble": "lancaster-university/BLE_API#touchdevelop",
-    "ble-nrf51822": "lancaster-university/nRF51822#touchdevelop",
-    "microbit-dal": "lancaster-university/microbit-dal#touchdevelop"
+    "ble": "lancaster-university/BLE_API#td0",
+    "ble-nrf51822": "lancaster-university/nRF51822#td0",
+    "microbit-dal": "lancaster-university/microbit-dal#td0"
   },
   "targetDependencies": { },
   "bin": "./source",
