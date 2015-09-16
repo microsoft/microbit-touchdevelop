@@ -27,7 +27,7 @@ namespace touch_develop {
 #endif
 
   enum TdError {
-    TD_UNITIALIZED_OBJECT_TYPE = 100,
+    TD_UNINITIALIZED_OBJECT_TYPE = 40,
     TD_OUT_OF_BOUNDS,
     TD_BAD_USAGE,
   };
@@ -58,7 +58,7 @@ namespace touch_develop {
       if (c.get() != NULL)
         c->push_back(x);
       else
-        uBit.panic(TD_UNITIALIZED_OBJECT_TYPE);
+        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
     }
 
     // First check that [c] is valid (panic if not), then proceed to check that
@@ -67,7 +67,7 @@ namespace touch_develop {
       if (c.get() != NULL)
         return (0 <= x && x < c->size());
       else
-        uBit.panic(TD_UNITIALIZED_OBJECT_TYPE);
+        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
     }
 
     template<typename T> T at(Collection_of<T> c, int x) {
@@ -485,7 +485,7 @@ namespace touch_develop {
       char buf[7];
       uBit.i2c.read(addr << 1, buf, 7);
 
-      user_types::DateTime d;
+      user_types::DateTime d(new user_types::DateTime_());
       d->seconds = bcd2bin(buf[0] & 0x7F);
       d->minutes = bcd2bin(buf[1]);
       d->hours = bcd2bin(buf[2]);
