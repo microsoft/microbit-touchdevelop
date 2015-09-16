@@ -34,6 +34,8 @@ namespace touch_develop {
     ManagedString mk_string(char* c) {
       return ManagedString(c);
     }
+
+    void noop(...) {}
   }
 
 #if __cplusplus > 199711L
@@ -220,7 +222,7 @@ namespace touch_develop {
 #if __cplusplus > 199711L
     // Experimental support for closures compiled as C++ functions. Only works
     // for closures passed to [onButtonPressed] (all other functions would have
-    // to be updated), along with [in_background]. Must figure out a way to
+    // to be updated, along with [in_background]). Must figure out a way to
     // limit code duplication.
     void callbackF(MicroBitEvent e, std::function<void()>* f) {
       (*f)();
