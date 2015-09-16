@@ -17,6 +17,8 @@ enum TdError {
   TD_BAD_USAGE,
 };
 
+#define TD_NOOP(...)
+
 namespace touch_develop {
 
   // Base TouchDevelop types
@@ -34,8 +36,6 @@ namespace touch_develop {
     ManagedString mk_string(char* c) {
       return ManagedString(c);
     }
-
-    void noop(...) {}
   }
 
 #if __cplusplus > 199711L
