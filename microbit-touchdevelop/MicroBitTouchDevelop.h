@@ -11,12 +11,6 @@
 #include "ManagedString.h"
 #include "ManagedType.h"
 
-enum TdError {
-  TD_UNITIALIZED_OBJECT_TYPE = 100,
-  TD_OUT_OF_BOUNDS,
-  TD_BAD_USAGE,
-};
-
 #define TD_NOOP(...)
 
 namespace touch_develop {
@@ -31,6 +25,12 @@ namespace touch_develop {
   template <typename T> using Collection = ManagedType<vector<T>>;
   template <typename T> using Ref = ManagedType<T>;
 #endif
+
+  enum TdError {
+    TD_UNITIALIZED_OBJECT_TYPE = 100,
+    TD_OUT_OF_BOUNDS,
+    TD_BAD_USAGE,
+  };
 
   namespace touch_develop {
     ManagedString mk_string(char* c) {
@@ -449,54 +449,51 @@ namespace touch_develop {
       return val + 6 * (val / 10);
     }
 
-    struct DateTime {
-      int seconds;
-      int minutes;
-      int hours;
-      int day;
-      int month;
-      int year;
-    };
+    // The TouchDevelop type is marked as {shim:} an exactly matches this
+    // definition. It's kind of unfortunate that we have to duplicate the
+    // definition.
+    namespace user_types {
+      struct DateTime_ {
+        Number seconds;
+        Number minutes;
+        Number hours;
+        Number day;
+        Number month;
+        Number year;
+      };
+      typedef ManagedType<DateTime_> DateTime;
+    }
 
-    void adjust(DateTime& d) {
+    void adjust(user_types::DateTime d) {
       char commands[] = {
         0,
-        bin2bcd(d.seconds),
-        bin2bcd(d.minutes),
-        bin2bcd(d.hours),
+        bin2bcd(d->seconds),
+        bin2bcd(d->minutes),
+        bin2bcd(d->hours),
         0,
-        bin2bcd(d.day),
-        bin2bcd(d.month),
-        bin2bcd(d.year - 2000)
+        bin2bcd(d->day),
+        bin2bcd(d->month),
+        bin2bcd(d->year - 2000)
       };
       uBit.i2c.write(addr << 1, commands, 8);
     }
 
-    DateTime now() {
+    user_types::DateTime now() {
       char c = 0;
       uBit.i2c.write(addr << 1, &c, 1);
 
       char buf[7];
       uBit.i2c.read(addr << 1, buf, 7);
 
-      DateTime d;
-      d.seconds = bcd2bin(buf[0] & 0x7F);
-      d.minutes = bcd2bin(buf[1]);
-      d.hours = bcd2bin(buf[2]);
-      d.day = bcd2bin(buf[4]);
-      d.month = bcd2bin(buf[5]);
-      d.year = bcd2bin(buf[6]) + 2000;
+      user_types::DateTime d;
+      d->seconds = bcd2bin(buf[0] & 0x7F);
+      d->minutes = bcd2bin(buf[1]);
+      d->hours = bcd2bin(buf[2]);
+      d->day = bcd2bin(buf[4]);
+      d->month = bcd2bin(buf[5]);
+      d->year = bcd2bin(buf[6]) + 2000;
       return d;
     }
-
-    int minutes() {
-      return now().minutes;
-    }
-
-    int hours() {
-      return now().hours;
-    }
-
   }
 
   namespace string {
