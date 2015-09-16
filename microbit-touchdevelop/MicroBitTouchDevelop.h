@@ -11,6 +11,12 @@
 #include "ManagedString.h"
 #include "ManagedType.h"
 
+enum TdError {
+  TD_UNITIALIZED_OBJECT_TYPE = 100,
+  TD_OUT_OF_BOUNDS,
+  TD_BAD_USAGE,
+};
+
 namespace touch_develop {
 
   // Base TouchDevelop types
@@ -50,7 +56,7 @@ namespace touch_develop {
       if (c.get() != NULL)
         c->push_back(x);
       else
-        uBit.panic(MICROBIT_INVALID_VALUE);
+        uBit.panic(TD_UNITIALIZED_OBJECT_TYPE);
     }
 
     // First check that [c] is valid (panic if not), then proceed to check that
@@ -59,14 +65,14 @@ namespace touch_develop {
       if (c.get() != NULL)
         return (0 <= x && x < c->size());
       else
-        uBit.panic(MICROBIT_INVALID_VALUE);
+        uBit.panic(TD_UNITIALIZED_OBJECT_TYPE);
     }
 
     template<typename T> T at(Collection_of<T> c, int x) {
       if (in_range(c, x))
         return c->at(x);
       else
-        uBit.panic(MICROBIT_INVALID_VALUE);
+        uBit.panic(TD_OUT_OF_BOUNDS);
     }
 
     template<typename T> void remove_at(Collection_of<T> c, int x) {
@@ -379,28 +385,27 @@ namespace touch_develop {
       }
     }
 
-    DynamicPwm* pwm = NULL;
+    MicroBitPin* pitchPin = NULL;
 
     void enablePitch(MicroBitPin& p) {
-      pwm = DynamicPwm::allocate(p.name);
-      if (pwm == NULL) {
-        uBit.display.enable();
-        uBit.display.print("No pwm available");
-      }
+      pitchPin = &p;
     }
 
     void pitch(int freq, int ms) {
-      pwm->setPeriodUs(1000000/freq);
-      pwm->write(.5f);
+      if (pitchPin == NULL) {
+        uBit.display.scroll("Please call enablePitch first");
+        panic(TD_BAD_USAGE);
+      }
+      pitchPin->setAnalogValue(512);
+      pitchPin->setAnalogPeriodUs(1000000/freq);
       wait_ms(ms);
-      pwm->write(0);
+      pitchPin->setAnalogValue(0);
       wait_ms(40);
     }
 
     void disablePitch() {
-      pwm->write(0);
+      pitchPin->setAnalogValue(0);
     }
-
   }
 
 
@@ -569,13 +574,14 @@ namespace touch_develop {
     ManagedString to_character(int x) { return ManagedString((char) x); }
   }
 
-  /* http://blog.regehr.org/archives/1063 */
-  uint32_t rotl32c (uint32_t x, uint32_t n)
-  {
-    return (x<<n) | (x>>(-n&31));
-  }
-
   namespace bits {
+
+    /* http://blog.regehr.org/archives/1063 */
+    uint32_t rotl32c (uint32_t x, uint32_t n)
+    {
+      return (x<<n) | (x>>(-n&31));
+    }
+
     int or_uint32(int x, int y) { return (uint32_t) x | (uint32_t) y; }
     int and_uint32(int x, int y) { return (uint32_t) x & (uint32_t) y; }
     int xor_uint32(int x, int y) { return (uint32_t) x ^ (uint32_t) y; }
