@@ -552,9 +552,13 @@ namespace touch_develop {
     }
 
     void scrollString(ManagedString s, int delay) {
-      if (s.length() > 1)
+      int l = s.length();
+      if (l == 0) {
+        uBit.display.clear();
+        uBit.sleep(delay * 5);
+      } else if (l > 1) {
         uBit.display.scroll(s, delay);
-      else {
+      } else {
         uBit.display.print(s.charAt(0), delay * 5);
       }
     }
