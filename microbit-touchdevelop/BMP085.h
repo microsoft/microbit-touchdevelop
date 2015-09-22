@@ -1,19 +1,21 @@
 /***************************************************************************
   This is a library for the BMP085 pressure sensor
-  Designed specifically to work with the Adafruit BMP085 or BMP180 Breakout 
+  Designed specifically to work with the Adafruit BMP085 or BMP180 Breakout
   ----> http://www.adafruit.com/products/391
   ----> http://www.adafruit.com/products/1603
- 
+
   These displays use I2C to communicate, 2 pins are required to interface.
   Adafruit invests time and resources providing this open source code,
   please support Adafruit andopen-source hardware by purchasing products
   from Adafruit!
-  Written by Kevin Townsend for Adafruit Industries.  
+  Written by Kevin Townsend for Adafruit Industries.
   BSD license, all text above must be included in any redistribution
  ***************************************************************************/
 
+#include "MicroBitTouchDevelop.h"
+
 namespace bmp085 {
-        
+
     const int addr = 0x77;
 
     enum
@@ -38,7 +40,7 @@ namespace bmp085 {
       BMP085_REGISTER_READTEMPCMD        = 0x2E,
       BMP085_REGISTER_READPRESSURECMD    = 0x34
     };
-    
+
     typedef enum
     {
       BMP085_MODE_ULTRALOWPOWER          = 0,
@@ -46,7 +48,7 @@ namespace bmp085 {
       BMP085_MODE_HIGHRES                = 2,
       BMP085_MODE_ULTRAHIGHRES           = 3
     } bmp085_mode_t;
-    
+
     typedef struct
     {
       int16_t  ac1;
@@ -61,29 +63,29 @@ namespace bmp085 {
       int16_t  mc;
       int16_t  md;
     } bmp085_calib_data;
-    
-    
+
+
     static uint8_t _bmp085Mode;
     static bmp085_calib_data _bmp085_coeffs;
-        
+
     static uint8_t read8(char i1){
         char cmd2[] = { i1 };
         uBit.i2c.write(addr << 1, cmd2, 1);
         char buf[1];
         uBit.i2c.read(addr << 1, buf, 1);
-        
+
         return buf[0];
     }
-    
+
     static uint16_t read16(char i1){
         char cmd2[] = { i1 };
         uBit.i2c.write(addr << 1, cmd2, 1);
         char buf[2];
         uBit.i2c.read(addr << 1, buf, 2);
-        
+
         return (((uint16_t) buf[0]) << 8) + buf[1];
     }
-    
+
     static int readS16(char i2){
          int16_t i = read16(i2);
          return (int16_t)i;
@@ -122,7 +124,7 @@ namespace bmp085 {
     void setMode(bmp085_mode_t mode) {
         _bmp085Mode = mode;
     }
-   
+
     int readRawTemperature() {
 #if BMP085_USE_DATASHEET_VALS
         return 27898;
@@ -132,9 +134,9 @@ namespace bmp085 {
         wait_ms(5);
         return read16(BMP085_REGISTER_TEMPDATA);
 #endif
-    }    
+    }
 
-        
+
     int readRawPressure() {
 #if BMP085_USE_DATASHEET_VALS
         return 23843;
@@ -142,10 +144,10 @@ namespace bmp085 {
         uint8_t  p8;
         uint16_t p16;
         int32_t  p32;
-    
+
         char cmd[] = { BMP085_REGISTER_CONTROL, BMP085_REGISTER_READPRESSURECMD + (_bmp085Mode << 6)};
         uBit.i2c.write(addr << 1, cmd, 2);
-        
+
         switch(_bmp085Mode)
         {
           case BMP085_MODE_ULTRALOWPOWER:
@@ -162,7 +164,7 @@ namespace bmp085 {
             wait_ms(26);
             break;
         }
-        
+
         p16 = read16(BMP085_REGISTER_PRESSUREDATA);
         p32 = (uint32_t)p16 << 8;
         p8 = read8(BMP085_REGISTER_PRESSUREDATA+2);
@@ -171,38 +173,38 @@ namespace bmp085 {
         return p32;
 #endif
     }
-    
+
     int32_t computeB5(int32_t ut) {
       int32_t X1 = (ut - (int32_t)_bmp085_coeffs.ac6) * ((int32_t)_bmp085_coeffs.ac5) >> 15;
       int32_t X2 = ((int32_t)_bmp085_coeffs.mc << 11) / (X1+(int32_t)_bmp085_coeffs.md);
       return X1 + X2;
     }
-    
+
     void begin(bmp085_mode_t mode)
     {
       if (read8(BMP085_REGISTER_CHIPID) != 0x55)
         uBit.panic(12);
-      
+
       /* Set the mode indicator */
       _bmp085Mode = mode;
-    
+
       /* Coefficients need to be read once */
       readCoefficients();
     }
-        
+
     float getPressure()
     {
       int32_t  ut = 0, up = 0, compp = 0;
       int32_t  x1, x2, b5, b6, x3, b3, p;
       uint32_t b4, b7;
-    
+
       /* Get the raw pressure and temperature values */
       ut = readRawTemperature();
       up = readRawPressure();
-    
+
       /* Temperature compensation */
       b5 = computeB5(ut);
-    
+
       /* Pressure compensation */
       b6 = b5 - 4000;
       x1 = (_bmp085_coeffs.b2 * ((b6 * b6) >> 12)) >> 11;
@@ -214,7 +216,7 @@ namespace bmp085 {
       x3 = ((x1 + x2) + 2) >> 2;
       b4 = (_bmp085_coeffs.ac4 * (uint32_t) (x3 + 32768)) >> 15;
       b7 = ((uint32_t) (up - b3) * (50000 >> _bmp085Mode));
-    
+
       if (b7 < 0x80000000)
       {
         p = (b7 << 1) / b4;
@@ -223,23 +225,23 @@ namespace bmp085 {
       {
         p = (b7 / b4) << 1;
       }
-    
+
       x1 = (p >> 8) * (p >> 8);
       x1 = (x1 * 3038) >> 16;
       x2 = (-7357 * p) >> 16;
       compp = p + ((x1 + x2 + 3791) >> 4);
-    
+
       /* Assign compensated pressure value */
       return compp;
     }
-    
+
     float getTemperature()
     {
       int32_t UT, X1, X2, B5;     // following ds convention
       float t;
-    
+
       UT = readRawTemperature();
-    
+
 #if BMP085_USE_DATASHEET_VALS
         // use datasheet numbers!
         UT = 27898;
@@ -248,14 +250,14 @@ namespace bmp085 {
         _bmp085_coeffs.mc = -8711;
         _bmp085_coeffs.md = 2868;
 #endif
-    
+
       B5 = computeB5(UT);
       t = (B5+8) >> 4;
       t /= 10;
-    
+
       return t;
     }
-    
+
     int getIntTemperature() {
         return ((int) getTemperature());
     }

@@ -1,3 +1,6 @@
+#ifndef __MICROBIT_TOUCHDEVELOP_H
+#define __MICROBIT_TOUCHDEVELOP_H
+
 #include <climits>
 #include <cmath>
 #include <vector>
@@ -722,5 +725,7 @@ namespace touch_develop {
     }
   }
 }
+
+#endif
 
 // vim: set ts=2 sw=2 sts=2:
