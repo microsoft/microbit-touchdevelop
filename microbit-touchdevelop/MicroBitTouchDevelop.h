@@ -348,7 +348,7 @@ namespace touch_develop {
       p.setDigitalValue(value);
     }
 
-    bool isPinTouched(MicroBitPin pin) {
+    bool isPinTouched(MicroBitPin& pin) {
       return pin.isTouched();
     }
 
