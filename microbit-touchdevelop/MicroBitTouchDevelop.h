@@ -340,7 +340,7 @@ namespace touch_develop {
       p.setAnalogValue(value);
     }
 
-    void analogSetPeriodUs(MicroBitPin& p, int value) {
+    void setAnalogPeriodUs(MicroBitPin& p, int value) {
       p.setAnalogPeriodUs(value);
     }
 
