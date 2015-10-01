@@ -340,6 +340,10 @@ namespace touch_develop {
       p.setAnalogValue(value);
     }
 
+    void analogSetPeriodUs(MicroBitPin& p, int value) {
+      p.setAnalogPeriodUs(value);
+    }
+
     int digitalReadPin(MicroBitPin& p) {
       return p.getDigitalValue();
     }
@@ -634,19 +638,13 @@ namespace touch_develop {
     }
 
     void pitch(int freq, int ms) {
-      if (pitchPin == NULL) {
-        uBit.display.scroll("Please call enablePitch first");
-        panic(TD_BAD_USAGE);
-      }
+      if (freq <= 0 || ms < 0 || pitchPin == NULL)
+        return;
       pitchPin->setAnalogValue(512);
       pitchPin->setAnalogPeriodUs(1000000/freq);
       wait_ms(ms);
       pitchPin->setAnalogValue(0);
       wait_ms(40);
-    }
-
-    void disablePitch() {
-      pitchPin->setAnalogValue(0);
     }
   }
 
