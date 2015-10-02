@@ -177,6 +177,9 @@ namespace touch_develop {
     bool and_(bool x, bool y) { return x && y; }
     bool not_(bool x) { return !x; }
     bool equals(bool x, bool y) { return x == y; }
+    ManagedString to_string(bool x) {
+      return x ? ManagedString("true") : ManagedString("false");
+    }
   }
 
   // ---------------------------------------------------------------------------
