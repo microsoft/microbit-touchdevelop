@@ -1,5 +1,5 @@
-#include "MicroBitTouchDevelop.h"
-void app_main() {
-}
+#include "BitVM.h"
 
-// This file should always stay empty, so that mbed-workshop is happy.
+void app_main() {
+    bitvm::exec_binary();
+}
