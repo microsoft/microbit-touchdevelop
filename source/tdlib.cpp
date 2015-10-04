@@ -325,7 +325,9 @@ namespace bitvm {
 
     // These have their arguments rewritten by the C++ compiler.
     void plotImage(int w, int h, const uint8_t* bitmap) {
-      showImage(createImage(w,h,bitmap), 0);
+      RefImage *img = createImage(w,h,bitmap);
+      showImage(img, 0);
+      img->unref();
     }
 
     void showAnimation(int w, int h, const uint8_t* bitmap, int ms) {
