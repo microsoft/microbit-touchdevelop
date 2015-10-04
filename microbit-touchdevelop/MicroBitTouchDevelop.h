@@ -28,6 +28,25 @@ namespace touch_develop {
     TD_BAD_USAGE,
   };
 
+  namespace touch_develop {
+    ManagedString mk_string(char* c) {
+      return ManagedString(c);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Implementation of the base TouchDevelop types
+  // ---------------------------------------------------------------------------
+
+  typedef int Number;
+  typedef bool Boolean;
+  typedef ManagedString String;
+  typedef void (*Action)();
+#if __cplusplus > 199711L
+  template <typename T> using Collection_of = ManagedType<vector<T>>;
+  template <typename T> using Collection = ManagedType<vector<T>>;
+  template <typename T> using Ref = ManagedType<T>;
+#endif
 
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop libraries and operations
