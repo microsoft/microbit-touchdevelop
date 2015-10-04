@@ -61,6 +61,8 @@ namespace bitvm {
 
         UCALLPROC,    // SX
         UCALLFUNC,    // SX
+        FLATUCALLPROC,    // SX
+        FLATUCALLFUNC,    // SX
 
         FLATCALL0PROC,    // S0
         FLATCALL1PROC,    // S-1

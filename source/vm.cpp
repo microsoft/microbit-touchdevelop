@@ -123,6 +123,16 @@ uint32_t exec_function(const uint16_t *pc, uint32_t *args)
         case JMPZ: tmp = nextArg24(); if (pop() == 0) pc = bytecode + tmp; break;
         case JMPNZ: tmp = nextArg24(); if (pop() != 0) pc = bytecode + tmp; break;
 
+        case FLATUCALLPROC:
+            sp -= directArg();
+            exec_function(bytecode + nextArg(), sp);
+            break;
+        case FLATUCALLFUNC:
+            sp -= directArg();
+            tmp = exec_function(bytecode + nextArg(), sp);
+            push(tmp);
+            break;
+
         case UCALLPROC:
             sp -= directArg();
             exec_function(bytecode + nextArg(), sp);
