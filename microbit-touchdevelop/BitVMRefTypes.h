@@ -258,7 +258,7 @@ namespace bitvm {
 
         uint32_t run()
         {
-            return exec_function(this->startptr, this->fields);
+            return exec_function(bytecode + this->startptr, this->fields);
         }
     };
 

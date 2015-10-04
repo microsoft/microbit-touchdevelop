@@ -22,14 +22,14 @@ uint16_t bytecode00[] = {
 void error(ERROR code, int subcode)
 {
     printf("Error: %d [%d]\n", code, subcode);
-    exit(1);
+    die();
 }
 
 #define pop() (*--sp)
 #define top() (sp[-1])
 #define push(v) { uint32_t tmp2 = v; *sp++ = tmp2; }
 #define directArg() (op >> 8)
-#define nextArg() (bytecode[pc++])
+#define nextArg() (*pc++)
 #define nextArg24() ((directArg()<<16) | nextArg())
 
 #define incrpush(e) { uint32_t tmp2 = e; incr(tmp2); *sp++ = tmp2; }
@@ -56,13 +56,13 @@ void error(ERROR code, int subcode)
 uint32_t *globals;
 uint32_t *strings;
 
-uint32_t exec_function(uint32_t pc, uint32_t *args)
+uint32_t exec_function(const uint16_t *pc, uint32_t *args)
 {
-    uint32_t ver = bytecode[pc++];
+    uint32_t ver = *pc++;
     check(ver == V1FUNC, ERR_INVALID_FUNCTION_HEADER);
 
-    uint32_t numLocals = bytecode[pc++];
-    uint32_t stackSize = bytecode[pc++];
+    uint32_t numLocals = *pc++;
+    uint32_t stackSize = *pc++;
     uint32_t locals[numLocals];
     uint32_t stack[stackSize];
     uint32_t *sp = stack;
@@ -71,7 +71,7 @@ uint32_t exec_function(uint32_t pc, uint32_t *args)
     memset(locals, 0, numLocals * sizeof(uint32_t));
 
     while (true) {
-        uint32_t op = bytecode[pc++];
+        uint32_t op = *pc++;
         uint32_t tmp;
 
         // printf("EXEC: %x\n", op);
@@ -134,9 +134,9 @@ uint32_t exec_function(uint32_t pc, uint32_t *args)
 
         case STCLO: tmp = pop(); ((RefAction*)top())->st(directArg(), tmp); break;
 
-        case JMP: tmp = nextArg24(); pc = tmp; break;
-        case JMPZ: tmp = nextArg24(); if (pop() == 0) pc = tmp; break;
-        case JMPNZ: tmp = nextArg24(); if (pop() != 0) pc = tmp; break;
+        case JMP: tmp = nextArg24(); pc = bytecode + tmp; break;
+        case JMPZ: tmp = nextArg24(); if (pop() == 0) pc = bytecode + tmp; break;
+        case JMPNZ: tmp = nextArg24(); if (pop() != 0) pc = bytecode + tmp; break;
 
         case REFMASK:
             refmask = directArg();
@@ -144,13 +144,57 @@ uint32_t exec_function(uint32_t pc, uint32_t *args)
 
         case UCALLPROC:
             sp -= directArg();
-            exec_function(nextArg(), sp);
+            exec_function(bytecode + nextArg(), sp);
             applyRefMask();
             break;
         case UCALLFUNC:
             sp -= directArg();
-            tmp = exec_function(nextArg(), sp);
+            tmp = exec_function(bytecode + nextArg(), sp);
             applyRefMask(); push(tmp);
+            break;
+
+        case FLATCALL0PROC:
+            ((void (*)())callProc0[directArg()])();
+            break;
+        case FLATCALL1PROC:
+            sp -= 1;
+            ((void (*)(uint32_t))callProc1[directArg()])(sp[0]);
+            break;
+        case FLATCALL2PROC:
+            sp -= 2;
+            ((void (*)(uint32_t, uint32_t))callProc2[directArg()])(sp[0], sp[1]);
+            break;
+        case FLATCALL3PROC:
+            sp -= 3;
+            ((void (*)(uint32_t, uint32_t, uint32_t))callProc3[directArg()])(sp[0], sp[1], sp[2]);
+            break;
+        case FLATCALL4PROC:
+            sp -= 4;
+            ((void (*)(uint32_t, uint32_t, uint32_t, uint32_t))callProc4[directArg()])(sp[0], sp[1], sp[2], sp[3]);
+            break;
+        case FLATCALL0FUNC:
+            tmp = (((uint32_t (*)())callFunc0[directArg()])());
+            push(tmp);
+            break;
+        case FLATCALL1FUNC:
+            sp -= 1;
+            tmp = (((uint32_t (*)(uint32_t))callFunc1[directArg()])(sp[0]));
+            push(tmp);
+            break;
+        case FLATCALL2FUNC:
+            sp -= 2;
+            tmp = (((uint32_t (*)(uint32_t, uint32_t))callFunc2[directArg()])(sp[0], sp[1]));
+            push(tmp);
+            break;
+        case FLATCALL3FUNC:
+            sp -= 3;
+            tmp = (((uint32_t (*)(uint32_t, uint32_t, uint32_t))callFunc3[directArg()])(sp[0], sp[1], sp[2]));
+            push(tmp);
+            break;
+        case FLATCALL4FUNC:
+            sp -= 4;
+            tmp = (((uint32_t (*)(uint32_t, uint32_t, uint32_t, uint32_t))callFunc4[directArg()])(sp[0], sp[1], sp[2], sp[3]));
+            push(tmp);
             break;
 
         case CALL0PROC:
@@ -207,8 +251,8 @@ uint32_t exec_function(uint32_t pc, uint32_t *args)
             error(ERR_BAD_OPCODE);
         }
 
-        check(sp >= stack, ERR_STACK_UNDERFLOW);
-        check(sp <= stack + stackSize, ERR_STACK_OVERFLOW);
+        //check(sp >= stack, ERR_STACK_UNDERFLOW);
+        //check(sp <= stack + stackSize, ERR_STACK_OVERFLOW);
     }
 }
 
@@ -227,9 +271,9 @@ int exec_binary()
     globals = allocate(bytecode[pc++]);
     strings = allocate(bytecode[pc++]);
     pc += 3; // reserved
-    return exec_function(pc, NULL);
+    return exec_function(bytecode + pc, NULL);
 }
 
-}
+} // namespace bitvm
 
 // vim: ts=4 sw=4

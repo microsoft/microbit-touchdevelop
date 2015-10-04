@@ -118,9 +118,14 @@ namespace bitvm {
 
         RefString *to_string(int x)
         {
+        #ifdef MICROBIT
+            ManagedString m(x);
+            return mkString(m.toCharArray());
+        #else
             char buf[30];
             snprintf(buf, 29, "%d", x);
             return mkString(buf);
+        #endif
         }
     }
 
@@ -167,7 +172,7 @@ namespace bitvm {
         {
             if (cond == 0) {
                 printf("Assertion failed: %s\n", msg);
-                exit(1);
+                die();
             }
         }
     }

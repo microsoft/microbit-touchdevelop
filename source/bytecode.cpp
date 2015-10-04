@@ -1,6 +1,6 @@
 #include "BitVM.h"
 namespace bitvm {
-const unsigned short bytecode[32000] 
+const uint16_t bytecode[32000] 
 __attribute__((aligned(0x20)))
 = {
 // Magic header to find it in the file

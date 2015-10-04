@@ -1,7 +1,7 @@
 #ifndef __BITVM_H
 #define __BITVM_H
 
-#define DEBUG_MEMLEAKS 1
+// #define DEBUG_MEMLEAKS 1
 
 #ifndef DESKTOP
 #define MICROBIT
@@ -13,6 +13,8 @@
 #include "MicroBitImage.h"
 #include "ManagedString.h"
 #include "ManagedType.h"
+#define printf(...) uBit.serial.printf(__VA_ARGS__)
+// #define printf(...)
 #endif
 
 #include <stdint.h>
@@ -62,6 +64,18 @@ namespace bitvm {
         UCALLPROC,    // SX
         UCALLFUNC,    // SX
 
+        FLATCALL0PROC,    // S0
+        FLATCALL1PROC,    // S-1
+        FLATCALL2PROC,    // S-2
+        FLATCALL3PROC,    // S-3
+        FLATCALL4PROC,    // S-4
+
+        FLATCALL0FUNC,    // S1
+        FLATCALL1FUNC,    // S0
+        FLATCALL2FUNC,    // S-1
+        FLATCALL3FUNC,    // S-2
+        FLATCALL4FUNC,    // S-3
+
         CALL0PROC,    // S0
         CALL1PROC,    // S-1
         CALL2PROC,    // S-2
@@ -87,8 +101,14 @@ namespace bitvm {
         ERR_SIZE = 9,
     } ERROR;
 
-    #define V1FUNC 0x4201
-    #define V1BINARY 0x4202
+    const int V1FUNC = 0x4201;
+    const int V1BINARY = 0x4202;
+
+    #ifdef MICROBIT
+    inline void die() { uBit.panic(42); }
+    #else
+    inline void die() { exit(1); }
+    #endif
 
     void error(ERROR code, int subcode = 0);
 
@@ -97,7 +117,7 @@ namespace bitvm {
         if (!cond) error(code, subcode);
     }
 
-    uint32_t exec_function(uint32_t pc, uint32_t *args);
+    uint32_t exec_function(const uint16_t *pc, uint32_t *args);
     int exec_binary();
 
     inline int min(int a, int b)
