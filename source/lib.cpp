@@ -26,6 +26,28 @@ namespace bitvm {
     }
 #endif
 
+    RefString *mkStringSz(uint32_t sz)
+    {
+        RefString *res = new RefString();
+        res->len = sz;
+        res->data = new char[res->len + 1];
+        return res;
+    }
+
+    RefString *mkStringLen(const char *lit, uint32_t len)
+    {
+        RefString *res = mkStringSz(len);
+        memcpy(res->data, lit, len);
+        res->data[len] = 0;
+        //printf("MK: %s\n", res->data);
+        return res;
+    }
+
+    RefString *mkString(const char *lit)
+    {
+        return mkStringLen(lit, strlen(lit));
+    }
+
 
     namespace math {
         int max(int x, int y) { return x < y ? y : x; }
@@ -72,81 +94,86 @@ namespace bitvm {
         int pi() { return 3; }
     }
 
-  namespace number {
-    int lt(int x, int y) { return x < y; }
-    int leq(int x, int y) { return x <= y; }
-    int neq(int x, int y) { return x != y; }
-    int eq(int x, int y) { return x == y; }
-    int gt(int x, int y) { return x > y; }
-    int geq(int x, int y) { return x >= y; }
-    int plus(int x, int y) { return x + y; }
-    int minus(int x, int y) { return x - y; }
-    int div(int x, int y) { return x / y; }
-    int times(int x, int y) { return x * y; }
-    //ManagedString to_string(int x) { return ManagedString(x); }
-    //ManagedString to_character(int x) { return ManagedString((char) x); }
-    void post_to_wall(int n) { printf("%d\n", n); }
-  }
+    namespace number {
+        int lt(int x, int y) { return x < y; }
+        int leq(int x, int y) { return x <= y; }
+        int neq(int x, int y) { return x != y; }
+        int eq(int x, int y) { return x == y; }
+        int gt(int x, int y) { return x > y; }
+        int geq(int x, int y) { return x >= y; }
+        int plus(int x, int y) { return x + y; }
+        int minus(int x, int y) { return x - y; }
+        int div(int x, int y) { return x / y; }
+        int times(int x, int y) { return x * y; }
 
-  namespace bits {
+        void post_to_wall(int n) { printf("%d\n", n); }
 
-    // See http://blog.regehr.org/archives/1063
-    uint32_t rotl32c (uint32_t x, uint32_t n)
-    {
-      return (x<<n) | (x>>(-n&31));
+        RefString *to_character(int x)
+        {
+            char b[2];
+            b[0] = x;
+            b[1] = 0;
+            return mkString(b);
+        }
+
+        RefString *to_string(int x)
+        {
+            char buf[30];
+            snprintf(buf, 29, "%d", x);
+            return mkString(buf);
+        }
     }
 
-    int or_uint32(int x, int y) { return (uint32_t) x | (uint32_t) y; }
-    int and_uint32(int x, int y) { return (uint32_t) x & (uint32_t) y; }
-    int xor_uint32(int x, int y) { return (uint32_t) x ^ (uint32_t) y; }
-    int shift_left_uint32(int x, int y) { return (uint32_t) x << y; }
-    int shift_right_uint32(int x, int y) { return (uint32_t) x >> y; }
-    int rotate_right_uint32(int x, int y) { return rotl32c((uint32_t) x, 32-y); }
-    int rotate_left_uint32(int x, int y) { return rotl32c((uint32_t) x, y); }
-  }
+    namespace bits {
+        // See http://blog.regehr.org/archives/1063
+        uint32_t rotl32c (uint32_t x, uint32_t n)
+        {
+          return (x<<n) | (x>>(-n&31));
+        }
 
-  namespace boolean {
-    int or_(int x, int y) { return x || y; }
-    int and_(int x, int y) { return x && y; }
-    int not_(int x) { return !x; }
-    int equals(int x, int y) { return x == y; }
-  }
-
-  namespace contract {
-    void assert(int cond, char *msg)
-    {
-      if (cond == 0) {
-        printf("Assertion failed: %s\n", msg);
-        exit(1);
-      }
-    }
-  }
-
-    RefString *mkStringSz(uint32_t sz)
-    {
-        RefString *res = new RefString();
-        res->len = sz;
-        res->data = new char[res->len + 1];
-        return res;
+        int or_uint32(int x, int y) { return (uint32_t) x | (uint32_t) y; }
+        int and_uint32(int x, int y) { return (uint32_t) x & (uint32_t) y; }
+        int xor_uint32(int x, int y) { return (uint32_t) x ^ (uint32_t) y; }
+        int shift_left_uint32(int x, int y) { return (uint32_t) x << y; }
+        int shift_right_uint32(int x, int y) { return (uint32_t) x >> y; }
+        int rotate_right_uint32(int x, int y) { return rotl32c((uint32_t) x, 32-y); }
+        int rotate_left_uint32(int x, int y) { return rotl32c((uint32_t) x, y); }
     }
 
-    RefString *mkStringLen(const char *lit, uint32_t len)
-    {
-        RefString *res = mkStringSz(len);
-        memcpy(res->data, lit, len);
-        res->data[len] = 0;
-        //printf("MK: %s\n", res->data);
-        return res;
+    namespace boolean {
+        int or_(int x, int y) { return x || y; }
+        int and_(int x, int y) { return x && y; }
+        int not_(int x) { return !x; }
+        int equals(int x, int y) { return x == y; }
+
+        RefString *sTrue, *sFalse;
+        RefString *to_string(int v)
+        {
+            if (v) {
+                if (sTrue == NULL) sTrue = string::fromLiteral("true");
+                sTrue->ref();
+                return sTrue;
+            } else {
+                if (sFalse == NULL) sFalse = string::fromLiteral("false");
+                sFalse->ref();
+                return sFalse;
+            }            
+        }
     }
 
-    RefString *mkString(const char *lit)
+    namespace contract
     {
-        return mkStringLen(lit, strlen(lit));
+        void assert(int cond, char *msg)
+        {
+            if (cond == 0) {
+                printf("Assertion failed: %s\n", msg);
+                exit(1);
+            }
+        }
     }
 
 
     namespace string {
-
         RefString *dempty;
 
         RefString *fromLiteral(const char *p)
@@ -224,40 +251,6 @@ namespace bitvm {
         void post_to_wall(RefString *s) { printf("%s\n", s->data); }
     }
 
-
-    namespace boolean {
-        RefString *sTrue, *sFalse;
-
-        RefString *to_string(int v)
-        {
-            if (v) {
-                if (sTrue == NULL) sTrue = string::fromLiteral("true");
-                sTrue->ref();
-                return sTrue;
-            } else {
-                if (sFalse == NULL) sFalse = string::fromLiteral("false");
-                sFalse->ref();
-                return sFalse;
-            }            
-        }
-    }
-
-    namespace number {
-        RefString *to_character(int x)
-        {
-            char b[2];
-            b[0] = x;
-            b[1] = 0;
-            return mkString(b);
-        }
-
-        RefString *to_string(int x)
-        {
-            char buf[30];
-            snprintf(buf, 29, "%d", x);
-            return mkString(buf);
-        }
-    }
 
     namespace collection {
 

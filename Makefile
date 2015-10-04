@@ -6,6 +6,7 @@ TRG = build/bbc-microbit-classic-gcc/source/microbit-touchdevelop-combined.hex
 all:
 	yotta build
 	node scripts/generateEmbedInfo.js $(TRG) $(SRCCOMMON) $(HEADERS)
+	cp build/bytecode.js ../TouchDevelop/microbit/bytecode.js
 
 desktop:
 	$(CC) -o build/vm $(SRCCOMMON) desktop/main.cpp
