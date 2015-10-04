@@ -436,6 +436,8 @@ namespace bitvm {
         mbit(compassCalibrateEnd)
         mbit(compassCalibrateStart)
         mbit(reset)
+        mbit(serialSendDisplayState)
+        mbit(serialReadDisplayState)
     };
 
     const void *callProc1[] = {
@@ -450,6 +452,9 @@ namespace bitvm {
         mbit(setBrightness)
         mbit(showDigit)
         mbit(showLetter)
+        mbit(serialSendString)
+        mbit(serialSendImage)
+        mbit(panic)
     };
 
     const void *callProc2[] = {
@@ -466,7 +471,7 @@ namespace bitvm {
         mbit(pitch)
         mbit(plot)
         mbit(scrollString)
-        mbit(scrollint)
+        mbit(scrollNumber)
         mbit(setAnalogPeriodUs)
         mbit(showImage)
         mbit(unPlot)
@@ -514,6 +519,7 @@ namespace bitvm {
         mbit(ioP16)
         mbit(ioP19)
         mbit(ioP20)
+        mbit(serialReadString)
     };
 
     const void *callFunc1[] = {
@@ -577,6 +583,7 @@ namespace bitvm {
         (void*)refcollection::remove,
         (void*)record::mk,
         mbit(point)
+        mbit(serialReadImage)
     };
 
     const void *callFunc3[] = {
@@ -588,6 +595,7 @@ namespace bitvm {
         mbit(createImage)
         mbit(getImagePixel)
     };
+
 
     const void *callFunc4[] = {
     };

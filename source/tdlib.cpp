@@ -290,7 +290,7 @@ namespace bitvm {
       uBit.display.print('0' + (n % 10));
     }
 
-    void scrollint(int n, int delay) {
+    void scrollNumber(int n, int delay) {
       ManagedString t(n);
       if (n < 0 || n >= 10) {
         uBit.display.scroll(t, delay);
@@ -305,7 +305,7 @@ namespace bitvm {
         uBit.display.clear();
         uBit.sleep(delay * 5);
       } else if (l > 1) {
-        ManagedString tmp(s->data);
+        ManagedString tmp(s->data, s->len);
         uBit.display.scroll(tmp, delay);
       } else {
         uBit.display.print(s->charAt(0), delay * 5);
@@ -417,15 +417,35 @@ namespace bitvm {
     MicroBitPin *ioP19() { return &uBit.io.P19; }
     MicroBitPin *ioP20() { return &uBit.io.P20; }
 
+    void panic(int code)
+    {
+      uBit.panic(code);
+    }
 
-    /* TODO:
-        uBit.serial.readDisplayState
-        uBit.serial.readImage
-        uBit.serial.readString
-        uBit.serial.sendDisplayState
-        uBit.serial.sendImage
-        uBit.serial.sendString
-    */
+    void serialSendString(RefString *s)
+    {
+      ManagedString tmp(s->data, s->len);
+      uBit.serial.sendString(tmp);
+    }
+
+    RefString *serialReadString()
+    {
+      ManagedString s = uBit.serial.readString();
+      return mkStringLen(s.toCharArray(), s.length());
+    }
+    
+    void serialSendImage(RefImage *img)
+    {
+      uBit.serial.sendImage(img->v);
+    }
+
+    RefImage *serialReadImage(int width, int height)
+    {
+      return new RefImage(uBit.serial.readImage(width, height));
+    }
+
+    void serialSendDisplayState() { uBit.serial.sendDisplayState(); }
+    void serialReadDisplayState() { uBit.serial.readDisplayState(); }
   }
 
   // ---------------------------------------------------------------------------
