@@ -59,8 +59,6 @@ namespace bitvm {
         JMPZ,         // S-1
         JMPNZ,        // S-1
 
-        REFMASK,      // S0
-
         UCALLPROC,    // SX
         UCALLFUNC,    // SX
 

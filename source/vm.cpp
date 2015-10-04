@@ -34,6 +34,8 @@ void error(ERROR code, int subcode)
 
 #define incrpush(e) { uint32_t tmp2 = e; incr(tmp2); *sp++ = tmp2; }
 #define applyRefMask() \
+  { \
+    uint16_t refmask = nextArg(); \
     if (refmask) { \
         applyRefMaskAt(0); \
         applyRefMaskAt(1); \
@@ -45,8 +47,8 @@ void error(ERROR code, int subcode)
             applyRefMaskAt(6); \
             applyRefMaskAt(7); \
         } \
-        refmask = 0; \
-    }
+    } \
+  }
 #define applyRefMaskAt(n) \
     if (refmask & (1 << n)) decr(sp[n])
 
@@ -66,7 +68,6 @@ uint32_t exec_function(const uint16_t *pc, uint32_t *args)
     uint32_t locals[numLocals];
     uint32_t stack[stackSize];
     uint32_t *sp = stack;
-    uint32_t refmask = 0;
 
     memset(locals, 0, numLocals * sizeof(uint32_t));
 
@@ -137,10 +138,6 @@ uint32_t exec_function(const uint16_t *pc, uint32_t *args)
         case JMP: tmp = nextArg24(); pc = bytecode + tmp; break;
         case JMPZ: tmp = nextArg24(); if (pop() == 0) pc = bytecode + tmp; break;
         case JMPNZ: tmp = nextArg24(); if (pop() != 0) pc = bytecode + tmp; break;
-
-        case REFMASK:
-            refmask = directArg();
-            break;
 
         case UCALLPROC:
             sp -= directArg();
