@@ -23,18 +23,10 @@ namespace bitvm {
     // Helpers
     // -------------------------------------------------------------------------
 
-#if __cplusplus > 199711L
-    void callbackF(MicroBitEvent e, std::function<void()>* f) {
-      (*f)();
-    }
-#endif
+    typedef RefAction *Action;
 
     void callback(MicroBitEvent e, Action a) {
-      a();
-    }
-
-    void callback1(MicroBitEvent e, void (*a)(int)) {
-      a(e.value);
+      a->run();
     }
 
 
@@ -63,7 +55,7 @@ namespace bitvm {
       uBit.compass.calibrateStart();
       uBit.display.print("Turn me around!");
       MicroBitImage img = MicroBitImage(bitmap0_w, bitmap0_h, bitmap0);
-      for (Number i = 0; i < 10; ++i) {
+      for (int i = 0; i < 10; ++i) {
         uBit.display.scroll(img, 5, 400);
       }
       uBit.compass.calibrateEnd();
@@ -94,12 +86,13 @@ namespace bitvm {
       p.setDigitalValue(value);
     }
 
-    bool isPinTouched(MicroBitPin& pin) {
+    int isPinTouched(MicroBitPin& pin) {
       return pin.isTouched();
     }
 
     void onPinPressed(int pin, Action a) {
       if (a != NULL) {
+        a->ref();
         // Forces the PIN to switch to makey-makey style detection.
         switch(pin) {
           case MICROBIT_ID_IO_P0:
@@ -128,7 +121,7 @@ namespace bitvm {
     // Buttons
     // -------------------------------------------------------------------------
 
-    bool isButtonPressed(int button) {
+    int isButtonPressed(int button) {
       if (button == MICROBIT_ID_BUTTON_A)
         return uBit.buttonA.isPressed();
       else if (button == MICROBIT_ID_BUTTON_B)
@@ -140,6 +133,7 @@ namespace bitvm {
 
     void onButtonPressedExt(int button, int event, Action a) {
       if (a != NULL) {
+        a->ref();
         uBit.MessageBus.ignore(
           button,
           event,
@@ -157,47 +151,45 @@ namespace bitvm {
     }
 
 
-#if __cplusplus > 199711L
-    // Experimental support for closures compiled as C++ functions. Only works
-    // for closures passed to [onButtonPressed] (all other functions would have
-    // to be updated, along with [in_background]). Must figure out a way to
-    // limit code duplication.
-    void onButtonPressed(int button, std::function<void()>* f) {
-      uBit.MessageBus.ignore(
-        button,
-        MICROBIT_BUTTON_EVT_CLICK,
-        (void (*)(MicroBitEvent, void*)) callbackF);
-      uBit.MessageBus.listen(
-        button,
-        MICROBIT_BUTTON_EVT_CLICK,
-        (void (*)(MicroBitEvent, void*)) callbackF,
-        (void*) f);
-    }
-#endif
-
     // -------------------------------------------------------------------------
     // System
     // -------------------------------------------------------------------------
+    
+    void fiberHelper(void *a)
+    {
+      ((Action)a)->run();
+    }
+
+    void fiberDone(void *a)
+    {
+      ((Action)a)->unref();
+      release_fiber();
+    }
+
 
     void runInBackground(Action a) {
-      if (a != NULL)
-        create_fiber(a);
+      if (a != NULL) {
+        a->ref();
+        create_fiber(fiberHelper, a, fiberDone);
+      }
     }
 
     void pause(int ms) {
       uBit.sleep(ms);
     }
 
-    void forever_stub(void (*f)()) {
+    void forever_stub(void *a) {
       while (true) {
-        f();
+        ((Action)a)->run();
         pause(20);
       }
     }
 
-    void forever(void (*f)()) {
-      if (f != NULL)
-        create_fiber((void(*)(void*))forever_stub, (void*) f);
+    void forever(Action a) {
+      if (a != NULL) {
+        a->ref();
+        create_fiber(forever_stub, a);
+      }
     }
 
     int getCurrentTime() {
@@ -245,53 +237,55 @@ namespace bitvm {
       uBit.display.image.setPixelValue(x, y, 0);
     }
 
-    bool point(int x, int y) {
+    int point(int x, int y) {
       return uBit.display.image.getPixelValue(x, y);
     }
 
     // -------------------------------------------------------------------------
     // Images (helpers that create/modify a MicroBitImage)
     // -------------------------------------------------------------------------
+    
+    typedef RefStruct<MicroBitImage> RefImage;
 
     // Argument rewritten by the C++ emitter to be what we need
-    MicroBitImage createImage(int w, int h, const uint8_t* bitmap) {
-      return MicroBitImage(w, h, bitmap);
+    RefImage *createImage(int w, int h, const uint8_t* bitmap) {
+      return new RefImage(MicroBitImage(w, h, bitmap));
     }
 
-    MicroBitImage createImageFromString(ManagedString s) {
-      const char* raw = s.toCharArray();
-      return MicroBitImage(raw);
+    RefImage *createImageFromString(RefString *s) {
+      MicroBitImage i(s->data);
+      return new RefImage(i);
     }
 
-    void clearImage(MicroBitImage i) {
-      i.clear();
+    void clearImage(RefImage *i) {
+      i->v.clear();
     }
 
-    int getImagePixel(MicroBitImage i, int x, int y) {
-      return i.getPixelValue(x, y);
+    int getImagePixel(RefImage *i, int x, int y) {
+      return i->v.getPixelValue(x, y);
     }
 
-    void setImagePixel(MicroBitImage i, int x, int y, int value) {
-      i.setPixelValue(x, y, value);
+    void setImagePixel(RefImage *i, int x, int y, int value) {
+      i->v.setPixelValue(x, y, value);
     }
 
-    int getImageWidth(MicroBitImage i) {
-      return i.getWidth();
+    int getImageWidth(RefImage *i) {
+      return i->v.getWidth();
     }
 
     // -------------------------------------------------------------------------
     // Various "show"-style functions to display and scroll things on the screen
     // -------------------------------------------------------------------------
 
-    void showLetter(ManagedString s) {
-      uBit.display.print(s.charAt(0));
+    void showLetter(RefString *s) {
+      uBit.display.print(s->charAt(0));
     }
 
     void showDigit(int n) {
       uBit.display.print('0' + (n % 10));
     }
 
-    void scrollNumber(int n, int delay) {
+    void scrollint(int n, int delay) {
       ManagedString t(n);
       if (n < 0 || n >= 10) {
         uBit.display.scroll(t, delay);
@@ -300,27 +294,28 @@ namespace bitvm {
       }
     }
 
-    void scrollString(ManagedString s, int delay) {
-      int l = s.length();
+    void scrollString(RefString *s, int delay) {
+      int l = s->len;
       if (l == 0) {
         uBit.display.clear();
         uBit.sleep(delay * 5);
       } else if (l > 1) {
-        uBit.display.scroll(s, delay);
+        ManagedString tmp(s->data);
+        uBit.display.scroll(tmp, delay);
       } else {
-        uBit.display.print(s.charAt(0), delay * 5);
+        uBit.display.print(s->charAt(0), delay * 5);
       }
     }
 
-    void showImage(MicroBitImage i, int offset) {
-      uBit.display.print(i, -offset, 0, 0);
+    void showImage(RefImage *i, int offset) {
+      uBit.display.print(i->v, -offset, 0, 0);
     }
 
-    void scrollImage(MicroBitImage i, int offset, int delay) {
-      if (i.getWidth() <= 5)
+    void scrollImage(RefImage *i, int offset, int delay) {
+      if (i->v.getWidth() <= 5)
         showImage(i, 0);
       else
-        uBit.display.animate(i, delay, offset, 0);
+        uBit.display.animate(i->v, delay, offset, 0);
     }
 
     // These have their arguments rewritten by the C++ compiler.
@@ -336,6 +331,7 @@ namespace bitvm {
     // BLE Events
     // -------------------------------------------------------------------------
 
+#if false
     void generate_event(int id, int event) {
       MicroBitEvent e(id, event);
     }
@@ -368,6 +364,7 @@ namespace bitvm {
         micro_bit::generate_event(MES_ALERTS_ID, event);
       }
     }
+#endif
 
     // -------------------------------------------------------------------------
     // Music
@@ -411,12 +408,12 @@ namespace bitvm {
     // definition.
     namespace user_types {
       struct DateTime_ {
-        Number seconds;
-        Number minutes;
-        Number hours;
-        Number day;
-        Number month;
-        Number year;
+        int seconds;
+        int minutes;
+        int hours;
+        int day;
+        int month;
+        int year;
       };
       typedef ManagedType<DateTime_> DateTime;
     }

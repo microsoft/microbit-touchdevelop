@@ -229,7 +229,7 @@ namespace bitvm {
         }
 
         int code_at(RefString *s, int index) {
-          return (index >=0 && index < s->len) ? s->data[index] : 0;
+          return s->charAt(index);
         }
 
         RefString *at(RefString *s, int i)
@@ -534,6 +534,9 @@ namespace bitvm {
     };
 
 }
+
+#define INCLUDE_TDLIB
+#include "tdlib.cpp"
 
 // vim: ts=4 sw=4
 

@@ -109,6 +109,31 @@ namespace bitvm {
         {
             printf("RefString %p %s\n", this, data);
         }
+
+        int charAt(int index)
+        {
+            return (index >=0 && index < this->len) ? this->data[index] : 0;
+        }
+    };
+
+
+    template <class T>
+    class RefStruct
+        : public RefObject
+    {
+    public:
+        T v;
+
+        virtual ~RefStruct()
+        {
+        }
+
+        virtual void print()
+        {
+            printf("RefStruct %p\n", this);
+        }
+
+        RefStruct(const T& i) : v(i) {}
     };
 
     class RefCollection
@@ -242,3 +267,4 @@ namespace bitvm {
     }
 }
 #endif
+// vim: ts=4 sw=4
