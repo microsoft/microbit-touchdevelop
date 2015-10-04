@@ -4,21 +4,6 @@
 
 namespace bitvm {
 
-#define A(o, a) (o | (a << 8))
-#define FUNC(loc, st)  V1FUNC, loc, st
-
-uint16_t bytecode00[] = {
-    V1BINARY,
-    1,
-    0, 0, 0, 0,
-    FUNC(0, 1),
-    NOOP,
-   // A(LDCONST8, 42),
-   // LDCONST32, 42, 1,
-    LDPTR, 2,
-    RET1,
-};
-
 void error(ERROR code, int subcode)
 {
     printf("Error: %d [%d]\n", code, subcode);
@@ -32,26 +17,25 @@ void error(ERROR code, int subcode)
 #define nextArg() (*pc++)
 #define nextArg24() ((directArg()<<16) | nextArg())
 
-#define incrpush(e) { uint32_t tmp2 = e; incr(tmp2); *sp++ = tmp2; }
-#define applyRefMask() \
-  { \
-    uint16_t refmask = nextArg(); \
-    if (refmask) { \
-        applyRefMaskAt(0); \
-        applyRefMaskAt(1); \
-        applyRefMaskAt(2); \
-        applyRefMaskAt(3); \
-        if (refmask & 0xf0) { \
-            applyRefMaskAt(4); \
-            applyRefMaskAt(5); \
-            applyRefMaskAt(6); \
-            applyRefMaskAt(7); \
-        } \
-    } \
-  }
 #define applyRefMaskAt(n) \
     if (refmask & (1 << n)) decr(sp[n])
 
+void applyRefMaskCore(uint32_t refmask, uint32_t *sp)
+{
+    applyRefMaskAt(0);
+    applyRefMaskAt(1);
+    applyRefMaskAt(2);
+    applyRefMaskAt(3);
+    if (refmask & 0xf0) {
+        applyRefMaskAt(4);
+        applyRefMaskAt(5);
+        applyRefMaskAt(6);
+        applyRefMaskAt(7);
+    }
+}
+
+#define incrpush(e) { uint32_t tmp2 = e; incr(tmp2); *sp++ = tmp2; }
+#define applyRefMask() applyRefMaskCore(nextArg(), sp)
 
 
 
