@@ -257,6 +257,11 @@ namespace bitvm {
       return new RefImage(i);
     }
 
+    RefImage *displayScreenShot()
+    {
+      return new RefImage(uBit.display.screenShot());
+    }
+
     void clearImage(RefImage *i) {
       i->v.clear();
     }
@@ -385,6 +390,40 @@ namespace bitvm {
       pitchPin->setAnalogValue(0);
       wait_ms(40);
     }
+
+    void compassCalibrateEnd() { uBit.compass.calibrateEnd(); }
+    void compassCalibrateStart() { uBit.compass.calibrateStart(); }
+    void reset() { uBit.reset(); }
+
+    MicroBitPin *ioP0() { return &uBit.io.P0; }
+    MicroBitPin *ioP1() { return &uBit.io.P1; }
+    MicroBitPin *ioP2() { return &uBit.io.P2; }
+    MicroBitPin *ioP3() { return &uBit.io.P3; }
+    MicroBitPin *ioP4() { return &uBit.io.P4; }
+    MicroBitPin *ioP5() { return &uBit.io.P5; }
+    MicroBitPin *ioP6() { return &uBit.io.P6; }
+    MicroBitPin *ioP7() { return &uBit.io.P7; }
+    MicroBitPin *ioP8() { return &uBit.io.P8; }
+    MicroBitPin *ioP9() { return &uBit.io.P9; }
+    MicroBitPin *ioP10() { return &uBit.io.P10; }
+    MicroBitPin *ioP11() { return &uBit.io.P11; }
+    MicroBitPin *ioP12() { return &uBit.io.P12; }
+    MicroBitPin *ioP13() { return &uBit.io.P13; }
+    MicroBitPin *ioP14() { return &uBit.io.P14; }
+    MicroBitPin *ioP15() { return &uBit.io.P15; }
+    MicroBitPin *ioP16() { return &uBit.io.P16; }
+    MicroBitPin *ioP19() { return &uBit.io.P19; }
+    MicroBitPin *ioP20() { return &uBit.io.P20; }
+
+
+    /* TODO:
+        uBit.serial.readDisplayState
+        uBit.serial.readImage
+        uBit.serial.readString
+        uBit.serial.sendDisplayState
+        uBit.serial.sendImage
+        uBit.serial.sendString
+    */
   }
 
   // ---------------------------------------------------------------------------
@@ -461,6 +500,7 @@ namespace bitvm {
         micro_bit::on_calibrate_required);
     }
   }
+
 }
 
 #endif

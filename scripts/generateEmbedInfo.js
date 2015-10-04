@@ -31,12 +31,16 @@ process.argv.slice(3).forEach(function (fn) {
         if (type) {
             if (/^\s*\};/.test(ln)) {
                 type = null
-            } else if (/^\s*\/\//.test(ln) || /^\s*$/.test(ln)) {
+            } else if (/^\s*\/\//.test(ln) || /^\s*$/.test(ln) || /^\s*#/.test(ln)) {
                 // nothing
             } else {
                 m = /^\s*(\(void\*\))?([\w:]+),?\s*$/.exec(ln)
+                if (!m)
+                    m = /^\s*(mbit)\(([\w:]+)\)\s*$/.exec(ln)
                 if (m) {
-                    funs[m[2]] = { type: type[0], args: numArgs, idx: idx }
+                    var nm = m[2]
+                    if (m[1] == "mbit") nm = "micro_bit::" + nm
+                    funs[nm] = { type: type[0], args: numArgs, idx: idx }
                     idx++
                 } else {
                     console.log("bad line: " + ln)

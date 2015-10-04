@@ -419,18 +419,37 @@ namespace bitvm {
             a->run();
         }
     }
- 
+} 
+
+#ifdef DESKTOP
+#define mbit(x)
+#else
+#define mbit(x) (void*)micro_bit::x,
+#define INCLUDE_TDLIB
+#include "tdlib.cpp"
+#endif
 
 
-
-
+namespace bitvm {
     const void *callProc0[] = {
+        mbit(clearScreen)
+        mbit(compassCalibrateEnd)
+        mbit(compassCalibrateStart)
+        mbit(reset)
     };
 
     const void *callProc1[] = {
         (void*)number::post_to_wall,
         (void*)string::post_to_wall,
         (void*)action::run,
+        mbit(clearImage)
+        mbit(enablePitch)
+        mbit(forever)
+        mbit(pause)
+        mbit(runInBackground)
+        mbit(setBrightness)
+        mbit(showDigit)
+        mbit(showLetter)
     };
 
     const void *callProc2[] = {
@@ -439,14 +458,32 @@ namespace bitvm {
         (void*)collection::remove_at,
         (void*)refcollection::add,
         (void*)refcollection::remove_at,
+        mbit(analogWritePin)
+        mbit(digitalWritePin)
+        mbit(i2c_write)
+        mbit(onButtonPressed)
+        mbit(onPinPressed)
+        mbit(pitch)
+        mbit(plot)
+        mbit(scrollString)
+        mbit(scrollint)
+        mbit(setAnalogPeriodUs)
+        mbit(showImage)
+        mbit(unPlot)
     };
 
     const void *callProc3[] = {
         (void*)collection::set_at,
         (void*)refcollection::set_at,
+        mbit(i2c_write2)
+        mbit(onButtonPressedExt)
+        mbit(plotImage)
+        mbit(scrollImage)
     };
 
     const void *callProc4[] = {
+        mbit(showAnimation)
+        mbit(setImagePixel)
     };
 
 
@@ -455,6 +492,28 @@ namespace bitvm {
         (void*)collection::mk,
         (void*)refcollection::mk,
         (void*)math::pi,
+        mbit(compassHeading)
+        mbit(getBrightness)
+        mbit(getCurrentTime)
+        mbit(ioP0)
+        mbit(ioP1)
+        mbit(ioP2)
+        mbit(ioP3)
+        mbit(ioP4)
+        mbit(ioP5)
+        mbit(ioP6)
+        mbit(ioP7)
+        mbit(ioP8)
+        mbit(ioP9)
+        mbit(ioP10)
+        mbit(ioP11)
+        mbit(ioP12)
+        mbit(ioP13)
+        mbit(ioP14)
+        mbit(ioP15)
+        mbit(ioP16)
+        mbit(ioP19)
+        mbit(ioP20)
     };
 
     const void *callFunc1[] = {
@@ -472,6 +531,15 @@ namespace bitvm {
         (void*)collection::count,
         (void*)refcollection::count,
         (void*)boolean::to_string,
+        mbit(analogReadPin)
+        mbit(digitalReadPin)
+        mbit(getAcceleration)
+        mbit(createImageFromString)
+        mbit(getImageWidth)
+        mbit(i2c_read)
+        mbit(isButtonPressed)
+        mbit(isPinTouched)
+        mbit(displayScreenShot)
     };
 
     const void *callFunc2[] = {
@@ -508,6 +576,7 @@ namespace bitvm {
         (void*)refcollection::at,
         (void*)refcollection::remove,
         (void*)record::mk,
+        mbit(point)
     };
 
     const void *callFunc3[] = {
@@ -516,6 +585,8 @@ namespace bitvm {
         (void*)collection::index_of,
         (void*)refcollection::index_of,
         (void*)action::mk,
+        mbit(createImage)
+        mbit(getImagePixel)
     };
 
     const void *callFunc4[] = {
@@ -531,12 +602,51 @@ namespace bitvm {
         ERR_REF_DELETED,
         ERR_OUT_OF_BOUNDS,
         ERR_SIZE,
+#ifndef DESKTOP
+        MES_ALERT_EVT_ALARM1,
+        MES_ALERT_EVT_ALARM2,
+        MES_ALERT_EVT_ALARM3,
+        MES_ALERT_EVT_ALARM4,
+        MES_ALERT_EVT_ALARM5,
+        MES_ALERT_EVT_ALARM6,
+        MES_ALERT_EVT_DISPLAY_TOAST,
+        MES_ALERT_EVT_FIND_MY_PHONE,
+        MES_ALERT_EVT_PLAY_RINGTONE,
+        MES_ALERT_EVT_PLAY_SOUND,
+        MES_ALERT_EVT_VIBRATE,
+        MES_AUDIO_RECORDER_EVT_LAUNCH,
+        MES_AUDIO_RECORDER_EVT_START_CAPTURE,
+        MES_AUDIO_RECORDER_EVT_STOP_CAPTURE,
+        MES_AUDIO_RECORDER_EVT_STOP,
+        MES_CAMERA_EVT_LAUNCH_PHOTO_MODE,
+        MES_CAMERA_EVT_LAUNCH_VIDEO_MODE,
+        MES_CAMERA_EVT_START_VIDEO_CAPTURE,
+        MES_CAMERA_EVT_STOP_PHOTO_MODE,
+        MES_CAMERA_EVT_STOP_VIDEO_CAPTURE,
+        MES_CAMERA_EVT_STOP_VIDEO_MODE,
+        MES_CAMERA_EVT_TAKE_PHOTO,
+        MES_CAMERA_EVT_TOGGLE_FRONT_REAR,
+        MES_DEVICE_INFO_ID,
+        MES_PLAY_CONTROLLER_ID,
+        MES_REMOTE_CONTROL_EVT_FORWARD,
+        MES_REMOTE_CONTROL_EVT_NEXTTRACK,
+        MES_REMOTE_CONTROL_EVT_PAUSE,
+        MES_REMOTE_CONTROL_EVT_PLAY,
+        MES_REMOTE_CONTROL_EVT_PREVTRACK,
+        MES_REMOTE_CONTROL_EVT_REWIND,
+        MES_REMOTE_CONTROL_EVT_STOP,
+        MES_REMOTE_CONTROL_EVT_VOLUMEDOWN,
+        MES_REMOTE_CONTROL_EVT_VOLUMEUP,
+        MES_SIGNAL_STRENGTH_ID,
+        MICROBIT_ID_BUTTON_A,
+        MICROBIT_ID_BUTTON_AB,
+        MICROBIT_ID_BUTTON_B,
+        MICROBIT_ID_IO_P0,
+        MICROBIT_ID_IO_P1,
+        MICROBIT_ID_IO_P2,
+#endif
     };
 
 }
 
-#define INCLUDE_TDLIB
-#include "tdlib.cpp"
-
 // vim: ts=4 sw=4
-
