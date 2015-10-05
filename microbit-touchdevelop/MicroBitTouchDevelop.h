@@ -57,6 +57,10 @@ namespace touch_develop {
       return s1 + s2;
     }
 
+    ManagedString _(ManagedString s1, ManagedString s2) {
+      return concat(s1, s2);
+    }
+
     ManagedString substring(ManagedString s, int i, int j) {
       return s.substring(i, j);
     }
