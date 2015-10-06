@@ -41,6 +41,7 @@ void applyRefMaskCore(uint32_t refmask, uint32_t *sp)
 
 uint32_t *globals;
 uint32_t *strings;
+int numGlobals, numStrings;
 
 uint32_t exec_function(const uint16_t *pc, uint32_t *args)
 {
@@ -259,8 +260,10 @@ int exec_binary()
     uint32_t pc = 0;
     uint32_t ver = bytecode[pc++];
     check(ver == V1BINARY, ERR_INVALID_BINARY_HEADER);
-    globals = allocate(bytecode[pc++]);
-    strings = allocate(bytecode[pc++]);
+    numGlobals = bytecode[pc++];
+    numStrings = bytecode[pc++];
+    globals = allocate(numGlobals);
+    strings = allocate(numStrings);
     pc += 3; // reserved
     return exec_function(bytecode + pc, NULL);
 }

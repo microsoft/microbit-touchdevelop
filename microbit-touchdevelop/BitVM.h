@@ -105,6 +105,9 @@ namespace bitvm {
     const int V1BINARY = 0x4202;
 
     extern uint32_t *globals;
+    extern uint32_t *strings;
+    extern int numGlobals, numStrings;
+
 
     #ifdef MICROBIT
     inline void die() { uBit.panic(42); }

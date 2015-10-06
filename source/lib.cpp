@@ -13,6 +13,7 @@ inline int uBitRandom(int max)
 
 namespace bitvm {
 #define getstr(off) ((const char*)&bytecode[off])
+#define getbytes(off) ((const uint8_t*)&bytecode[off])
 
     uint32_t ldfld(RefRecord *r, int idx)
     {
@@ -44,7 +45,7 @@ namespace bitvm {
     {
         check(0 <= idx && idx < numGlobals, ERR_OUT_OF_BOUNDS, 7);
         uint32_t tmp = globals[idx];
-        incr(tmp)
+        incr(tmp);
         return tmp;
     }
 
@@ -620,6 +621,7 @@ namespace bitvm {
         (void*)boolean::to_string,
         (void*)bitvm::ldglb,
         (void*)bitvm::ldglbRef,
+        (void*)bitvm::is_invalid,
         mbit(analogReadPin)
         mbit(digitalReadPin)
         mbit(getAcceleration)
@@ -667,9 +669,11 @@ namespace bitvm {
         (void*)record::mk,
         (void*)bitvm::ldfld,
         (void*)bitvm::ldfldRef,
+        (void*)bitvm::stringLiteral,
         mbit(point)
         mbit(serialReadImage)
     };
+
 
     const void *callFunc3[] = {
         (void*)math::clamp,
@@ -677,6 +681,7 @@ namespace bitvm {
         (void*)collection::index_of,
         (void*)refcollection::index_of,
         (void*)action::mk,
+        (void*)bitvm::stclo,
         mbit(createImage)
         mbit(getImagePixel)
     };

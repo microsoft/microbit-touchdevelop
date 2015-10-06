@@ -249,7 +249,7 @@ namespace bitvm {
 
     // Argument rewritten by the C++ emitter to be what we need
     RefImage *createImage(int w, int h, uint32_t bitmap) {
-      return new RefImage(MicroBitImage(w, h, getstr(bitmap)));
+      return new RefImage(MicroBitImage(w, h, getbytes(bitmap)));
     }
 
     RefImage *createImageFromString(RefString *s) {
@@ -325,13 +325,13 @@ namespace bitvm {
 
     // These have their arguments rewritten by the C++ compiler.
     void plotImage(int w, int h, uint32_t bitmap) {
-      RefImage *img = createImage(w,h,getstr(bitmap));
+      RefImage *img = createImage(w,h,bitmap);
       showImage(img, 0);
       img->unref();
     }
 
     void showAnimation(int w, int h, uint32_t bitmap, int ms) {
-      uBit.display.animate(MicroBitImage(w, h, getstr(bitmap)), ms, 5, 0);
+      uBit.display.animate(MicroBitImage(w, h, getbytes(bitmap)), ms, 5, 0);
     }
 
     // -------------------------------------------------------------------------
