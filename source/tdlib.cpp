@@ -13,9 +13,6 @@
 namespace bitvm {
 
 
-#define DBG printf
-//#define DBG(...)
-
   // ---------------------------------------------------------------------------
   // Implementation of the BBC micro:bit features
   // ---------------------------------------------------------------------------
@@ -290,12 +287,12 @@ namespace bitvm {
     }
 
     void showDigit(int n) {
-      DBG("showDigit(%d)\n", n);
+      //DBG("showDigit(%d)\n", n);
       uBit.display.print('0' + (n % 10));
     }
 
     void scrollNumber(int n, int delay) {
-      DBG("showNumber(%d)\n", n);
+      //DBG("showNumber(%d)\n", n);
       ManagedString t(n);
       if (n < 0 || n >= 10) {
         uBit.display.scroll(t, delay);

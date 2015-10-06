@@ -1,6 +1,8 @@
 #ifndef __BITVM_REFTYPES_H
 #define __BITVM_REFTYPES_H
 
+// #define DEBUG_MEMLEAKS 1
+
 #include <stdio.h>
 #include <string.h>
 #include <vector>
@@ -41,12 +43,13 @@ namespace bitvm {
         inline void ref()
         {
             check(refcnt > 0, ERR_REF_DELETED);
+            //printf("INCR "); this->print();
             refcnt++;
         }
 
         inline void unref()
         {
-            //printf("DELOBJ: %p %d\n", this, refcnt);
+            //printf("DECR "); this->print();
             if (--refcnt == 0) {
                 delete this;
             }
@@ -73,15 +76,15 @@ namespace bitvm {
     inline void incr(uint32_t e)
     {
         if (e) {
-            //printf("INCR %x\n", e);
             ((RefObject*)e)->ref();
         }
     }
 
     inline void decr(uint32_t e)
     {
-        if (e)
+        if (e) {
             ((RefObject*)e)->unref();
+        }
     }
 
     class RefString
@@ -107,7 +110,7 @@ namespace bitvm {
 
         virtual void print()
         {
-            printf("RefString %p %s\n", this, data);
+            printf("RefString %p r=%d, %s\n", this, refcnt, data);
         }
 
         int charAt(int index)
@@ -130,7 +133,7 @@ namespace bitvm {
 
         virtual void print()
         {
-            printf("RefStruct %p\n", this);
+            printf("RefStruct %p r=%d\n", this, refcnt);
         }
 
         RefStruct(const T& i) : v(i) {}
@@ -144,7 +147,7 @@ namespace bitvm {
 
         virtual void print()
         {
-            printf("RefCollection %p size=%d\n", this, data.size());
+            printf("RefCollection %p r=%d size=%d\n", this, refcnt, data.size());
         }
     };
 
@@ -155,6 +158,7 @@ namespace bitvm {
         std::vector<RefObject*> data;
         virtual ~RefRefCollection()
         {
+            // printf("KILL "); this->print();
             for (uint32_t i = 0; i < data.size(); ++i) {
                 if (data[i])
                     data[i]->unref();
@@ -165,7 +169,7 @@ namespace bitvm {
 
         virtual void print()
         {
-            printf("RefRefCollection %p size=%d\n", this, data.size());
+            printf("RefRefCollection %p r=%d size=%d [%p, ...]\n", this, refcnt, data.size(), data.size() > 0 ? data[0] : NULL);
         }
     };
 
@@ -188,7 +192,7 @@ namespace bitvm {
 
         virtual void print()
         {
-            printf("RefRecord %p size=%d (%d refs)\n", this, len, reflen);
+            printf("RefRecord %p r=%d size=%d (%d refs)\n", this, refcnt, len, reflen);
         }
 
         inline uint32_t ld(int idx)
@@ -248,7 +252,7 @@ namespace bitvm {
 
         virtual void print()
         {
-            printf("RefAction %p pc=0x%lx size=%d (%d refs)\n", this, (const uint16_t*)func - bytecode, len, reflen);
+            printf("RefAction %p r=%d pc=0x%lx size=%d (%d refs)\n", this, refcnt, ((const uint16_t*)func - bytecode) * 2, len, reflen);
         }
 
         inline void st(int idx, uint32_t v)
@@ -259,7 +263,7 @@ namespace bitvm {
             fields[idx] = v;
         }
 
-        uint32_t run()
+        inline uint32_t run()
         {
             this->ref();
             uint32_t r = this->func(this, &this->fields[0]);

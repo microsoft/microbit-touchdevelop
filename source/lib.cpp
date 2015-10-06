@@ -11,6 +11,10 @@ inline int uBitRandom(int max)
 #define uBitRandom uBit.random
 #endif
 
+#define DBG printf
+//#define DBG(...)
+
+
 namespace bitvm {
 #define getstr(off) ((const char*)&bytecode[off])
 #define getbytes(off) ((const uint8_t*)&bytecode[off])
@@ -81,6 +85,7 @@ namespace bitvm {
 
     RefAction *stclo(RefAction *a, int idx, uint32_t v)
     {
+    //DBG("stclo(%p, %d, %d)\n", a, idx, v);
         a->st(idx, v);
         return a;
     }
@@ -278,7 +283,7 @@ namespace bitvm {
             memcpy(res->data, s1->data, s1->len);
             memcpy(res->data + s1->len, s2->data, s2->len);
             res->data[res->len] = 0;
-            //printf("MK2: %s\n", res->data);
+            //printf("CONCAT "); res->print();
             return res;
         }
 
@@ -486,8 +491,10 @@ namespace bitvm {
             RefAction *r = new (ptr) RefAction();
             r->len = totallen;
             r->reflen = reflen;
-            r->func = (ActionCB)&bytecode[startptr];
+            uint32_t tmp = (uint32_t)&bytecode[startptr];
+            r->func = (ActionCB)(tmp | 1);
             memset(r->fields, 0, r->len * sizeof(uint32_t));
+
             return r;
         }
 
