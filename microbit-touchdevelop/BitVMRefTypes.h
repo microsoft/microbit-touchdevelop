@@ -226,13 +226,16 @@ namespace bitvm {
         }
     };
 
+    class RefAction;
+    typedef uint32_t (*ActionCB)(RefAction *, uint32_t *);
+
     class RefAction
         : public RefObject
     {
     public:
         uint8_t len;
         uint8_t reflen;
-        uint32_t startptr;
+        ActionCB func;
         uint32_t fields[];
 
         virtual ~RefAction()
@@ -245,7 +248,7 @@ namespace bitvm {
 
         virtual void print()
         {
-            printf("RefAction %p pc=0x%lx size=%d (%d refs)\n", this, startptr, len, reflen);
+            printf("RefAction %p pc=0x%lx size=%d (%d refs)\n", this, (const uint16_t*)func - bytecode, len, reflen);
         }
 
         inline void st(int idx, uint32_t v)
@@ -258,9 +261,8 @@ namespace bitvm {
 
         uint32_t run()
         {
-            // push args to stack
             this->ref();
-            uint32_t r = exec_function(bytecode + this->startptr, this->fields);
+            uint32_t r = this->func(this, &this->fields[0]);
             this->unref();
             return r;
         }

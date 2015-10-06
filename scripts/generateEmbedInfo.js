@@ -1,26 +1,24 @@
 var fs = require('fs');
 
 var funs = {}
-var ops = {}
 
 var hex = fs.readFileSync(process.argv[2], "utf8").split(/\r?\n/)
 
 process.argv.slice(3).forEach(function (fn) {
     var type = null;
-    var opcodes = false;
     var numArgs = 0;
     var idx = 0;
     fs.readFileSync(fn, "utf8").split(/\n/).forEach(function(ln) {
         ln = ln.replace(/\r/g, "")
-        var m = /^\s*const void \*call(Func|Proc)(\d+)\[/.exec(ln)
+        var m = /^\s*void \*\s*const\s*functions\[/.exec(ln)
         if (m) {
-            type = m[1]
-            numArgs = parseInt(m[2]);
+            type = "X"
+            numArgs = 0;
             idx = 0;
             return
         }
 
-        m = /^\s*const int enums\[\] =/.exec(ln)
+        m = /^\s*const int enums\[\]/.exec(ln)
         if (m) {
             type = "Enums";
             numArgs = 0;
@@ -29,9 +27,13 @@ process.argv.slice(3).forEach(function (fn) {
         }
 
         if (type) {
+            m = /^\s*\/\/ (FUNC|PROC)(\d+)/.exec(ln)
             if (/^\s*\};/.test(ln)) {
                 type = null
-            } else if (/^\s*\/\//.test(ln) || /^\s*$/.test(ln) || /^\s*#/.test(ln)) {
+            } else if (m) {
+                type = m[1];
+                numArgs = parseInt(m[2]);
+            } else if (/^\s*$/.test(ln) || /^\s*#/.test(ln)) {
                 // nothing
             } else {
                 m = /^\s*(\(void\*\))?([\w:]+),?\s*$/.exec(ln)
@@ -47,34 +49,11 @@ process.argv.slice(3).forEach(function (fn) {
                 }
             }
         }
-
-        if (/^\s*\/\*OPCODES\*\/ typedef enum/.test(ln)) {
-            opcodes = true;
-            idx = 0;
-            return
-        }
-
-        if (opcodes) {
-            if (/^\s*\}/.test(ln)) {
-                opcodes = false
-            } else if (/^\s*\/\//.test(ln) || /^\s*$/.test(ln)) {
-                // nothing
-            } else {
-                m = /^\s*([A-Z0-9]+),\s*\/\/ S([X0-9\-]+)?\s*$/.exec(ln)
-                if (m) {
-                    ops[m[1]] = { stack: parseInt(m[2]), idx: idx }
-                    idx++;
-                } else {
-                    console.log("bad line: " + ln)
-                }
-            }
-        }
     })
 
 })
 
 var s = "TDev.bytecodeInfo = " + JSON.stringify({
-    opcodes: ops,
     functions: funs,
     hex: hex
 }, null, 2)

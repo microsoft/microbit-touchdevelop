@@ -486,7 +486,7 @@ namespace bitvm {
             RefAction *r = new (ptr) RefAction();
             r->len = totallen;
             r->reflen = reflen;
-            r->startptr = startptr;
+            r->func = (ActionCB)&bytecode[startptr];
             memset(r->fields, 0, r->len * sizeof(uint32_t));
             return r;
         }
@@ -507,16 +507,20 @@ namespace bitvm {
 #endif
 
 namespace bitvm {
-    const void *callProc0[] = {
+
+    void * const functions[] __attribute__((aligned(0x10))) = {
+        (void*)0x684e35a0,
+        (void*)0x7ebbb194,
+
+        // PROC0
         mbit(clearScreen)
         mbit(compassCalibrateEnd)
         mbit(compassCalibrateStart)
         mbit(reset)
         mbit(serialSendDisplayState)
         mbit(serialReadDisplayState)
-    };
 
-    const void *callProc1[] = {
+        // PROC1
         (void*)number::post_to_wall,
         (void*)string::post_to_wall,
         (void*)action::run,
@@ -533,9 +537,8 @@ namespace bitvm {
         mbit(serialSendString)
         mbit(serialSendImage)
         mbit(panic)
-    };
 
-    const void *callProc2[] = {
+        // PROC2
         (void*)contract::assert,
         (void*)collection::add,
         (void*)collection::remove_at,
@@ -555,9 +558,8 @@ namespace bitvm {
         mbit(setAnalogPeriodUs)
         mbit(showImage)
         mbit(unPlot)
-    };
 
-    const void *callProc3[] = {
+        // PROC3
         (void*)collection::set_at,
         (void*)refcollection::set_at,
         (void*)bitvm::stfld,
@@ -566,15 +568,12 @@ namespace bitvm {
         mbit(onButtonPressedExt)
         mbit(plotImage)
         mbit(scrollImage)
-    };
-
-    const void *callProc4[] = {
+        
+        // PROC4
         mbit(showAnimation)
         mbit(setImagePixel)
-    };
 
-
-    const void *callFunc0[] = {
+        // FUNC0
         (void*)string::mkEmpty,
         (void*)collection::mk,
         (void*)refcollection::mk,
@@ -602,9 +601,8 @@ namespace bitvm {
         mbit(ioP19)
         mbit(ioP20)
         mbit(serialReadString)
-    };
 
-    const void *callFunc1[] = {
+        // FUNC1
         (void*)boolean::not_,
         (void*)math::random,
         (void*)math::abs,
@@ -631,9 +629,8 @@ namespace bitvm {
         mbit(isButtonPressed)
         mbit(isPinTouched)
         mbit(displayScreenShot)
-    };
 
-    const void *callFunc2[] = {
+        // FUNC2
         (void*)boolean::or_,
         (void*)boolean::and_,
         (void*)boolean::equals,
@@ -672,10 +669,8 @@ namespace bitvm {
         (void*)bitvm::stringLiteral,
         mbit(point)
         mbit(serialReadImage)
-    };
 
-
-    const void *callFunc3[] = {
+        // FUNC3
         (void*)math::clamp,
         (void*)string::substring,
         (void*)collection::index_of,
@@ -686,11 +681,9 @@ namespace bitvm {
         mbit(getImagePixel)
     };
 
-
-    const void *callFunc4[] = {
-    };
-
-    const int enums[] = {
+    const int enums[] __attribute__((aligned(0x10))) = {
+        0x44f4ecc1,
+        0x33e7fa08,
         ERR_BAD_OPCODE,
         ERR_STACK_OVERFLOW,
         ERR_STACK_UNDERFLOW,

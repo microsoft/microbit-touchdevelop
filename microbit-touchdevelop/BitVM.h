@@ -101,8 +101,7 @@ namespace bitvm {
         ERR_SIZE = 9,
     } ERROR;
 
-    const int V1FUNC = 0x4201;
-    const int V1BINARY = 0x4202;
+    const int V2BINARY = 0x4203;
 
     extern uint32_t *globals;
     extern uint32_t *strings;
@@ -136,16 +135,7 @@ namespace bitvm {
     }
 
 
-    extern const void *callProc0[];
-    extern const void *callProc1[];
-    extern const void *callProc2[];
-    extern const void *callProc3[];
-    extern const void *callProc4[];
-    extern const void *callFunc0[];
-    extern const void *callFunc1[];
-    extern const void *callFunc2[];
-    extern const void *callFunc3[];
-    extern const void *callFunc4[];
+    extern void * const functions[];
     extern const int enums[];
 
     extern const unsigned short bytecode[];

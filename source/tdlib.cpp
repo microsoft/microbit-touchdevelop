@@ -294,6 +294,7 @@ namespace bitvm {
       ManagedString t(n);
       if (n < 0 || n >= 10) {
         uBit.display.scroll(t, delay);
+      //printf("leave SN %d\n", n);
       } else {
         uBit.display.print(t.charAt(0), delay * 5);
       }
