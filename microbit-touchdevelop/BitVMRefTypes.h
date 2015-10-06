@@ -38,13 +38,13 @@ namespace bitvm {
 #endif
         }
 
-        void ref()
+        inline void ref()
         {
             check(refcnt > 0, ERR_REF_DELETED);
             refcnt++;
         }
 
-        void unref()
+        inline void unref()
         {
             //printf("DELOBJ: %p %d\n", this, refcnt);
             if (--refcnt == 0) {
@@ -258,7 +258,11 @@ namespace bitvm {
 
         uint32_t run()
         {
-            return exec_function(bytecode + this->startptr, this->fields);
+            // push args to stack
+            this->ref();
+            uint32_t r = exec_function(bytecode + this->startptr, this->fields);
+            this->unref();
+            return r;
         }
     };
 

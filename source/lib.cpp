@@ -12,6 +12,77 @@ inline int uBitRandom(int max)
 #endif
 
 namespace bitvm {
+#define getstr(off) ((const char*)&bytecode[off])
+
+    uint32_t ldfld(RefRecord *r, int idx)
+    {
+        return r->ld(idx);
+    }
+
+    uint32_t ldfldRef(RefRecord *r, int idx)
+    {
+        return r->ldref(idx);
+    }
+
+    void stfld(RefRecord *r, int idx, uint32_t val)
+    {
+        r->st(idx, val);
+    }
+
+    void stfldRef(RefRecord *r, int idx, uint32_t val)
+    {
+        r->stref(idx, val);
+    }
+
+    uint32_t ldglb(int idx)
+    {
+        check(0 <= idx && idx < numGlobals, ERR_OUT_OF_BOUNDS, 7);
+        return globals[idx];
+    }
+
+    uint32_t ldglbRef(int idx)
+    {
+        check(0 <= idx && idx < numGlobals, ERR_OUT_OF_BOUNDS, 7);
+        uint32_t tmp = globals[idx];
+        incr(tmp)
+        return tmp;
+    }
+
+    uint32_t is_invalid(uint32_t v)
+    {
+        return v == 0;
+    }
+
+    // note the idx comes last - it's more convienient that way in the emitter
+    void stglb(uint32_t v, int idx)
+    {
+        check(0 <= idx && idx < numGlobals, ERR_OUT_OF_BOUNDS, 7);
+        globals[idx] = v;
+    }
+
+    void stglbRef(uint32_t v, int idx)
+    {
+        check(0 <= idx && idx < numGlobals, ERR_OUT_OF_BOUNDS, 7);
+        decr(globals[idx]);
+        globals[idx] = v;
+    }
+
+    uint32_t stringLiteral(int id, uint32_t off)
+    {
+        uint32_t tmp = strings[id];
+        if (tmp == 0) {
+            tmp = strings[id] = (uint32_t)string::fromLiteral(getstr(off));
+        }
+        incr(tmp);
+        return tmp;
+    }
+
+
+    RefAction *stclo(RefAction *a, int idx, uint32_t v)
+    {
+        a->st(idx, v);
+        return a;
+    }
 
 #ifdef DEBUG_MEMLEAKS
     std::set<RefObject*> allptrs;
@@ -168,10 +239,10 @@ namespace bitvm {
 
     namespace contract
     {
-        void assert(int cond, char *msg)
+        void assert(int cond, uint32_t msg)
         {
             if (cond == 0) {
-                printf("Assertion failed: %s\n", msg);
+                printf("Assertion failed: %s\n", getstr(msg));
                 die();
             }
         }
@@ -434,7 +505,6 @@ namespace bitvm {
 #include "tdlib.cpp"
 #endif
 
-
 namespace bitvm {
     const void *callProc0[] = {
         mbit(clearScreen)
@@ -449,6 +519,8 @@ namespace bitvm {
         (void*)number::post_to_wall,
         (void*)string::post_to_wall,
         (void*)action::run,
+        (void*)bitvm::incr,
+        (void*)bitvm::decr,
         mbit(clearImage)
         mbit(enablePitch)
         mbit(forever)
@@ -468,6 +540,8 @@ namespace bitvm {
         (void*)collection::remove_at,
         (void*)refcollection::add,
         (void*)refcollection::remove_at,
+        (void*)bitvm::stglb,
+        (void*)bitvm::stglbRef,
         mbit(analogWritePin)
         mbit(digitalWritePin)
         mbit(i2c_write)
@@ -485,6 +559,8 @@ namespace bitvm {
     const void *callProc3[] = {
         (void*)collection::set_at,
         (void*)refcollection::set_at,
+        (void*)bitvm::stfld,
+        (void*)bitvm::stfldRef,
         mbit(i2c_write2)
         mbit(onButtonPressedExt)
         mbit(plotImage)
@@ -542,6 +618,8 @@ namespace bitvm {
         (void*)collection::count,
         (void*)refcollection::count,
         (void*)boolean::to_string,
+        (void*)bitvm::ldglb,
+        (void*)bitvm::ldglbRef,
         mbit(analogReadPin)
         mbit(digitalReadPin)
         mbit(getAcceleration)
@@ -587,6 +665,8 @@ namespace bitvm {
         (void*)refcollection::at,
         (void*)refcollection::remove,
         (void*)record::mk,
+        (void*)bitvm::ldfld,
+        (void*)bitvm::ldfldRef,
         mbit(point)
         mbit(serialReadImage)
     };
