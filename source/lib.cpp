@@ -287,6 +287,11 @@ namespace bitvm {
             return res;
         }
 
+        RefString *concat(RefString *s1, RefString *s2)
+        {
+            return concat_op(s1, s2);
+        }
+
         RefString *substring(RefString *s, int start, int length)
         {
             // If the parameters are illegal, just return a reference to the empty string.
@@ -663,6 +668,7 @@ namespace bitvm {
         (void*)math::mod,
         (void*)math::pow,
         (void*)string::concat_op,
+        (void*)string::concat,
         (void*)string::equals,
         (void*)string::code_at,
         (void*)string::at,
