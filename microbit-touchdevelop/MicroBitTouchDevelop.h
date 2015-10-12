@@ -577,7 +577,7 @@ namespace touch_develop {
       }
     }
 
-    void showImageNoDelay(MicroBitImage i, int offset) {
+    void plotImage(MicroBitImage i, int offset) {
       uBit.display.print(i, -offset, 0, 0, 0);
     }
 
@@ -593,7 +593,7 @@ namespace touch_develop {
     }
 
     // These have their arguments rewritten by the C++ compiler.
-    void plotImage(int w, int h, const uint8_t* bitmap) {
+    void showLeds(int w, int h, const uint8_t* bitmap) {
       showImage(createImage(w,h,bitmap), 0);
     }
 
