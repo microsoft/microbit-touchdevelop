@@ -577,6 +577,10 @@ namespace touch_develop {
       }
     }
 
+    void showImageNoDelay(MicroBitImage i, int offset) {
+      uBit.display.print(i, -offset, 0, 0, 0);
+    }
+
     void showImage(MicroBitImage i, int offset) {
       uBit.display.print(i, -offset, 0, 0);
     }
