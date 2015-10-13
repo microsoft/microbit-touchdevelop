@@ -1,3 +1,5 @@
+#include "MicroBitCustomConfig.h"
+
 #ifndef __MICROBIT_TOUCHDEVELOP_H
 #define __MICROBIT_TOUCHDEVELOP_H
 
