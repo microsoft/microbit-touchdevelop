@@ -558,6 +558,7 @@ namespace bitvm {
         (void*)refcollection::remove_at,
         (void*)bitvm::stglb,
         (void*)bitvm::stglbRef,
+        mbit(plotImage)
         mbit(analogWritePin)
         mbit(digitalWritePin)
         mbit(i2c_write)
@@ -576,9 +577,9 @@ namespace bitvm {
         (void*)refcollection::set_at,
         (void*)bitvm::stfld,
         (void*)bitvm::stfldRef,
+        mbit(showLeds)
         mbit(i2c_write2)
         mbit(onButtonPressedExt)
-        mbit(plotImage)
         mbit(scrollImage)
         
         // PROC4

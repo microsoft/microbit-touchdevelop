@@ -325,8 +325,12 @@ namespace bitvm {
         uBit.display.animate(i->v, delay, offset, 0);
     }
 
+    void plotImage(RefImage *i, int offset) {
+      uBit.display.print(i->v, -offset, 0, 0, 0);
+    }
+
     // These have their arguments rewritten by the C++ compiler.
-    void plotImage(int w, int h, uint32_t bitmap) {
+    void showLeds(int w, int h, uint32_t bitmap) {
       RefImage *img = createImage(w,h,bitmap);
       showImage(img, 0);
       img->unref();
