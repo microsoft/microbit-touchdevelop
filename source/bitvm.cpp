@@ -80,6 +80,9 @@ namespace bitvm {
     return a;
   }
 
+  // This one is used for testing in 'bitvm test0'
+  uint32_t const3() { return 3; }
+
 #ifdef DEBUG_MEMLEAKS
   std::set<RefObject*> allptrs;
   void debugMemLeaks()
@@ -777,6 +780,7 @@ namespace bitvm {
     (void*)string::mkEmpty,
     (void*)collection::mk,
     (void*)refcollection::mk,
+    (void*)bitvm::const3,
     mbitc(compassHeading)
     mbitc(getBrightness)
     mbitc(getCurrentTime)
