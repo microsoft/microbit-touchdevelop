@@ -148,32 +148,30 @@ namespace bitvm {
     : public RefObject
   {
   public:
-    uint16_t len;
-    char *data;
+    ManagedString v;
+
+    RefString(const ManagedString& i) : v(i) {}
+    RefString(const char *ptr) : v(ManagedString(ptr)) {}
+    RefString(const char *ptr, const int size) : v(ManagedString(ptr, size)) {}
 
     virtual ~RefString()
     {
-      char *tmp = data;
-      //printf("DEL: %s\n", tmp);
-      data = NULL;
-      delete tmp;
     }
 
     virtual bool equals(RefObject *other_)
     {
       RefString *other = (RefString*)other_;
-      return this->len == other->len && memcmp(this->data, other->data, this->len) == 0;
+      return this->v == other->v;
     }
 
     virtual void print()
     {
-      printf("RefString %p r=%d, %s\n", this, refcnt, data);
+      printf("RefString %p r=%d, %s\n", this, refcnt, v.toCharArray());
     }
 
-    int charAt(int index)
-    {
-      return (index >=0 && index < this->len) ? this->data[index] : 0;
-    }
+    inline int charAt(int index) { return v.charAt(index); }
+    inline int length() { return v.length(); }
+    inline const char *toCharArray() { return v.toCharArray(); }
   };
 
 
