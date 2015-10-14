@@ -15,6 +15,7 @@
 // Define your configuration options here.
 // #define MICROBIT_DBG                                1
 
+#undef MESSAGE_BUS_LISTENER_DEFAULT_FLAGS
 #define MESSAGE_BUS_LISTENER_DEFAULT_FLAGS          MESSAGE_BUS_LISTENER_QUEUE_IF_BUSY
 
 #endif
