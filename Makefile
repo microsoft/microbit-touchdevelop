@@ -1,5 +1,5 @@
-SRCCOMMON = source/lib.cpp source/bytecode.cpp
-HEADERS = microbit-touchdevelop/BitVM.h microbit-touchdevelop/BitVMRefTypes.h
+SRCCOMMON = source/bitvm.cpp source/bytecode.cpp
+HEADERS = microbit-touchdevelop/BitVM.h
 TRG = build/bbc-microbit-classic-gcc/source/microbit-touchdevelop-combined.hex
 TD = ../TouchDevelop
 
