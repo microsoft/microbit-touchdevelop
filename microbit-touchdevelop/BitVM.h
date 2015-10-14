@@ -3,11 +3,6 @@
 
 // #define DEBUG_MEMLEAKS 1
 
-#ifndef DESKTOP
-#define MICROBIT
-#endif
-
-#ifdef MICROBIT
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #include "MicroBit.h"
 #include "MicroBitImage.h"
@@ -15,7 +10,6 @@
 #include "ManagedType.h"
 #define printf(...) uBit.serial.printf(__VA_ARGS__)
 // #define printf(...)
-#endif
 
 #include <stdint.h>
 
@@ -108,11 +102,7 @@ namespace bitvm {
     extern int numGlobals, numStrings;
 
 
-    #ifdef MICROBIT
     inline void die() { uBit.panic(42); }
-    #else
-    inline void die() { exit(1); }
-    #endif
 
     void error(ERROR code, int subcode = 0);
 
@@ -123,16 +113,6 @@ namespace bitvm {
 
     uint32_t exec_function(const uint16_t *pc, uint32_t *args);
     int exec_binary();
-
-    inline int min(int a, int b)
-    {
-        return (a < b ? a : b);
-    }
-
-    inline int max(int a, int b)
-    {
-        return (a > b ? a : b);
-    }
 
 
     extern void * const functions[];

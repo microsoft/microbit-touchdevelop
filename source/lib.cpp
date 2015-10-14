@@ -6,15 +6,6 @@
 #include <vector>
 
 
-#ifdef DESKTOP
-inline int uBitRandom(int max)
-{
-    return rand() % max;
-}
-#else
-#define uBitRandom uBit.random
-#endif
-
 #define DBG printf
 //#define DBG(...)
 
@@ -143,14 +134,8 @@ namespace bitvm {
 
         RefString *to_string(int x)
         {
-        #ifdef MICROBIT
             ManagedString m(x);
             return mkString(m.toCharArray());
-        #else
-            char buf[30];
-            snprintf(buf, 29, "%d", x);
-            return mkString(buf);
-        #endif
         }
     }
 
@@ -977,7 +962,6 @@ namespace bitvm {
         ERR_REF_DELETED,
         ERR_OUT_OF_BOUNDS,
         ERR_SIZE,
-#ifndef DESKTOP
         MES_ALERT_EVT_ALARM1,
         MES_ALERT_EVT_ALARM2,
         MES_ALERT_EVT_ALARM3,
@@ -1019,7 +1003,6 @@ namespace bitvm {
         MICROBIT_ID_IO_P0,
         MICROBIT_ID_IO_P1,
         MICROBIT_ID_IO_P2,
-#endif
     };
 
 }
