@@ -9,6 +9,7 @@ var fs = require('fs');
 var funs = {}
 
 var hex = fs.readFileSync(process.argv[2], "utf8").split(/\r?\n/)
+var fotahex = fs.readFileSync(process.argv[2].replace(/-combined/, ""), "utf8").split(/\r?\n/)
 
 process.argv.slice(3).forEach(function (fn) {
     var type = null;
@@ -62,7 +63,8 @@ process.argv.slice(3).forEach(function (fn) {
 
 var s = "TDev.bytecodeInfo = " + JSON.stringify({
     functions: funs,
-    hex: hex
+    hex: hex,
+    fotahex: fotahex
 }, null, 2)
 fs.writeFileSync("build/bytecode.js", s)
 
