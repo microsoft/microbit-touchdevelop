@@ -17,7 +17,7 @@ namespace bitvm {
   // Implementation of the BBC micro:bit features
   // ---------------------------------------------------------------------------
 
-  namespace micro_bit {
+  namespace bitvm_micro_bit {
 
     // -------------------------------------------------------------------------
     // Helpers
@@ -31,64 +31,8 @@ namespace bitvm {
 
 
     // -------------------------------------------------------------------------
-    // Sensors
-    // -------------------------------------------------------------------------
-
-    int compassHeading() {
-      return uBit.compass.heading();
-    }
-
-    int getAcceleration(int dimension) {
-      if (dimension == 0)
-        return uBit.accelerometer.getX();
-      else if (dimension == 1)
-        return uBit.accelerometer.getY();
-      else
-        return uBit.accelerometer.getZ();
-    }
-
-    void on_calibrate_required (MicroBitEvent e) {
-      const int bitmap0_w = 10;
-      const int bitmap0_h = 5;
-      const uint8_t bitmap0[] = { 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, };
-
-      uBit.compass.calibrateStart();
-      uBit.display.print("Turn me around!");
-      MicroBitImage img = MicroBitImage(bitmap0_w, bitmap0_h, bitmap0);
-      for (int i = 0; i < 10; ++i) {
-        uBit.display.scroll(img, 5, 400);
-      }
-      uBit.compass.calibrateEnd();
-      uBit.display.print("Please restart.");
-    }
-
-    // -------------------------------------------------------------------------
     // Pins
     // -------------------------------------------------------------------------
-
-    int analogReadPin(MicroBitPin& p) {
-      return p.getAnalogValue();
-    }
-
-    void analogWritePin(MicroBitPin& p, int value) {
-      p.setAnalogValue(value);
-    }
-
-    void setAnalogPeriodUs(MicroBitPin& p, int value) {
-      p.setAnalogPeriodUs(value);
-    }
-
-    int digitalReadPin(MicroBitPin& p) {
-      return p.getDigitalValue();
-    }
-
-    void digitalWritePin(MicroBitPin& p, int value) {
-      p.setDigitalValue(value);
-    }
-
-    int isPinTouched(MicroBitPin& pin) {
-      return pin.isTouched();
-    }
 
     void onPinPressed(int pin, Action a) {
       if (a != NULL) {
@@ -120,16 +64,6 @@ namespace bitvm {
     // -------------------------------------------------------------------------
     // Buttons
     // -------------------------------------------------------------------------
-
-    int isButtonPressed(int button) {
-      if (button == MICROBIT_ID_BUTTON_A)
-        return uBit.buttonA.isPressed();
-      else if (button == MICROBIT_ID_BUTTON_B)
-        return uBit.buttonB.isPressed();
-      else if (button == MICROBIT_ID_BUTTON_AB)
-        return uBit.buttonAB.isPressed();
-      return false;
-    }
 
     void onButtonPressedExt(int button, int event, Action a) {
       if (a != NULL) {
@@ -174,14 +108,10 @@ namespace bitvm {
       }
     }
 
-    void pause(int ms) {
-      uBit.sleep(ms);
-    }
-
     void forever_stub(void *a) {
       while (true) {
         ((Action)a)->run();
-        pause(20);
+        micro_bit::pause(20);
       }
     }
 
@@ -190,55 +120,6 @@ namespace bitvm {
         a->ref();
         create_fiber(forever_stub, a);
       }
-    }
-
-    int getCurrentTime() {
-      return uBit.systemTime();
-    }
-
-    int i2c_read(int addr) {
-      char c;
-      uBit.i2c.read(addr << 1, &c, 1);
-      return c;
-    }
-
-    void i2c_write(int addr, char c) {
-      uBit.i2c.write(addr << 1, &c, 1);
-    }
-
-    void i2c_write2(int addr, int c1, int c2) {
-      char c[2];
-      c[0] = (char) c1;
-      c[1] = (char) c2;
-      uBit.i2c.write(addr << 1, c, 2);
-    }
-
-    // -------------------------------------------------------------------------
-    // Screen (reading/modifying the global, mutable state of the display)
-    // -------------------------------------------------------------------------
-
-    int getBrightness() {
-      return uBit.display.getBrightness();
-    }
-
-    void setBrightness(int percentage) {
-      uBit.display.setBrightness(percentage);
-    }
-
-    void clearScreen() {
-      uBit.display.image.clear();
-    }
-
-    void plot(int x, int y) {
-      uBit.display.image.setPixelValue(x, y, 1);
-    }
-
-    void unPlot(int x, int y) {
-      uBit.display.image.setPixelValue(x, y, 0);
-    }
-
-    int point(int x, int y) {
-      return uBit.display.image.getPixelValue(x, y);
     }
 
     // -------------------------------------------------------------------------
@@ -284,21 +165,6 @@ namespace bitvm {
 
     void showLetter(RefString *s) {
       uBit.display.print(s->charAt(0));
-    }
-
-    void showDigit(int n) {
-      //DBG("showDigit(%d)\n", n);
-      uBit.display.print('0' + (n % 10));
-    }
-
-    void scrollNumber(int n, int delay) {
-      //DBG("showNumber(%d)\n", n);
-      ManagedString t(n);
-      if (n < 0 || n >= 10) {
-        uBit.display.scroll(t, delay);
-      } else {
-        uBit.display.print(t.charAt(0), delay * 5);
-      }
     }
 
     void scrollString(RefString *s, int delay) {
@@ -380,24 +246,8 @@ namespace bitvm {
 #endif
 
     // -------------------------------------------------------------------------
-    // Music
+    // Additions - cannot access objects
     // -------------------------------------------------------------------------
-
-    MicroBitPin* pitchPin = NULL;
-
-    void enablePitch(MicroBitPin& p) {
-      pitchPin = &p;
-    }
-
-    void pitch(int freq, int ms) {
-      if (freq <= 0 || ms < 0 || pitchPin == NULL)
-        return;
-      pitchPin->setAnalogValue(512);
-      pitchPin->setAnalogPeriodUs(1000000/freq);
-      wait_ms(ms);
-      pitchPin->setAnalogValue(0);
-      wait_ms(40);
-    }
 
     void compassCalibrateEnd() { uBit.compass.calibrateEnd(); }
     void compassCalibrateStart() { uBit.compass.calibrateStart(); }
@@ -454,80 +304,8 @@ namespace bitvm {
     void serialReadDisplayState() { uBit.serial.readDisplayState(); }
   }
 
-  // ---------------------------------------------------------------------------
-  // The DS1307 real-time clock and its i2c communication protocol
-  // ---------------------------------------------------------------------------
 
-  namespace ds1307 {
-
-    const int addr = 0x68;
-
-    uint8_t bcd2bin(uint8_t val) {
-      return val - 6 * (val >> 4);
-    }
-
-    uint8_t bin2bcd(uint8_t val) {
-      return val + 6 * (val / 10);
-    }
-
-    // The TouchDevelop type is marked as {shim:} an exactly matches this
-    // definition. It's kind of unfortunate that we have to duplicate the
-    // definition.
-    namespace user_types {
-      struct DateTime_ {
-        int seconds;
-        int minutes;
-        int hours;
-        int day;
-        int month;
-        int year;
-      };
-      typedef ManagedType<DateTime_> DateTime;
-    }
-
-    void adjust(user_types::DateTime d) {
-      char commands[] = {
-        0,
-        bin2bcd(d->seconds),
-        bin2bcd(d->minutes),
-        bin2bcd(d->hours),
-        0,
-        bin2bcd(d->day),
-        bin2bcd(d->month),
-        bin2bcd(d->year - 2000)
-      };
-      uBit.i2c.write(addr << 1, commands, 8);
-    }
-
-    user_types::DateTime now() {
-      char c = 0;
-      uBit.i2c.write(addr << 1, &c, 1);
-
-      char buf[7];
-      uBit.i2c.read(addr << 1, buf, 7);
-
-      user_types::DateTime d(new user_types::DateTime_());
-      d->seconds = bcd2bin(buf[0] & 0x7F);
-      d->minutes = bcd2bin(buf[1]);
-      d->hours = bcd2bin(buf[2]);
-      d->day = bcd2bin(buf[4]);
-      d->month = bcd2bin(buf[5]);
-      d->year = bcd2bin(buf[6]) + 2000;
-      return d;
-    }
-  }
-
-  // -------------------------------------------------------------------------
-  // Called at start-up by the generated code
-  // -------------------------------------------------------------------------
-  namespace touch_develop {
-    void main() {
-      uBit.MessageBus.listen(
-        MICROBIT_ID_COMPASS,
-        MICROBIT_COMPASS_EVT_CAL_REQUIRED,
-        micro_bit::on_calibrate_required);
-    }
-  }
+  // TODO call touch_develop::main() at the beginning of generated code
 
 }
 

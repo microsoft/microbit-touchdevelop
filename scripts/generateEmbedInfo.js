@@ -38,9 +38,9 @@ process.argv.slice(3).forEach(function (fn) {
             } else {
                 m = /^\s*(\(void\*\))?([\w:]+),?\s*$/.exec(ln)
                 if (!m)
-                    m = /^\s*(mbit)\(([\w:]+)\)\s*$/.exec(ln)
+                    m = /^\s*(mbit)c?\(([\w:]+)\)\s*$/.exec(ln)
                 if (m) {
-                    var nm = m[2]
+                    var nm = m[3]
                     if (m[1] == "mbit") nm = "micro_bit::" + nm
                     funs[nm] = { type: type[0], args: numArgs, idx: idx }
                     idx++

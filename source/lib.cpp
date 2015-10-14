@@ -1,4 +1,5 @@
 #include "BitVM.h"
+#include "MicroBitTouchDevelop.h"
 #include <limits.h>
 #include <stdlib.h>
 
@@ -126,63 +127,7 @@ namespace bitvm {
     }
 
 
-    namespace math {
-        int max(int x, int y) { return x < y ? y : x; }
-        int min(int x, int y) { return x < y ? x : y; }
-        int random(int max) {
-          if (max == INT_MIN)
-            return -uBitRandom(INT_MAX);
-          else if (max < 0)
-            return -uBitRandom(-max);
-          else if (max == 0)
-            return 0;
-          else
-            return uBitRandom(max);
-        }
-        // Unspecified behavior for int_min
-        int abs(int x) { return x < 0 ? -x : x; }
-        int mod (int x, int y) { return x % y; }
-
-        int pow(int x, int n) {
-          if (n < 0)
-          return 0;
-          int r = 1;
-          while (n) {
-            if (n & 1)
-              r *= x;
-            n >>= 1;
-            x *= x;
-          }
-          return r;
-        }
-
-        int clamp(int l, int h, int x) {
-          return x < l ? l : x > h ? h : x;
-        }
-
-        int sqrt(int x) {
-          return sqrt(x);
-        }
-
-        int sign(int x) {
-          return x > 0 ? 1 : (x == 0 ? 0 : -1);
-        }
-
-        int pi() { return 3; }
-    }
-
-    namespace number {
-        int lt(int x, int y) { return x < y; }
-        int leq(int x, int y) { return x <= y; }
-        int neq(int x, int y) { return x != y; }
-        int eq(int x, int y) { return x == y; }
-        int gt(int x, int y) { return x > y; }
-        int geq(int x, int y) { return x >= y; }
-        int plus(int x, int y) { return x + y; }
-        int minus(int x, int y) { return x - y; }
-        int div(int x, int y) { return x / y; }
-        int times(int x, int y) { return x * y; }
-
+    namespace bitvm_number {
         void post_to_wall(int n) { printf("%d\n", n); }
 
         RefString *to_character(int x)
@@ -206,28 +151,7 @@ namespace bitvm {
         }
     }
 
-    namespace bits {
-        // See http://blog.regehr.org/archives/1063
-        uint32_t rotl32c (uint32_t x, uint32_t n)
-        {
-          return (x<<n) | (x>>(-n&31));
-        }
-
-        int or_uint32(int x, int y) { return (uint32_t) x | (uint32_t) y; }
-        int and_uint32(int x, int y) { return (uint32_t) x & (uint32_t) y; }
-        int xor_uint32(int x, int y) { return (uint32_t) x ^ (uint32_t) y; }
-        int shift_left_uint32(int x, int y) { return (uint32_t) x << y; }
-        int shift_right_uint32(int x, int y) { return (uint32_t) x >> y; }
-        int rotate_right_uint32(int x, int y) { return rotl32c((uint32_t) x, 32-y); }
-        int rotate_left_uint32(int x, int y) { return rotl32c((uint32_t) x, y); }
-    }
-
-    namespace boolean {
-        int or_(int x, int y) { return x || y; }
-        int and_(int x, int y) { return x && y; }
-        int not_(int x) { return !x; }
-        int equals(int x, int y) { return x == y; }
-
+    namespace bitvm_boolean {
         RefString *sTrue, *sFalse;
         RefString *to_string(int v)
         {
@@ -510,13 +434,13 @@ namespace bitvm {
     }
 } 
 
-#ifdef DESKTOP
-#define mbit(x)
-#else
-#define mbit(x) (void*)micro_bit::x,
+#define mbit(x) (void*)bitvm_micro_bit::x,
+#define mbitc(x) (void*)micro_bit::x,
+
+using namespace touch_develop;
+
 #define INCLUDE_TDLIB
 #include "tdlib.cpp"
-#endif
 
 namespace bitvm {
 
@@ -525,7 +449,7 @@ namespace bitvm {
         (void*)0x7ebbb194,
 
         // PROC0
-        mbit(clearScreen)
+        mbitc(clearScreen)
         mbit(compassCalibrateEnd)
         mbit(compassCalibrateStart)
         mbit(reset)
@@ -533,18 +457,18 @@ namespace bitvm {
         mbit(serialReadDisplayState)
 
         // PROC1
-        (void*)number::post_to_wall,
+        (void*)bitvm_number::post_to_wall,
         (void*)string::post_to_wall,
         (void*)action::run,
         (void*)bitvm::incr,
         (void*)bitvm::decr,
         mbit(clearImage)
-        mbit(enablePitch)
+        mbitc(enablePitch)
         mbit(forever)
-        mbit(pause)
+        mbitc(pause)
         mbit(runInBackground)
-        mbit(setBrightness)
-        mbit(showDigit)
+        mbitc(setBrightness)
+        mbitc(showDigit)
         mbit(showLetter)
         mbit(serialSendString)
         mbit(serialSendImage)
@@ -559,18 +483,18 @@ namespace bitvm {
         (void*)bitvm::stglb,
         (void*)bitvm::stglbRef,
         mbit(plotImage)
-        mbit(analogWritePin)
-        mbit(digitalWritePin)
-        mbit(i2c_write)
+        mbitc(analogWritePin)
+        mbitc(digitalWritePin)
+        mbitc(i2c_write)
         mbit(onButtonPressed)
         mbit(onPinPressed)
-        mbit(pitch)
-        mbit(plot)
+        mbitc(pitch)
+        mbitc(plot)
         mbit(scrollString)
-        mbit(scrollNumber)
-        mbit(setAnalogPeriodUs)
+        mbitc(scrollNumber)
+        mbitc(setAnalogPeriodUs)
         mbit(showImage)
-        mbit(unPlot)
+        mbitc(unPlot)
 
         // PROC3
         (void*)collection::set_at,
@@ -578,7 +502,7 @@ namespace bitvm {
         (void*)bitvm::stfld,
         (void*)bitvm::stfldRef,
         mbit(showLeds)
-        mbit(i2c_write2)
+        mbitc(i2c_write2)
         mbit(onButtonPressedExt)
         mbit(scrollImage)
         
@@ -590,10 +514,9 @@ namespace bitvm {
         (void*)string::mkEmpty,
         (void*)collection::mk,
         (void*)refcollection::mk,
-        (void*)math::pi,
-        mbit(compassHeading)
-        mbit(getBrightness)
-        mbit(getCurrentTime)
+        mbitc(compassHeading)
+        mbitc(getBrightness)
+        mbitc(getCurrentTime)
         mbit(ioP0)
         mbit(ioP1)
         mbit(ioP2)
@@ -625,22 +548,22 @@ namespace bitvm {
         (void*)string::to_character_code,
         (void*)string::to_number,
         (void*)bitvm::mkString,
-        (void*)number::to_character,
-        (void*)number::to_string,
+        (void*)bitvm_number::to_character,
+        (void*)bitvm_number::to_string,
         (void*)collection::count,
         (void*)refcollection::count,
-        (void*)boolean::to_string,
+        (void*)bitvm_boolean::to_string,
         (void*)bitvm::ldglb,
         (void*)bitvm::ldglbRef,
         (void*)bitvm::is_invalid,
-        mbit(analogReadPin)
-        mbit(digitalReadPin)
-        mbit(getAcceleration)
+        mbitc(analogReadPin)
+        mbitc(digitalReadPin)
+        mbitc(getAcceleration)
         mbit(createImageFromString)
         mbit(getImageWidth)
-        mbit(i2c_read)
-        mbit(isButtonPressed)
-        mbit(isPinTouched)
+        mbitc(i2c_read)
+        mbitc(isButtonPressed)
+        mbitc(isPinTouched)
         mbit(displayScreenShot)
 
         // FUNC2
@@ -681,7 +604,7 @@ namespace bitvm {
         (void*)bitvm::ldfld,
         (void*)bitvm::ldfldRef,
         (void*)bitvm::stringLiteral,
-        mbit(point)
+        mbitc(point)
         mbit(serialReadImage)
 
         // FUNC3
