@@ -717,7 +717,7 @@ namespace bitvm {
     return arr;
   }
 
-  int exec_binary()
+  void exec_binary()
   {
     uint32_t pc = 0;
     uint32_t ver = bytecode[pc++];
@@ -745,7 +745,12 @@ namespace bitvm {
     startptr |= 1; // Thumb state
     startptr = ((uint32_t (*)())startptr)();
     printf("stop main\n");
-    return startptr;
+
+#ifdef DEBUG_MEMLEAKS
+    bitvm::debugMemLeaks();
+#endif
+
+    return;
   }
   
 

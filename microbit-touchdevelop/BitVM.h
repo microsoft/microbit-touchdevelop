@@ -48,7 +48,7 @@ namespace bitvm {
   }
 
   uint32_t exec_function(const uint16_t *pc, uint32_t *args);
-  int exec_binary();
+  void exec_binary();
 
 
   extern void * const functions[];
