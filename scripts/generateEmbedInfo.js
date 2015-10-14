@@ -1,3 +1,9 @@
+if (process.argv.length < 4) {
+  console.log("Genarete JSON/JavaScript file embeddeding a given hex file and meta-information about it.")
+  console.log("USAGE: node generateEmbedInfo.js file.hex file.cpp...")
+  process.exit(1)
+}
+
 var fs = require('fs');
 
 var funs = {}
