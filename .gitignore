@@ -1,5 +1,7 @@
 .yotta.json
 build
 *.swp
+microbit-touchdevelop/MicroBitTouchDevelop.h.gch
+test.cpp
 yotta_modules
 yotta_targets

@@ -1,3 +1,5 @@
+#include "MicroBitCustomConfig.h"
+
 #ifndef __MICROBIT_TOUCHDEVELOP_H
 #define __MICROBIT_TOUCHDEVELOP_H
 
@@ -55,6 +57,10 @@ namespace touch_develop {
   namespace string {
     ManagedString concat(ManagedString s1, ManagedString s2) {
       return s1 + s2;
+    }
+
+    ManagedString _(ManagedString s1, ManagedString s2) {
+      return concat(s1, s2);
     }
 
     ManagedString substring(ManagedString s, int i, int j) {
@@ -573,6 +579,10 @@ namespace touch_develop {
       }
     }
 
+    void plotImage(MicroBitImage i, int offset) {
+      uBit.display.print(i, -offset, 0, 0, 0);
+    }
+
     void showImage(MicroBitImage i, int offset) {
       uBit.display.print(i, -offset, 0, 0);
     }
@@ -585,7 +595,7 @@ namespace touch_develop {
     }
 
     // These have their arguments rewritten by the C++ compiler.
-    void plotImage(int w, int h, const uint8_t* bitmap) {
+    void showLeds(int w, int h, const uint8_t* bitmap) {
       showImage(createImage(w,h,bitmap), 0);
     }
 
