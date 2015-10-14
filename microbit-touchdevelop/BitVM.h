@@ -63,7 +63,7 @@ namespace bitvm {
   void debugMemLeaks();
 #endif
 
-
+  // A base abstract class for ref-counted objects.
   class RefObject
   {
   public:
@@ -77,6 +77,8 @@ namespace bitvm {
 #endif
     }
 
+    // Call to disable pointer tracking on the current instance. Currently used
+    // by string literals.
     void canLeak()
     {
 #ifdef DEBUG_MEMLEAKS
@@ -84,6 +86,7 @@ namespace bitvm {
 #endif
     }
 
+    // Increment/decrement the ref-count. Decrementing to zero deletes the current object.
     inline void ref()
     {
       check(refcnt > 0, ERR_REF_DELETED);
@@ -113,12 +116,19 @@ namespace bitvm {
 #endif
     }
 
+    // This is used by index_of function, overridden in RefString
     virtual bool equals(RefObject *other)
     {
       return this == other;
     }
   };
 
+  // The standard calling convention is:
+  //   - when a pointer is loaded from a local/global/field etc, and incr()ed
+  //     (in other words, its presence on stack counts as a reference)
+  //   - after a function call, all pointers are popped off the stack and decr()ed
+  // This does not apply to the RefRecord and st/ld(ref) methods - they unref()
+  // the RefRecord* this.
   inline void incr(uint32_t e)
   {
     if (e) {
@@ -133,6 +143,7 @@ namespace bitvm {
     }
   }
 
+  // Ref-counted string. In future we should be able to just wrap ManagedString
   class RefString
     : public RefObject
   {
@@ -166,6 +177,7 @@ namespace bitvm {
   };
 
 
+  // Ref-counted wrapper around any C++ object.
   template <class T>
   class RefStruct
     : public RefObject
@@ -185,6 +197,7 @@ namespace bitvm {
     RefStruct(const T& i) : v(i) {}
   };
 
+  // A ref-counted collection of primitive objects (Number, Boolean)
   class RefCollection
     : public RefObject
   {
@@ -197,6 +210,8 @@ namespace bitvm {
     }
   };
 
+  // A ref-counted collection of ref-counted objects (String, Image,
+  // user-defined record, another collection)
   class RefRefCollection
     : public RefObject
   {
@@ -219,12 +234,17 @@ namespace bitvm {
     }
   };
 
+  // A ref-counted, user-defined Touch Develop object.
   class RefRecord
     : public RefObject
   {
   public:
-    uint8_t len;
-    uint8_t reflen;
+    // Total number of fields.
+    uint8_t len; 
+    // Number of fields which are ref-counted pointers; these always come first
+    // on the fields[] array.
+    uint8_t reflen; 
+    // The object is allocated, so that there is space at the end for the fields.
     uint32_t fields[];
 
     virtual ~RefRecord()
@@ -241,6 +261,8 @@ namespace bitvm {
       printf("RefRecord %p r=%d size=%d (%d refs)\n", this, refcnt, len, reflen);
     }
 
+    // All of the functions below unref() self. This is for performance reasons -
+    // the code emitter will not emit the unrefs for them.
     inline uint32_t ld(int idx)
     {
       check(reflen <= idx && idx < len, ERR_OUT_OF_BOUNDS, 1);
@@ -279,15 +301,18 @@ namespace bitvm {
   class RefAction;
   typedef uint32_t (*ActionCB)(RefAction *, uint32_t *);
 
+  // Ref-counted function pointer. It's currently always a ()=>void procedure pointer.
   class RefAction
     : public RefObject
   {
   public:
+    // This is the same as for RefRecord.
     uint8_t len;
     uint8_t reflen;
-    ActionCB func;
+    ActionCB func; // The function pointer
     uint32_t fields[];
 
+    // fields[] contain captured locals
     virtual ~RefAction()
     {
       for (int i = 0; i < this->reflen; ++i) {

@@ -98,7 +98,7 @@ namespace bitvm {
     return tmp;
   }
 
-
+  // Store a captured local in a closure. It returns the action, so it can be chained.
   RefAction *stclo(RefAction *a, int idx, uint32_t v)
   {
     a->st(idx, v);
@@ -769,7 +769,7 @@ namespace bitvm {
   //
   // The generateEmbedInfo.js looks for them.
   //
-  // The code generator will assert if the TouchDevelop function
+  // The code generator will assert if the Touch Develop function
   // has different number of input/output parameters than the one
   // defined here.
   //
