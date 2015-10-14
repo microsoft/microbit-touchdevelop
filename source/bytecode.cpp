@@ -1,4 +1,5 @@
 #include "BitVM.h"
+// This file can be overridden to compile-in a specific program
 namespace bitvm {
 const uint16_t bytecode[32000] 
 __attribute__((aligned(0x20)))
