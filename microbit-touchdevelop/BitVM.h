@@ -106,6 +106,8 @@ namespace bitvm {
 
         virtual ~RefObject()
         {
+            // This is just a base class for ref-counted objects.
+            // There is nothing to free yet, but derived classes will have things to free.
 #ifdef DEBUG_MEMLEAKS
             allptrs.erase(this);
 #endif

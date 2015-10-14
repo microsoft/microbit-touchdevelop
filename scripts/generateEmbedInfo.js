@@ -33,7 +33,7 @@ process.argv.slice(3).forEach(function (fn) {
         }
 
         if (type) {
-            m = /^\s*\/\/ (FUNC|PROC)(\d+)/.exec(ln)
+            m = /^\s*\/\/-- (FUNC|PROC)(\d+)/.exec(ln)
             if (/^\s*\};/.test(ln)) {
                 type = null
             } else if (m) {
@@ -42,12 +42,13 @@ process.argv.slice(3).forEach(function (fn) {
             } else if (/^\s*$/.test(ln) || /^\s*#/.test(ln)) {
                 // nothing
             } else {
-                m = /^\s*(\(void\*\))?([\w:]+),?\s*$/.exec(ln)
+                m = /^\s*(\(void\*\))?\&?([\w:]+),?\s*$/.exec(ln)
                 if (!m)
                     m = /^\s*(mbit)c?\(([\w:]+)\)\s*$/.exec(ln)
                 if (m) {
-                    var nm = m[3]
+                    var nm = m[2]
                     if (m[1] == "mbit") nm = "micro_bit::" + nm
+                    nm = nm.replace(/^bitvm_/, "")
                     funs[nm] = { type: type[0], args: numArgs, idx: idx }
                     idx++
                 } else {

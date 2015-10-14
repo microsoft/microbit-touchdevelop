@@ -1,6 +1,6 @@
 #include "BitVM.h"
 #include "MicroBitTouchDevelop.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <climits>
 #include <cmath>
 #include <vector>
@@ -9,11 +9,16 @@
 #define DBG printf
 //#define DBG(...)
 
-
-namespace bitvm {
 #define getstr(off) ((const char*)&bytecode[off])
 #define getbytes(off) ((const uint8_t*)&bytecode[off])
 
+// Macros to reference function pointer in the jump-list
+// c in mbitc - stands for 'common'
+#define mbit(x) (void*)bitvm_micro_bit::x,
+#define mbitc(x) (void*)micro_bit::x,
+
+
+namespace bitvm {
     uint32_t ldfld(RefRecord *r, int idx)
     {
         return r->ld(idx);
@@ -53,7 +58,7 @@ namespace bitvm {
         return v == 0;
     }
 
-    // note the idx comes last - it's more convienient that way in the emitter
+    // note the idx comes last - it's more convenient that way in the emitter
     void stglb(uint32_t v, int idx)
     {
         check(0 <= idx && idx < numGlobals, ERR_OUT_OF_BOUNDS, 7);
@@ -79,6 +84,9 @@ namespace bitvm {
         }
     }
 
+    // The global array strings[] maps string-literal-id (as determined by the
+    // code generator) to the actual string literal, which is a RefString* pointer. 
+    // It is populated lazily. 
     uint32_t stringLiteral(int id, uint32_t off)
     {
         uint32_t tmp = strings[id];
@@ -92,7 +100,6 @@ namespace bitvm {
 
     RefAction *stclo(RefAction *a, int idx, uint32_t v)
     {
-    //DBG("stclo(%p, %d, %d)\n", a, idx, v);
         a->st(idx, v);
         return a;
     }
@@ -152,6 +159,8 @@ namespace bitvm {
     }
 
     namespace bitvm_boolean {
+        // Cache the string literals "true" and "false" when used.
+        // Note that the representation of booleans stays the usual C-one.
         RefString *sTrue, *sFalse;
         RefString *to_string(int v)
         {
@@ -658,7 +667,8 @@ namespace bitvm {
 #endif
 
     // -------------------------------------------------------------------------
-    // Additions - cannot access objects
+    // Functions that expose member fields of objects because the compilation 
+    // scheme only works with the C-style calling convention 
     // -------------------------------------------------------------------------
 
     void compassCalibrateEnd() { uBit.compass.calibrateEnd(); }
@@ -716,8 +726,8 @@ namespace bitvm {
     void serialReadDisplayState() { uBit.serial.readDisplayState(); }
   }
 
-  // TODO call touch_develop::main() at the beginning of generated code
-  
+
+
 void error(ERROR code, int subcode)
 {
     printf("Error: %d [%d]\n", code, subcode);
@@ -729,6 +739,8 @@ uint32_t *globals;
 uint32_t *strings;
 int numGlobals, numStrings;
 
+// This function is here, just so that the jump-tables for functions and enums
+// are always referenced and present in the hex file.
 void linkStuff()
 {
     uint32_t pc = bytecode[numStrings];
@@ -758,11 +770,16 @@ int exec_binary()
     numStrings = bytecode[pc++];
     globals = allocate(numGlobals);
     strings = allocate(numStrings);
+    pc += 3; // reserved
+
+    // We need to make sure there is a code path where linkStuff() is executed
+    // that the optimizing compiler cannot remove.
+    // We know we cannot allocate that many globals, so it's safe to "call" it
+    // under that assumption.
     if (numGlobals > 30000) {
-        // never executed
         linkStuff();
     }
-    pc += 3; // reserved
+
     uint32_t startptr = (uint32_t)&bytecode[pc];
     startptr |= 1; // Thumb state
     startptr = ((uint32_t (*)())startptr)();
@@ -770,19 +787,33 @@ int exec_binary()
     return startptr;
 }
   
-} 
 
-#define mbit(x) (void*)bitvm_micro_bit::x,
-#define mbitc(x) (void*)micro_bit::x,
-
-
-namespace bitvm {
+    // The ARM Thumb generator in the JavaScript code is parsing
+    // the hex file and looks for the two random numbers as present
+    // in the header of this file.
+    //
+    // Then it fetches function pointer addresses from there.
+    //
+    // The way it's setup, it doesn't actually matter what the numbers
+    // are (they are embedded in JSON metadata) provided they
+    // are random enough not to occur elsewhere in the hex file.
+    //
+    // The comments PROC<n> and FUNC<n> refer to the procedures
+    // and functions with given number of arguments.
+    //
+    // The generateEmbedInfo.js looks for them.
+    //
+    // The code generator will assert if the TouchDevelop function
+    // has different number of input/output parameters than the one
+    // defined here.
+    //
+    // It of course should match the C++ implementation.
 
     void * const functions[] __attribute__((aligned(0x10))) = {
         (void*)0x684e35a0,
         (void*)0x7ebbb194,
 
-        // PROC0
+        //-- PROC0
         mbitc(clearScreen)
         mbit(compassCalibrateEnd)
         mbit(compassCalibrateStart)
@@ -790,7 +821,7 @@ namespace bitvm {
         mbit(serialSendDisplayState)
         mbit(serialReadDisplayState)
 
-        // PROC1
+        //-- PROC1
         (void*)bitvm_number::post_to_wall,
         (void*)string::post_to_wall,
         (void*)action::run,
@@ -808,7 +839,7 @@ namespace bitvm {
         mbit(serialSendImage)
         mbit(panic)
 
-        // PROC2
+        //-- PROC2
         (void*)contract::assert,
         (void*)collection::add,
         (void*)collection::remove_at,
@@ -830,7 +861,7 @@ namespace bitvm {
         mbit(showImage)
         mbitc(unPlot)
 
-        // PROC3
+        //-- PROC3
         (void*)collection::set_at,
         (void*)refcollection::set_at,
         (void*)bitvm::stfld,
@@ -840,11 +871,11 @@ namespace bitvm {
         mbit(onButtonPressedExt)
         mbit(scrollImage)
         
-        // PROC4
+        //-- PROC4
         mbit(showAnimation)
         mbit(setImagePixel)
 
-        // FUNC0
+        //-- FUNC0
         (void*)string::mkEmpty,
         (void*)collection::mk,
         (void*)refcollection::mk,
@@ -872,7 +903,7 @@ namespace bitvm {
         mbit(ioP20)
         mbit(serialReadString)
 
-        // FUNC1
+        //-- FUNC1
         (void*)boolean::not_,
         (void*)math::random,
         (void*)math::abs,
@@ -900,7 +931,7 @@ namespace bitvm {
         mbitc(isPinTouched)
         mbit(displayScreenShot)
 
-        // FUNC2
+        //-- FUNC2
         (void*)boolean::or_,
         (void*)boolean::and_,
         (void*)boolean::equals,
@@ -941,7 +972,7 @@ namespace bitvm {
         mbitc(point)
         mbit(serialReadImage)
 
-        // FUNC3
+        //-- FUNC3
         (void*)math::clamp,
         (void*)string::substring,
         (void*)collection::index_of,
@@ -952,6 +983,8 @@ namespace bitvm {
         mbit(getImagePixel)
     };
 
+    // This uses the same mechanism with the magic numbers as the
+    // functions array above.
     const int enums[] __attribute__((aligned(0x10))) = {
         0x44f4ecc1,
         0x33e7fa08,
