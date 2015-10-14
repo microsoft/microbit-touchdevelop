@@ -628,45 +628,6 @@ namespace bitvm {
     }
 
     // -------------------------------------------------------------------------
-    // BLE Events
-    // -------------------------------------------------------------------------
-
-#if false
-    void generate_event(int id, int event) {
-      MicroBitEvent e(id, event);
-    }
-
-    void on_event(int id, void (*a)(int)) {
-      if (a != NULL) {
-        uBit.MessageBus.ignore(
-          id,
-          MICROBIT_EVT_ANY,
-          (void (*)(MicroBitEvent, void*)) callback1);
-        uBit.MessageBus.listen(
-          id,
-          MICROBIT_EVT_ANY,
-          (void (*)(MicroBitEvent, void*)) callback1,
-          (void*) a);
-      }
-    }
-
-    namespace events {
-      void remote_control(int event) {
-        micro_bit::generate_event(MES_REMOTE_CONTROL_ID,event);
-      }
-      void camera(int event) {
-        micro_bit::generate_event(MES_CAMERA_ID, event);
-      }
-      void audio_recorder(int event) {
-        micro_bit::generate_event(MES_AUDIO_RECORDER_ID, event);
-      }
-      void alert(int event) {
-        micro_bit::generate_event(MES_ALERTS_ID, event);
-      }
-    }
-#endif
-
-    // -------------------------------------------------------------------------
     // Functions that expose member fields of objects because the compilation 
     // scheme only works with the C-style calling convention 
     // -------------------------------------------------------------------------
