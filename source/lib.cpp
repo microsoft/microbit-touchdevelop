@@ -953,9 +953,6 @@ namespace bitvm {
     const int enums[] __attribute__((aligned(0x10))) = {
         0x44f4ecc1,
         0x33e7fa08,
-        ERR_BAD_OPCODE,
-        ERR_STACK_OVERFLOW,
-        ERR_STACK_UNDERFLOW,
         ERR_INVALID_FUNCTION_HEADER,
         ERR_INVALID_BINARY_HEADER,
         ERR_STACK_ONRETURN,

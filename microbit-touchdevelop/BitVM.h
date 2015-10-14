@@ -15,78 +15,7 @@
 
 namespace bitvm {
 
-    /*OPCODES*/ typedef enum {
-        NOOP,         // S0
-        RET0,         // S0
-        RET1,         // S-1
-
-        LDZERO,       // S1
-        LDCONST8,     // S1
-        LDCONST16,    // S1
-        LDCONST32,    // S1
-
-        LDPTR,        // S1
-        LDARG,        // S1
-        LDLOC,        // S1
-        LDARGREF,     // S1
-        LDLOCREF,     // S1
-        LDFLD,        // S0
-        LDFLDREF,     // S0
-        LDGLB,        // S1
-        LDGLBREF,     // S1
-        LDSTRREF,     // S1
-        LDENUM,       // S1
-        STGLB,        // S-1
-        STGLBREF,     // S-1
-        STFLD,        // S-2
-        STFLDREF,     // S-2
-        STCLO,        // S-1
-        STLOC,        // S-1
-        STLOCREF,     // S-1
-        CLRLOCREF,    // S0
-        POP,          // S-1
-        POPREF,       // S-1
-        NOT,          // S0
-        ISNULL,       // S0
-        NEG,          // S0
-        JMP,          // S0
-        JMPZ,         // S-1
-        JMPNZ,        // S-1
-
-        UCALLPROC,    // SX
-        UCALLFUNC,    // SX
-        FLATUCALLPROC,    // SX
-        FLATUCALLFUNC,    // SX
-
-        FLATCALL0PROC,    // S0
-        FLATCALL1PROC,    // S-1
-        FLATCALL2PROC,    // S-2
-        FLATCALL3PROC,    // S-3
-        FLATCALL4PROC,    // S-4
-
-        FLATCALL0FUNC,    // S1
-        FLATCALL1FUNC,    // S0
-        FLATCALL2FUNC,    // S-1
-        FLATCALL3FUNC,    // S-2
-        FLATCALL4FUNC,    // S-3
-
-        CALL0PROC,    // S0
-        CALL1PROC,    // S-1
-        CALL2PROC,    // S-2
-        CALL3PROC,    // S-3
-        CALL4PROC,    // S-4
-
-        CALL0FUNC,    // S1
-        CALL1FUNC,    // S0
-        CALL2FUNC,    // S-1
-        CALL3FUNC,    // S-2
-        CALL4FUNC,    // S-3
-    } OPCODE;
-
     typedef enum {
-        ERR_BAD_OPCODE = 1,
-        ERR_STACK_OVERFLOW = 2,
-        ERR_STACK_UNDERFLOW = 3,
         ERR_INVALID_FUNCTION_HEADER = 4,
         ERR_INVALID_BINARY_HEADER = 5,
         ERR_STACK_ONRETURN = 6,
