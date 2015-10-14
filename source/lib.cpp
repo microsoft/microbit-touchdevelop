@@ -67,6 +67,18 @@ namespace bitvm {
         globals[idx] = v;
     }
 
+    namespace string {
+        RefString *fromLiteral(const char *p)
+        {
+            RefString *res = new RefString();
+            res->refcnt = 2; // never unrefed
+            res->len = strlen(p);
+            res->data = (char*)p;
+            res->canLeak();
+            return res;
+        }
+    }
+
     uint32_t stringLiteral(int id, uint32_t off)
     {
         uint32_t tmp = strings[id];
@@ -169,16 +181,6 @@ namespace bitvm {
 
     namespace string {
         RefString *dempty;
-
-        RefString *fromLiteral(const char *p)
-        {
-            RefString *res = new RefString();
-            res->refcnt = 2; // never unrefed
-            res->len = strlen(p);
-            res->data = (char*)p;
-            res->canLeak();
-            return res;
-        }
 
         RefString *mkEmpty()
         {
