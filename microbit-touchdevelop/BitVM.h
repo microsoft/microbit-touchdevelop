@@ -340,6 +340,40 @@ namespace bitvm {
       return r;
     }
   };
+
+  // These two are used to represent locals written from inside inline functions
+  class RefLocal
+    : public RefObject
+  {
+  public:
+    uint32_t v;
+
+    virtual void print()
+    {
+      printf("RefLocal %p r=%d v=%d\n", this, refcnt, v);
+    }
+
+    RefLocal() : v(0) {}
+  };
+
+  class RefRefLocal
+    : public RefObject
+  {
+  public:
+    uint32_t v;
+
+    virtual void print()
+    {
+      printf("RefRefLocal %p r=%d v=%p\n", this, refcnt, (void*)v);
+    }
+
+    RefRefLocal() : v(0) {}
+
+    virtual ~RefRefLocal()
+    {
+      decr(v);
+    }
+  };
 }
 
 #endif

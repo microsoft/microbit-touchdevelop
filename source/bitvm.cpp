@@ -20,6 +20,41 @@
 
 namespace bitvm {
 
+  uint32_t ldloc(RefLocal *r)
+  {
+    //DBG("LD "); r->print();
+    return r->v;
+  }
+
+  uint32_t ldlocRef(RefRefLocal *r)
+  {
+    uint32_t tmp = r->v;
+    incr(tmp);
+    return tmp;
+  }
+
+  void stloc(RefLocal *r, uint32_t v)
+  {
+    r->v = v;
+    //DBG("ST "); r->print();
+  }
+
+  void stlocRef(RefRefLocal *r, uint32_t v)
+  {
+    decr(r->v);
+    r->v = v;
+  }
+
+  RefLocal *mkloc()
+  {
+    return new RefLocal();
+  }
+
+  RefRefLocal *mklocRef()
+  {
+    return new RefRefLocal();
+  }
+
   uint32_t ldfld(RefRecord *r, int idx)
   {
     return r->ld(idx);
@@ -76,6 +111,7 @@ namespace bitvm {
   // Store a captured local in a closure. It returns the action, so it can be chained.
   RefAction *stclo(RefAction *a, int idx, uint32_t v)
   {
+    //DBG("STCLO "); a->print(); DBG("@%d = %p\n", idx, (void*)v);
     a->st(idx, v);
     return a;
   }
@@ -381,6 +417,7 @@ namespace bitvm {
 
     void run(RefAction *a)
     {
+      //DBG("run "); a->print();
       a->run();
     }
   }
@@ -748,6 +785,8 @@ namespace bitvm {
     (void*)refcollection::remove_at,
     (void*)bitvm::stglb,
     (void*)bitvm::stglbRef,
+    (void*)bitvm::stloc,
+    (void*)bitvm::stlocRef,
     mbit(plotImage)
     mbitc(analogWritePin)
     mbitc(digitalWritePin)
@@ -781,6 +820,8 @@ namespace bitvm {
     (void*)collection::mk,
     (void*)refcollection::mk,
     (void*)bitvm::const3,
+    (void*)bitvm::mkloc,
+    (void*)bitvm::mklocRef,
     mbitc(compassHeading)
     mbitc(getBrightness)
     mbitc(getCurrentTime)
@@ -821,6 +862,8 @@ namespace bitvm {
     (void*)bitvm_boolean::to_string,
     (void*)bitvm::ldglb,
     (void*)bitvm::ldglbRef,
+    (void*)bitvm::ldloc,
+    (void*)bitvm::ldlocRef,
     (void*)bitvm::is_invalid,
     mbitc(analogReadPin)
     mbitc(digitalReadPin)
