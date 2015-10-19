@@ -371,9 +371,10 @@ namespace touch_develop {
     user_types::DateTime now();
   }
 
-  namespace touch_develop {
-    void main();
-  }
+  // -------------------------------------------------------------------------
+  // Called at start-up by the generated code (currently not enabled).
+  // -------------------------------------------------------------------------
+  void internal_main();
 }
 
 #endif

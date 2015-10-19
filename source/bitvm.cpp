@@ -696,7 +696,9 @@ namespace bitvm {
 
     printf("start!\n");
 
-    ::touch_develop::touch_develop::main();
+    // XXX re-enable once the calibration code is fixed and [editor/embedded.ts]
+    // properly prepends a call to [internal_main].
+    // ::touch_develop::internal_main();
 
     check(ver == V2BINARY, ERR_INVALID_BINARY_HEADER);
     numGlobals = bytecode[pc++];

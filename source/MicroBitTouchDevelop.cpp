@@ -705,15 +705,13 @@ namespace touch_develop {
   }
 
   // -------------------------------------------------------------------------
-  // Called at start-up by the generated code
+  // Called at start-up by the generated code (currently not enabled).
   // -------------------------------------------------------------------------
-  namespace touch_develop {
-    void main() {
-      uBit.MessageBus.listen(
-        MICROBIT_ID_COMPASS,
-        MICROBIT_COMPASS_EVT_CAL_REQUIRED,
-        micro_bit::on_calibrate_required);
-    }
+  void internal_main() {
+    uBit.MessageBus.listen(
+      MICROBIT_ID_COMPASS,
+      MICROBIT_COMPASS_EVT_CAL_REQUIRED,
+      micro_bit::on_calibrate_required);
   }
 }
 
