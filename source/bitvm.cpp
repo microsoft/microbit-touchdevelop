@@ -808,7 +808,6 @@ namespace bitvm {
     (void*)refcollection::set_at,
     (void*)bitvm::stfld,
     (void*)bitvm::stfldRef,
-    mbit(showLeds)
     mbitc(i2c_write2)
     mbit(onButtonPressedExt)
     mbit(scrollImage)
@@ -816,6 +815,7 @@ namespace bitvm {
     //-- PROC4
     mbit(showAnimation)
     mbit(setImagePixel)
+    mbit(showLeds)
 
     //-- FUNC0
     (void*)string::mkEmpty,
