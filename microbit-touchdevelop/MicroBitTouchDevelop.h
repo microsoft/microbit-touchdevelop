@@ -583,8 +583,17 @@ namespace touch_develop {
       uBit.display.print(i, -offset, 0, 0, 0);
     }
 
+    void plotLeds(int w, int h, const uint8_t* bitmap) {
+      plotImage(MicroBitImage(w, h, bitmap), 0);
+    }
+
     void showImage(MicroBitImage i, int offset) {
       uBit.display.print(i, -offset, 0, 0);
+    }
+
+    // These have their arguments rewritten by the C++ compiler.
+    void showLeds(int w, int h, const uint8_t* bitmap, int delay) {
+      uBit.display.print(MicroBitImage(w, h, bitmap), 0, 0, 0, delay);
     }
 
     void scrollImage(MicroBitImage i, int offset, int delay) {
@@ -592,11 +601,6 @@ namespace touch_develop {
         showImage(i, 0);
       else
         uBit.display.animate(i, delay, offset, 0);
-    }
-
-    // These have their arguments rewritten by the C++ compiler.
-    void showLeds(int w, int h, const uint8_t* bitmap) {
-      showImage(createImage(w,h,bitmap), 0);
     }
 
     void showAnimation(int w, int h, const uint8_t* bitmap, int ms) {
