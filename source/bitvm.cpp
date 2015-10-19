@@ -594,8 +594,8 @@ namespace bitvm {
     }
 
     // These have their arguments rewritten by the C++ compiler.
-    void showLeds(int w, int h, uint32_t bitmap) {
-      ::touch_develop::micro_bit::showLeds(w, h, getbytes(bitmap));
+    void showLeds(int w, int h, uint32_t bitmap, int delay) {
+      ::touch_develop::micro_bit::showLeds(w, h, getbytes(bitmap), delay);
     }
 
     void showAnimation(int w, int h, uint32_t bitmap, int ms) {
