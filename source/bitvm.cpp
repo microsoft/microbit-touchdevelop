@@ -598,6 +598,10 @@ namespace bitvm {
       ::touch_develop::micro_bit::showLeds(w, h, getbytes(bitmap), delay);
     }
 
+    void plotLeds(int w, int h, uint32_t bitmap) {
+      ::touch_develop::micro_bit::plotLeds(w, h, getbytes(bitmap));
+    }
+
     void showAnimation(int w, int h, uint32_t bitmap, int ms) {
       ::touch_develop::micro_bit::showAnimation(w, h, getbytes(bitmap), ms);
     }
@@ -811,6 +815,7 @@ namespace bitvm {
     mbitc(i2c_write2)
     mbit(onButtonPressedExt)
     mbit(scrollImage)
+    mbit(plotLeds)
     
     //-- PROC4
     mbit(showAnimation)
