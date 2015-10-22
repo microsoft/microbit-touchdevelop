@@ -31,7 +31,7 @@ namespace bitvm {
     ERR_SIZE = 9,
   } ERROR;
 
-  const int V2BINARY = 0x4203;
+  const int V3BINARY = 0x4204;
 
   extern uint32_t *globals;
   extern uint32_t *strings;
@@ -47,14 +47,9 @@ namespace bitvm {
     if (!cond) error(code, subcode);
   }
 
-  uint32_t exec_function(const uint16_t *pc, uint32_t *args);
-  void exec_binary();
+  void exec_binary(uint16_t *pc);
 
-
-  extern void * const functions[];
-  extern const int enums[];
-
-  extern const unsigned short bytecode[];
+  extern const uint32_t functionsAndBytecode[16000];
 
 
 #ifdef DEBUG_MEMLEAKS
@@ -129,14 +124,17 @@ namespace bitvm {
   //   - after a function call, all pointers are popped off the stack and decr()ed
   // This does not apply to the RefRecord and st/ld(ref) methods - they unref()
   // the RefRecord* this.
-  inline void incr(uint32_t e)
+  // XXX 'inline' needs to be on separate line for embedding script
+  inline
+  void incr(uint32_t e)
   {
     if (e) {
       ((RefObject*)e)->ref();
     }
   }
 
-  inline void decr(uint32_t e)
+  inline 
+  void decr(uint32_t e)
   {
     if (e) {
       ((RefObject*)e)->unref();
@@ -321,7 +319,7 @@ namespace bitvm {
 
     virtual void print()
     {
-      printf("RefAction %p r=%d pc=0x%lx size=%d (%d refs)\n", this, refcnt, ((const uint16_t*)func - bytecode) * 2, len, reflen);
+      printf("RefAction %p r=%d pc=0x%lx size=%d (%d refs)\n", this, refcnt, (const uint8_t*)func - (const uint8_t*)functionsAndBytecode, len, reflen);
     }
 
     inline void st(int idx, uint32_t v)

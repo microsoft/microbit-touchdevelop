@@ -9,6 +9,8 @@
 #define DBG printf
 //#define DBG(...)
 
+#define bytecode ((uint16_t*)functionsAndBytecode)
+
 #define getstr(off) ((const char*)&bytecode[off])
 #define getbytes(off) ((const uint8_t*)&bytecode[off])
 
@@ -130,6 +132,8 @@ namespace bitvm {
     }    
     printf("\n");
   }
+#else
+  void debugMemLeaks() {}
 #endif
 
   namespace bitvm_number {
@@ -146,8 +150,7 @@ namespace bitvm {
     }
   }
 
-  namespace contract
-  {
+  namespace contract {
     void assert(int cond, uint32_t msg)
     {
       if (cond == 0) {
@@ -676,16 +679,6 @@ namespace bitvm {
   uint32_t *strings;
   int numGlobals, numStrings;
 
-  // This function is here, just so that the jump-tables for functions and enums
-  // are always referenced and present in the hex file.
-  void linkStuff()
-  {
-    uint32_t pc = bytecode[numStrings];
-    pc += (int)enums[pc];
-    pc += (int)functions[pc];
-    if (pc < 100) linkStuff();
-  }
-
   uint32_t *allocate(uint16_t sz)
   {
     uint32_t *arr = new uint32_t[sz];
@@ -693,33 +686,23 @@ namespace bitvm {
     return arr;
   }
 
-  void exec_binary()
+  void exec_binary(uint16_t *pc)
   {
-    uint32_t pc = 0;
-    uint32_t ver = bytecode[pc++];
-
     printf("start!\n");
 
     // XXX re-enable once the calibration code is fixed and [editor/embedded.ts]
     // properly prepends a call to [internal_main].
     // ::touch_develop::internal_main();
 
-    check(ver == V2BINARY, ERR_INVALID_BINARY_HEADER);
-    numGlobals = bytecode[pc++];
-    numStrings = bytecode[pc++];
+    uint32_t ver = *pc++;
+    check(ver == V3BINARY, ERR_INVALID_BINARY_HEADER);
+    numGlobals = *pc++;
+    numStrings = *pc++;
     globals = allocate(numGlobals);
     strings = allocate(numStrings);
     pc += 3; // reserved
 
-    // We need to make sure there is a code path where linkStuff() is executed
-    // that the optimizing compiler cannot remove.
-    // We know we cannot allocate that many globals, so it's safe to "call" it
-    // under that assumption.
-    if (numGlobals > 30000) {
-      linkStuff();
-    }
-
-    uint32_t startptr = (uint32_t)&bytecode[pc];
+    uint32_t startptr = (uint32_t)pc;
     startptr |= 1; // Thumb state
     startptr = ((uint32_t (*)())startptr)();
     printf("stop main\n");
@@ -733,260 +716,23 @@ namespace bitvm {
   
 
   // The ARM Thumb generator in the JavaScript code is parsing
-  // the hex file and looks for the two random numbers as present
-  // in the header of this file.
+  // the hex file and looks for the magic numbers as present here.
   //
   // Then it fetches function pointer addresses from there.
-  //
-  // The way it's setup, it doesn't actually matter what the numbers
-  // are (they are embedded in JSON metadata) provided they
-  // are random enough not to occur elsewhere in the hex file.
-  //
-  // The comments PROC<n> and FUNC<n> refer to the procedures
-  // and functions with given number of arguments.
-  //
-  // The generateEmbedInfo.js looks for them.
   //
   // The code generator will assert if the Touch Develop function
   // has different number of input/output parameters than the one
   // defined here.
   //
   // It of course should match the C++ implementation.
-
-  void * const functions[] __attribute__((aligned(0x10))) = {
-    (void*)0x684e35a0,
-    (void*)0x7ebbb194,
-
-    //-- PROC0
-    mbitc(clearScreen)
-    mbit(compassCalibrateEnd)
-    mbit(compassCalibrateStart)
-    mbit(reset)
-    mbit(serialSendDisplayState)
-    mbit(serialReadDisplayState)
-
-    //-- PROC1
-    (void*)bitvm_number::post_to_wall,
-    (void*)string::post_to_wall,
-    (void*)action::run,
-    (void*)bitvm::incr,
-    (void*)bitvm::decr,
-    mbit(clearImage)
-    mbitc(enablePitch)
-    mbit(forever)
-    mbitc(pause)
-    mbit(runInBackground)
-    mbitc(setBrightness)
-    mbitc(showDigit)
-    mbit(showLetter)
-    mbit(serialSendString)
-    mbit(serialSendImage)
-    mbit(panic)
-
-    //-- PROC2
-    (void*)contract::assert,
-    (void*)collection::add,
-    (void*)collection::remove_at,
-    (void*)refcollection::add,
-    (void*)refcollection::remove_at,
-    (void*)bitvm::stglb,
-    (void*)bitvm::stglbRef,
-    (void*)bitvm::stloc,
-    (void*)bitvm::stlocRef,
-    mbit(plotImage)
-    mbitc(analogWritePin)
-    mbitc(digitalWritePin)
-    mbitc(i2c_write)
-    mbit(onButtonPressed)
-    mbit(onPinPressed)
-    mbitc(pitch)
-    mbitc(plot)
-    mbit(scrollString)
-    mbitc(scrollNumber)
-    mbitc(setAnalogPeriodUs)
-    mbit(showImage)
-    mbitc(unPlot)
-
-    //-- PROC3
-    (void*)collection::set_at,
-    (void*)refcollection::set_at,
-    (void*)bitvm::stfld,
-    (void*)bitvm::stfldRef,
-    mbitc(i2c_write2)
-    mbit(onButtonPressedExt)
-    mbit(scrollImage)
-    mbit(plotLeds)
-    
-    //-- PROC4
-    mbit(showAnimation)
-    mbit(setImagePixel)
-    mbit(showLeds)
-
-    //-- FUNC0
-    (void*)string::mkEmpty,
-    (void*)collection::mk,
-    (void*)refcollection::mk,
-    (void*)bitvm::const3,
-    (void*)bitvm::mkloc,
-    (void*)bitvm::mklocRef,
-    mbitc(compassHeading)
-    mbitc(getBrightness)
-    mbitc(getCurrentTime)
-    mbit(ioP0)
-    mbit(ioP1)
-    mbit(ioP2)
-    mbit(ioP3)
-    mbit(ioP4)
-    mbit(ioP5)
-    mbit(ioP6)
-    mbit(ioP7)
-    mbit(ioP8)
-    mbit(ioP9)
-    mbit(ioP10)
-    mbit(ioP11)
-    mbit(ioP12)
-    mbit(ioP13)
-    mbit(ioP14)
-    mbit(ioP15)
-    mbit(ioP16)
-    mbit(ioP19)
-    mbit(ioP20)
-    mbit(serialReadString)
-
-    //-- FUNC1
-    (void*)boolean::not_,
-    (void*)math::random,
-    (void*)math::abs,
-    (void*)math::sqrt,
-    (void*)math::sign,
-    (void*)string::count,
-    (void*)string::to_character_code,
-    (void*)string::to_number,
-    (void*)bitvm_number::to_character,
-    (void*)bitvm_number::to_string,
-    (void*)collection::count,
-    (void*)refcollection::count,
-    (void*)bitvm_boolean::to_string,
-    (void*)bitvm::ldglb,
-    (void*)bitvm::ldglbRef,
-    (void*)bitvm::ldloc,
-    (void*)bitvm::ldlocRef,
-    (void*)bitvm::is_invalid,
-    mbitc(analogReadPin)
-    mbitc(digitalReadPin)
-    mbitc(getAcceleration)
-    mbit(createImageFromString)
-    mbit(getImageWidth)
-    mbitc(i2c_read)
-    mbitc(isButtonPressed)
-    mbitc(isPinTouched)
-    mbit(displayScreenShot)
-
-    //-- FUNC2
-    (void*)boolean::or_,
-    (void*)boolean::and_,
-    (void*)boolean::equals,
-    (void*)bits::or_uint32,
-    (void*)bits::and_uint32,
-    (void*)bits::xor_uint32,
-    (void*)bits::shift_left_uint32,
-    (void*)bits::shift_right_uint32,
-    (void*)bits::rotate_right_uint32,
-    (void*)bits::rotate_left_uint32,
-    (void*)number::lt,
-    (void*)number::leq,
-    (void*)number::neq,
-    (void*)number::eq,
-    (void*)number::gt,
-    (void*)number::geq,
-    (void*)number::plus,
-    (void*)number::minus,
-    (void*)number::div,
-    (void*)number::times,
-    (void*)math::max,
-    (void*)math::min,
-    (void*)math::mod,
-    (void*)math::pow,
-    (void*)string::concat_op,
-    (void*)string::concat,
-    (void*)string::equals,
-    (void*)string::code_at,
-    (void*)string::at,
-    (void*)collection::at,
-    (void*)collection::remove,
-    (void*)refcollection::at,
-    (void*)refcollection::remove,
-    (void*)record::mk,
-    (void*)bitvm::ldfld,
-    (void*)bitvm::ldfldRef,
-    (void*)bitvm::stringLiteral,
-    mbitc(point)
-    mbit(serialReadImage)
-
-    //-- FUNC3
-    (void*)math::clamp,
-    (void*)string::substring,
-    (void*)collection::index_of,
-    (void*)refcollection::index_of,
-    (void*)action::mk,
-    (void*)bitvm::stclo,
-    mbit(createImage)
-    mbit(getImagePixel)
+  
+  const uint32_t functionsAndBytecode[16000] __attribute__((aligned(0x20))) = {
+    // Magic header to find it in the file
+    0x08010801, 0x42424242, 0x08010801, 0x8de9d83e, 
+    // List of pointers generated by scripts/functionTable.js
+    #include "build/pointers.inc"
   };
 
-  // This uses the same mechanism with the magic numbers as the
-  // functions array above.
-  const int enums[] __attribute__((aligned(0x10))) = {
-    0x44f4ecc1,
-    0x33e7fa08,
-    ERR_INVALID_FUNCTION_HEADER,
-    ERR_INVALID_BINARY_HEADER,
-    ERR_STACK_ONRETURN,
-    ERR_REF_DELETED,
-    ERR_OUT_OF_BOUNDS,
-    ERR_SIZE,
-    MES_ALERT_EVT_ALARM1,
-    MES_ALERT_EVT_ALARM2,
-    MES_ALERT_EVT_ALARM3,
-    MES_ALERT_EVT_ALARM4,
-    MES_ALERT_EVT_ALARM5,
-    MES_ALERT_EVT_ALARM6,
-    MES_ALERT_EVT_DISPLAY_TOAST,
-    MES_ALERT_EVT_FIND_MY_PHONE,
-    MES_ALERT_EVT_PLAY_RINGTONE,
-    MES_ALERT_EVT_PLAY_SOUND,
-    MES_ALERT_EVT_VIBRATE,
-    MES_AUDIO_RECORDER_EVT_LAUNCH,
-    MES_AUDIO_RECORDER_EVT_START_CAPTURE,
-    MES_AUDIO_RECORDER_EVT_STOP_CAPTURE,
-    MES_AUDIO_RECORDER_EVT_STOP,
-    MES_CAMERA_EVT_LAUNCH_PHOTO_MODE,
-    MES_CAMERA_EVT_LAUNCH_VIDEO_MODE,
-    MES_CAMERA_EVT_START_VIDEO_CAPTURE,
-    MES_CAMERA_EVT_STOP_PHOTO_MODE,
-    MES_CAMERA_EVT_STOP_VIDEO_CAPTURE,
-    MES_CAMERA_EVT_STOP_VIDEO_MODE,
-    MES_CAMERA_EVT_TAKE_PHOTO,
-    MES_CAMERA_EVT_TOGGLE_FRONT_REAR,
-    MES_DEVICE_INFO_ID,
-    MES_PLAY_CONTROLLER_ID,
-    MES_REMOTE_CONTROL_EVT_FORWARD,
-    MES_REMOTE_CONTROL_EVT_NEXTTRACK,
-    MES_REMOTE_CONTROL_EVT_PAUSE,
-    MES_REMOTE_CONTROL_EVT_PLAY,
-    MES_REMOTE_CONTROL_EVT_PREVTRACK,
-    MES_REMOTE_CONTROL_EVT_REWIND,
-    MES_REMOTE_CONTROL_EVT_STOP,
-    MES_REMOTE_CONTROL_EVT_VOLUMEDOWN,
-    MES_REMOTE_CONTROL_EVT_VOLUMEUP,
-    MES_SIGNAL_STRENGTH_ID,
-    MICROBIT_ID_BUTTON_A,
-    MICROBIT_ID_BUTTON_AB,
-    MICROBIT_ID_BUTTON_B,
-    MICROBIT_ID_IO_P0,
-    MICROBIT_ID_IO_P1,
-    MICROBIT_ID_IO_P2,
-  };
 
 }
 
