@@ -12,4 +12,5 @@ all:
 
 run: all
 	cp build/bytecode.js $(TD)/microbit/bytecode.js
+	cp build/protos.h $(TD)/microbit/protos.h
 	cd $(TD) && jake

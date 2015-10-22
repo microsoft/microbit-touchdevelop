@@ -54,7 +54,8 @@ process.argv.slice(2).forEach(function (fn) {
 
         var m = /^(\s*)(class|namespace) (\w+)/.exec(ln)
         if (!/;$/.test(ln) && m) {
-            nsStack.push({ ns: m[3], endMark: m[1] + "}" + (m[2] == "class" ? ";" : ""), lineNo: lineNo })
+            var isClass = m[2] == "class"
+            nsStack.push({ ns: m[3], endMark: m[1] + "}" + (isClass ? ";" : ""), lineNo: lineNo, isClass: isClass })
             justPushed = true;
         } else {
             if (top.endMark == ln) {
@@ -65,6 +66,9 @@ process.argv.slice(2).forEach(function (fn) {
 
         m = /^(\s*)(\w+)([\*\&]*\s+[\*\&]*)(\w+)\s*\(([^\(\)]*)\)\s*(;\s*$|\{|$)/.exec(ln)
         if (top && m && !/^(else|return)$/.test(m[2])) {
+            if (top.isClass) {
+                return; // no class methods yet
+            }
             if (top.fnIndent != m[1]) {
                 console.log("skip by indent:", ln)
                 return;
@@ -98,7 +102,7 @@ process.argv.slice(2).forEach(function (fn) {
             basenames[name] = 1;
             var fmt = (s,n) => s.length >= n ? s + " " : (s + "                                                    ").slice(0, n)
             var rettp = (m[2] + m[3]).replace(/\s+/, "")
-            inf.proto = fmt(rettp, 15) + fmt(name, 25) + "(" + m[5] + ");";
+            inf.proto = fmt(rettp, 15) + fmt(name, 30) + fmt("(" + m[5] + ");", 40)
         }
     })
 
@@ -123,9 +127,14 @@ funnames.forEach(bn => {
             inf.name = bn
             if (inf.full == "touch_develop::" + bn)
                 delete inf.full;
-            ptrs += `(uint32_t)(void*)::${fn},  // ${inf.type + inf.args} {shim:${bn}}\n`;
+            let tp = inf.type + inf.args
+            if (inf.full == "bitvm::" + bn)
+              tp += " bvm"
+            if (inf.full == "bitvm::bitvm_" + bn)
+              tp += " over"
+            ptrs += `(uint32_t)(void*)::${fn},  // ${tp} {shim:${bn}}\n`;
             functions.push(inf)
-            protos += inf.proto + "\n";
+            protos += inf.proto + "// " + tp + "\n";
             break;
         }
     }
@@ -136,10 +145,19 @@ var metainfo = {
   enums: enums
 }
 
+function write(fn, cont)
+{
+    if (fs.existsSync(fn)) {
+        var curr = fs.readFileSync(fn, "utf8")
+        if (curr == cont)
+            return;
+    }
+    fs.writeFileSync(fn, cont)
+}
 
-fs.writeFileSync("build/pointers.inc", ptrs)
-fs.writeFileSync("build/protos.h", protos)
-fs.writeFileSync("build/metainfo.json", JSON.stringify(metainfo, null, 2))
+write("build/pointers.inc", ptrs)
+write("build/protos.h", protos)
+write("build/metainfo.json", JSON.stringify(metainfo, null, 2))
 
 
 // vim: ts=4 sw=4
