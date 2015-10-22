@@ -82,11 +82,12 @@ process.argv.slice(2).forEach(function (fn) {
             else
                 args = m[5].replace(/[^,]/g, "").length + 1
 
-            fullfuns[name] = {
+            var inf = fullfuns[name] = {
+                proto: "",
                 name: name,
                 type: tp,
                 args: args,
-                full: name
+                full: name,
             }
 
             prefixes.forEach(p => {
@@ -95,6 +96,9 @@ process.argv.slice(2).forEach(function (fn) {
                     name = name.slice(p.length)
             })
             basenames[name] = 1;
+            var fmt = (s,n) => s.length >= n ? s + " " : (s + "                                                    ").slice(0, n)
+            var rettp = (m[2] + m[3]).replace(/\s+/, "")
+            inf.proto = fmt(rettp, 15) + fmt(name, 25) + "(" + m[5] + ");";
         }
     })
 
@@ -105,19 +109,23 @@ process.argv.slice(2).forEach(function (fn) {
 })
 
 var ptrs = ""
+var protos = ""
 var functions = []
 
-Object.keys(basenames).forEach(bn => {
+var funnames = Object.keys(basenames)
+funnames.sort()
+funnames.forEach(bn => {
     for (let p of prefixes) {
         let fn = p + bn
         let inf = fullfuns[fn]
         if (inf) {
-            // basenames[bn] = inf
+            //basenames[bn] = inf
             inf.name = bn
             if (inf.full == "touch_develop::" + bn)
                 delete inf.full;
             ptrs += `(uint32_t)(void*)::${fn},  // ${inf.type + inf.args} {shim:${bn}}\n`;
             functions.push(inf)
+            protos += inf.proto + "\n";
             break;
         }
     }
@@ -130,6 +138,7 @@ var metainfo = {
 
 
 fs.writeFileSync("build/pointers.inc", ptrs)
+fs.writeFileSync("build/protos.h", protos)
 fs.writeFileSync("build/metainfo.json", JSON.stringify(metainfo, null, 2))
 
 
