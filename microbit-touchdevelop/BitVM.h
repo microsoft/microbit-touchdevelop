@@ -173,7 +173,7 @@ namespace bitvm {
 
   // A ref-counted collection of either primitive or ref-counted objects (String, Image,
   // user-defined record, another collection)
-  class RefRefCollection
+  class RefCollection
     : public RefObject
   {
   public:
@@ -182,12 +182,12 @@ namespace bitvm {
     uint16_t flags;
     std::vector<uint32_t> data;
 
-    RefRefCollection(uint16_t f)
+    RefCollection(uint16_t f)
     {
       flags = f;
     }
 
-    virtual ~RefRefCollection()
+    virtual ~RefCollection()
     {
       // printf("KILL "); this->print();
       if (flags & 1)
@@ -200,7 +200,7 @@ namespace bitvm {
 
     virtual void print()
     {
-      printf("RefRefCollection %p r=%d flags=%d size=%d [%p, ...]\n", this, refcnt, flags, data.size(), data.size() > 0 ? data[0] : NULL);
+      printf("RefCollection %p r=%d flags=%d size=%d [%p, ...]\n", this, refcnt, flags, data.size(), data.size() > 0 ? data[0] : NULL);
     }
   };
 

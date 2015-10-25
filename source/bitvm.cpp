@@ -231,24 +231,24 @@ namespace bitvm {
 
   namespace collection {
 
-    RefRefCollection *mk(uint32_t flags)
+    RefCollection *mk(uint32_t flags)
     {
-      RefRefCollection *r = new RefRefCollection(flags);
+      RefCollection *r = new RefCollection(flags);
       return r;
     }
 
-    int count(RefRefCollection *c) { return c->data.size(); }
+    int count(RefCollection *c) { return c->data.size(); }
 
-    void add(RefRefCollection *c, uint32_t x) {
+    void add(RefCollection *c, uint32_t x) {
       if (c->flags & 1) incr(x);
       c->data.push_back(x);
     }
 
-    inline bool in_range(RefRefCollection *c, int x) {
+    inline bool in_range(RefCollection *c, int x) {
       return (0 <= x && x < (int)c->data.size());
     }
 
-    uint32_t at(RefRefCollection *c, int x) {
+    uint32_t at(RefCollection *c, int x) {
       if (in_range(c, x)) {
         uint32_t tmp = c->data.at(x);
         if (c->flags & 1) incr(tmp);
@@ -260,7 +260,7 @@ namespace bitvm {
       }
     }
 
-    void remove_at(RefRefCollection *c, int x) {
+    void remove_at(RefCollection *c, int x) {
       if (!in_range(c, x))
         return;
 
@@ -268,7 +268,7 @@ namespace bitvm {
       c->data.erase(c->data.begin()+x);
     }
 
-    void set_at(RefRefCollection *c, int x, uint32_t y) {
+    void set_at(RefCollection *c, int x, uint32_t y) {
       if (!in_range(c, x))
         return;
 
@@ -279,7 +279,7 @@ namespace bitvm {
       c->data.at(x) = y;
     }
 
-    int index_of(RefRefCollection *c, uint32_t x, int start) {
+    int index_of(RefCollection *c, uint32_t x, int start) {
       if (!in_range(c, start))
         return -1;
 
@@ -299,7 +299,7 @@ namespace bitvm {
       return -1;
     }
 
-    int remove(RefRefCollection *c, uint32_t x) {
+    int remove(RefCollection *c, uint32_t x) {
       int idx = index_of(c, x, 0);
       if (idx >= 0) {
         remove_at(c, idx);
