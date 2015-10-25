@@ -12,13 +12,12 @@
 #define bytecode ((uint16_t*)functionsAndBytecode)
 
 #define getstr(off) ((const char*)&bytecode[off])
-#define getbytes(off) ((const uint8_t*)&bytecode[off])
+#define getbytes(off) ((ImageData*)(void*)&bytecode[off])
 
 // Macros to reference function pointer in the jump-list
 // c in mbitc - stands for 'common'
 #define mbit(x) (void*)bitvm_micro_bit::x,
 #define mbitc(x) (void*)micro_bit::x,
-
 
 namespace bitvm {
 
@@ -139,14 +138,14 @@ namespace bitvm {
   namespace bitvm_number {
     void post_to_wall(int n) { printf("%d\n", n); }
 
-    RefString *to_character(int x)
+    StringData *to_character(int x)
     {
-      return new RefString(ManagedString((char)x));
+      return ManagedString((char)x).leakData();
     }
 
-    RefString *to_string(int x)
+    StringData *to_string(int x)
     {
-      return new RefString(ManagedString(x));
+      return ManagedString(x).leakData();
     }
   }
 
@@ -161,96 +160,72 @@ namespace bitvm {
   }
 
   namespace string {
-    RefString *dempty;
-
-    RefString *mkEmpty()
+    StringData *mkEmpty()
     {
-      if (dempty == NULL) {
-        dempty = new RefString("");
-        dempty->canLeak();
-      }
-
-      dempty->ref();
-      return dempty;
+      return ManagedString::EmptyString.leakData();
     }
 
-    RefString *fromLiteral(const char *p)
-    {
-      if (!*p) return mkEmpty();
-      RefString *res = new RefString(p);
-      res->ref(); // never unrefed
-      res->canLeak();
-      return res;
+    StringData *concat(StringData *s1, StringData *s2) {
+      ManagedString a(s1), b(s2);
+      return (a + b).leakData();
     }
 
-    RefString *concat(RefString *s1, RefString *s2) {
-      return new RefString(s1->v + s2->v);
-    }
-
-    RefString *concat_op(RefString *s1, RefString *s2) {
+    StringData *concat_op(StringData *s1, StringData *s2) {
       return concat(s1, s2);
     }
 
-    RefString *substring(RefString *s, int i, int j) {
-      return new RefString(s->v.substring(i, j));
+    StringData *substring(StringData *s, int i, int j) {
+      return (ManagedString(s).substring(i, j)).leakData();
     }
 
-    bool equals(RefString *s1, RefString *s2) {
-      return s1->v == s2->v;
+    bool equals(StringData *s1, StringData *s2) {
+      return ManagedString(s1) == ManagedString(s2);
     }
 
-    int count(RefString *s) {
-      return s->length();
+    int count(StringData *s) {
+      return s->len;
     }
 
-    RefString *at(RefString *s, int i) {
-      return new RefString(ManagedString((char)s->v.charAt(i)));
+    StringData *at(StringData *s, int i) {
+      return ManagedString((char)ManagedString(s).charAt(i)).leakData();
     }
 
-    int to_character_code(RefString *s) {
-      return s->length() > 0 ? s->charAt(0) : '\0';
+    int to_character_code(StringData *s) {
+      return ManagedString(s).charAt(0);
     }
 
-    int code_at(RefString *s, int i) {
-      return i < s->length() && i >= 0 ? s->charAt(i) : '\0';
+    int code_at(StringData *s, int i) {
+      return ManagedString(s).charAt(i);
     }
 
-    int to_number(RefString *s) {
-      return atoi(s->toCharArray());
+    int to_number(StringData *s) {
+      return atoi(s->data);
     }
 
-    void post_to_wall(RefString *s) { printf("%s\n", s->toCharArray()); }
+    void post_to_wall(StringData *s) { printf("%s\n", s->data); }
   }
 
   namespace bitvm_boolean {
     // Cache the string literals "true" and "false" when used.
     // Note that the representation of booleans stays the usual C-one.
-    RefString *sTrue, *sFalse;
-    RefString *to_string(int v)
+    
+    static const char sTrue[]  __attribute__ ((aligned (4))) = "\xff\xff\x04\x00" "true\0";
+    static const char sFalse[] __attribute__ ((aligned (4))) = "\xff\xff\x05\x00" "false\0";
+
+    StringData *to_string(int v)
     {
       if (v) {
-        if (sTrue == NULL) sTrue = string::fromLiteral("true");
-        sTrue->ref();
-        return sTrue;
+        return (StringData*)(void*)sTrue;
       } else {
-        if (sFalse == NULL) sFalse = string::fromLiteral("false");
-        sFalse->ref();
-        return sFalse;
+        return (StringData*)(void*)sFalse;
       }            
     }
   }
 
-  // The global array strings[] maps string-literal-id (as determined by the
-  // code generator) to the actual string literal, which is a RefString* pointer. 
-  // It is populated lazily. 
-  uint32_t stringLiteral(int id, uint32_t off)
+  // The proper StringData* representation is already laid out in memory by the code generator.
+  uint32_t stringData(uint32_t lit)
   {
-    uint32_t tmp = strings[id];
-    if (tmp == 0) {
-      tmp = strings[id] = (uint32_t)string::fromLiteral(getstr(off));
-    }
-    incr(tmp);
-    return tmp;
+    return (uint32_t)getstr(lit);
   }
 
 
@@ -324,8 +299,8 @@ namespace bitvm {
 
     int count(RefRefCollection *c) { return c->data.size(); }
 
-    void add(RefRefCollection *c, RefObject *x) {
-      if (x) x->ref();
+    void add(RefRefCollection *c, uint32_t x) {
+      incr(x);
       c->data.push_back(x);
     }
 
@@ -333,10 +308,10 @@ namespace bitvm {
       return (0 <= x && x < (int)c->data.size());
     }
 
-    RefObject *at(RefRefCollection *c, int x) {
+    uint32_t at(RefRefCollection *c, int x) {
       if (in_range(c, x)) {
-        RefObject *tmp = c->data.at(x);
-        if (tmp) tmp->ref();
+        uint32_t tmp = c->data.at(x);
+        incr(tmp);
         return tmp;
       }
       else {
@@ -349,33 +324,31 @@ namespace bitvm {
       if (!in_range(c, x))
         return;
 
-      RefObject *tmp = c->data.at(x);
-      if (tmp) tmp->unref();
+      decr(c->data.at(x));
       c->data.erase(c->data.begin()+x);
     }
 
-    void set_at(RefRefCollection *c, int x, RefObject *y) {
+    void set_at(RefRefCollection *c, int x, uint32_t y) {
       if (!in_range(c, x))
         return;
 
-      RefObject *tmp = c->data.at(x);
-      if (tmp) tmp->unref();
-      if (y) y->ref();
+      decr(c->data.at(x));
+      incr(y);
       c->data.at(x) = y;
     }
 
-    int index_of(RefRefCollection *c, RefObject *x, int start) {
+    int index_of(RefRefCollection *c, uint32_t x, int start) {
       if (!in_range(c, start))
         return -1;
 
       for (uint32_t i = start; i < c->data.size(); ++i)
-        if (c->data.at(i)->equals(x))
-          return i;
+        if (c->data.at(i) == x)
+          return (int)i;
 
       return -1;
     }
 
-    int remove(RefRefCollection *c, RefObject *x) {
+    int remove(RefRefCollection *c, uint32_t x) {
       int idx = index_of(c, x, 0);
       if (idx >= 0) {
         remove_at(c, idx);
@@ -540,73 +513,88 @@ namespace bitvm {
     // Images (helpers that create/modify a MicroBitImage)
     // -------------------------------------------------------------------------
     
-    typedef RefStruct<MicroBitImage> RefImage;
-
-    // Argument rewritten by the C++ emitter to be what we need
-    RefImage *createImage(int w, int h, uint32_t bitmap) {
-      return new RefImage(::touch_develop::micro_bit::createImage(w, h, getbytes(bitmap)));
+    // Argument rewritten by the code emitter to be what we need
+    ImageData *createImage(uint32_t lit) {
+      return MicroBitImage(getbytes(lit)).clone().leakData();
     }
 
-    RefImage *createImageFromString(RefString *s) {
-      return new RefImage(::touch_develop::micro_bit::createImageFromString(s->v));
+    ImageData *createReadOnlyImage(uint32_t lit) {
+      return getbytes(lit);
     }
 
-    RefImage *displayScreenShot()
+    ImageData *createImageFromString(StringData *s) {
+      return ::touch_develop::micro_bit::createImageFromString(ManagedString(s)).leakData();
+    }
+
+    ImageData *displayScreenShot()
     {
-      return new RefImage(uBit.display.screenShot());
+      return uBit.display.screenShot().leakData();
+    }
+    
+    ImageData *imageClone(ImageData *i)
+    {
+      return MicroBitImage(i).clone().leakData();
     }
 
-    void clearImage(RefImage *i) {
-      ::touch_develop::micro_bit::clearImage(i->v);
+    void clearImage(ImageData *i) {
+      MicroBitImage(i).clear();
     }
 
-    int getImagePixel(RefImage *i, int x, int y) {
-      return ::touch_develop::micro_bit::getImagePixel(i->v, x, y);
+    int getImagePixel(ImageData *i, int x, int y) {
+      return MicroBitImage(i).getPixelValue(x, y);
     }
 
-    void setImagePixel(RefImage *i, int x, int y, int value) {
-      ::touch_develop::micro_bit::setImagePixel(i->v, x, y, value);
+    void setImagePixel(ImageData *i, int x, int y, int value) {
+      MicroBitImage(i).setPixelValue(x, y, value);
     }
 
-    int getImageWidth(RefImage *i) {
-      return ::touch_develop::micro_bit::getImageWidth(i->v);
+    int getImageHeight(ImageData *i) {
+      return i->height;
+    }
+
+    int getImageWidth(ImageData *i) {
+      return i->width;
+    }
+
+    bool isImageReadOnly(ImageData *i) {
+      return i->isReadOnly();
     }
 
     // -------------------------------------------------------------------------
     // Various "show"-style functions to display and scroll things on the screen
     // -------------------------------------------------------------------------
 
-    void showLetter(RefString *s) {
-      ::touch_develop::micro_bit::showLetter(s->v);
+    void showLetter(StringData *s) {
+      ::touch_develop::micro_bit::showLetter(ManagedString(s));
     }
 
-    void scrollString(RefString *s, int delay) {
-      ::touch_develop::micro_bit::scrollString(s->v, delay);
+    void scrollString(StringData *s, int delay) {
+      ::touch_develop::micro_bit::scrollString(ManagedString(s), delay);
     }
 
-    void showImage(RefImage *i, int offset) {
-      ::touch_develop::micro_bit::showImage(i->v, offset);
+    void showImage(ImageData *i, int offset) {
+      ::touch_develop::micro_bit::showImage(MicroBitImage(i), offset);
     }
 
-    void scrollImage(RefImage *i, int offset, int delay) {
-      ::touch_develop::micro_bit::scrollImage(i->v, offset, delay);
+    void scrollImage(ImageData *i, int offset, int delay) {
+      ::touch_develop::micro_bit::scrollImage(MicroBitImage(i), offset, delay);
     }
 
-    void plotImage(RefImage *i, int offset) {
-      ::touch_develop::micro_bit::plotImage(i->v, offset);
+    void plotImage(ImageData *i, int offset) {
+      ::touch_develop::micro_bit::plotImage(MicroBitImage(i), offset);
     }
 
-    // These have their arguments rewritten by the C++ compiler.
-    void showLeds(int w, int h, uint32_t bitmap, int delay) {
-      ::touch_develop::micro_bit::showLeds(w, h, getbytes(bitmap), delay);
+    // [lit] argument is rewritted by code emitted
+    void showLeds(uint32_t lit, int delay) {
+      uBit.display.print(MicroBitImage(getbytes(lit)), 0, 0, 0, delay);
     }
 
-    void plotLeds(int w, int h, uint32_t bitmap) {
-      ::touch_develop::micro_bit::plotLeds(w, h, getbytes(bitmap));
+    void plotLeds(uint32_t lit) {
+      plotImage(getbytes(lit), 0);
     }
 
-    void showAnimation(int w, int h, uint32_t bitmap, int ms) {
-      ::touch_develop::micro_bit::showAnimation(w, h, getbytes(bitmap), ms);
+    void showAnimation(uint32_t lit, int ms) {
+      uBit.display.animate(MicroBitImage(getbytes(lit)), ms, 5, 0);
     }
 
     // -------------------------------------------------------------------------
@@ -643,24 +631,24 @@ namespace bitvm {
       uBit.panic(code);
     }
 
-    void serialSendString(RefString *s)
+    void serialSendString(StringData *s)
     {
-      uBit.serial.sendString(s->v);
+      uBit.serial.sendString(ManagedString(s));
     }
 
-    RefString *serialReadString()
+    StringData *serialReadString()
     {
-      return new RefString(uBit.serial.readString());
+      return uBit.serial.readString().leakData();
     }
     
-    void serialSendImage(RefImage *img)
+    void serialSendImage(ImageData *img)
     {
-      uBit.serial.sendImage(img->v);
+      uBit.serial.sendImage(MicroBitImage(img));
     }
 
-    RefImage *serialReadImage(int width, int height)
+    ImageData *serialReadImage(int width, int height)
     {
-      return new RefImage(uBit.serial.readImage(width, height));
+      return uBit.serial.readImage(width, height).leakData();
     }
 
     void serialSendDisplayState() { uBit.serial.sendDisplayState(); }
@@ -676,8 +664,7 @@ namespace bitvm {
 
 
   uint32_t *globals;
-  uint32_t *strings;
-  int numGlobals, numStrings;
+  int numGlobals;
 
   uint32_t *allocate(uint16_t sz)
   {
@@ -695,12 +682,10 @@ namespace bitvm {
     // ::touch_develop::internal_main();
 
     uint32_t ver = *pc++;
-    check(ver == V3BINARY, ERR_INVALID_BINARY_HEADER);
+    check(ver == V5BINARY, ERR_INVALID_BINARY_HEADER);
     numGlobals = *pc++;
-    numStrings = *pc++;
     globals = allocate(numGlobals);
-    strings = allocate(numStrings);
-    pc += 3; // reserved
+    pc += 6; // reserved
 
     uint32_t startptr = (uint32_t)pc;
     startptr |= 1; // Thumb state

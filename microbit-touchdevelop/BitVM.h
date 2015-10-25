@@ -23,19 +23,16 @@
 namespace bitvm {
 
   typedef enum {
-    ERR_INVALID_FUNCTION_HEADER = 4,
     ERR_INVALID_BINARY_HEADER = 5,
-    ERR_STACK_ONRETURN = 6,
-    ERR_REF_DELETED = 7,
     ERR_OUT_OF_BOUNDS = 8,
+    ERR_REF_DELETED = 7,
     ERR_SIZE = 9,
   } ERROR;
 
-  const int V3BINARY = 0x4204;
+  const int V5BINARY = 0x4205;
 
   extern uint32_t *globals;
-  extern uint32_t *strings;
-  extern int numGlobals, numStrings;
+  extern int numGlobals;
 
 
   inline void die() { uBit.panic(42); }
@@ -118,18 +115,28 @@ namespace bitvm {
     }
   };
 
+  // Checks if object has a VTable, or if its RefCounted* from the runtime.
+  // XXX 'inline' needs to be on separate line for embedding script
+  inline
+  bool hasVTable(uint32_t e)
+  {
+    return (*((uint32_t*)e) & 1) == 0;
+  }
+
   // The standard calling convention is:
   //   - when a pointer is loaded from a local/global/field etc, and incr()ed
   //     (in other words, its presence on stack counts as a reference)
   //   - after a function call, all pointers are popped off the stack and decr()ed
   // This does not apply to the RefRecord and st/ld(ref) methods - they unref()
   // the RefRecord* this.
-  // XXX 'inline' needs to be on separate line for embedding script
   inline
   void incr(uint32_t e)
   {
     if (e) {
-      ((RefObject*)e)->ref();
+      if (hasVTable(e))
+        ((RefObject*)e)->ref();
+      else
+        ((RefCounted*)e)->incr();
     }
   }
 
@@ -137,41 +144,12 @@ namespace bitvm {
   void decr(uint32_t e)
   {
     if (e) {
-      ((RefObject*)e)->unref();
+      if (hasVTable(e))
+        ((RefObject*)e)->unref();
+      else
+        ((RefCounted*)e)->decr();
     }
   }
-
-  // Ref-counted string. In future we should be able to just wrap ManagedString
-  class RefString
-    : public RefObject
-  {
-  public:
-    ManagedString v;
-
-    RefString(const ManagedString& i) : v(i) {}
-    RefString(const char *ptr) : v(ManagedString(ptr)) {}
-    RefString(const char *ptr, const int size) : v(ManagedString(ptr, size)) {}
-
-    virtual ~RefString()
-    {
-    }
-
-    virtual bool equals(RefObject *other_)
-    {
-      RefString *other = (RefString*)other_;
-      return this->v == other->v;
-    }
-
-    virtual void print()
-    {
-      printf("RefString %p r=%d, %s\n", this, refcnt, v.toCharArray());
-    }
-
-    inline int charAt(int index) { return v.charAt(index); }
-    inline int length() { return v.length(); }
-    inline const char *toCharArray() { return v.toCharArray(); }
-  };
-
 
   // Ref-counted wrapper around any C++ object.
   template <class T>
@@ -212,14 +190,13 @@ namespace bitvm {
     : public RefObject
   {
   public:
-    std::vector<RefObject*> data;
+    std::vector<uint32_t> data;
     virtual ~RefRefCollection()
     {
       // printf("KILL "); this->print();
       for (uint32_t i = 0; i < data.size(); ++i) {
-        if (data[i])
-          data[i]->unref();
-        data[i] = NULL;
+        decr(data[i]);
+        data[i] = 0;
       }
       data.resize(0);
     }
