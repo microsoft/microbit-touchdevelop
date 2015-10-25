@@ -231,76 +231,16 @@ namespace bitvm {
 
   namespace collection {
 
-    RefCollection *mk()
+    RefRefCollection *mk(uint32_t flags)
     {
-      RefCollection *r = new RefCollection();
-      return r;
-    }
-
-    int count(RefCollection *c) { return c->data.size(); }
-    void add(RefCollection *c, int x) { c->data.push_back(x); }
-
-    inline bool in_range(RefCollection *c, int x) {
-      return (0 <= x && x < (int)c->data.size());
-    }
-
-    int at(RefCollection *c, int x) {
-      if (in_range(c, x))
-        return c->data.at(x);
-      else {
-        error(ERR_OUT_OF_BOUNDS);
-        return 0;
-      }
-    }
-
-    void remove_at(RefCollection *c, int x) {
-      if (!in_range(c, x))
-        return;
-
-      c->data.erase(c->data.begin()+x);
-    }
-
-    void set_at(RefCollection *c, int x, int y) {
-      if (!in_range(c, x))
-        return;
-
-      c->data.at(x) = y;
-    }
-
-    int index_of(RefCollection *c, uint32_t x, int start) {
-      if (!in_range(c, start))
-        return -1;
-
-      for (uint32_t i = start; i < c->data.size(); ++i)
-        if (c->data.at(i) == x)
-          return i;
-
-      return -1;
-    }
-
-    int remove(RefCollection *c, int x) {
-      int idx = index_of(c, x, 0);
-      if (idx >= 0) {
-        remove_at(c, idx);
-        return 1;
-      }
-
-      return 0;
-    }
-  }
-
-  namespace refcollection {
-
-    RefRefCollection *mk()
-    {
-      RefRefCollection *r = new RefRefCollection();
+      RefRefCollection *r = new RefRefCollection(flags);
       return r;
     }
 
     int count(RefRefCollection *c) { return c->data.size(); }
 
     void add(RefRefCollection *c, uint32_t x) {
-      incr(x);
+      if (c->flags & 1) incr(x);
       c->data.push_back(x);
     }
 
@@ -311,7 +251,7 @@ namespace bitvm {
     uint32_t at(RefRefCollection *c, int x) {
       if (in_range(c, x)) {
         uint32_t tmp = c->data.at(x);
-        incr(tmp);
+        if (c->flags & 1) incr(tmp);
         return tmp;
       }
       else {
@@ -324,7 +264,7 @@ namespace bitvm {
       if (!in_range(c, x))
         return;
 
-      decr(c->data.at(x));
+      if (c->flags & 1) decr(c->data.at(x));
       c->data.erase(c->data.begin()+x);
     }
 
@@ -332,8 +272,10 @@ namespace bitvm {
       if (!in_range(c, x))
         return;
 
-      decr(c->data.at(x));
-      incr(y);
+      if (c->flags & 1) {
+        decr(c->data.at(x));
+        incr(y);
+      }
       c->data.at(x) = y;
     }
 
@@ -341,9 +283,18 @@ namespace bitvm {
       if (!in_range(c, start))
         return -1;
 
-      for (uint32_t i = start; i < c->data.size(); ++i)
-        if (c->data.at(i) == x)
-          return (int)i;
+      if (c->flags & 2) {
+        StringData *xx = (StringData*)x;
+        for (uint32_t i = start; i < c->data.size(); ++i) {
+          StringData *ee = (StringData*)c->data.at(i);
+          if (xx->len == ee->len && memcmp(xx->data, ee->data, xx->len) == 0)
+            return (int)i;
+        }
+      } else {
+        for (uint32_t i = start; i < c->data.size(); ++i)
+          if (c->data.at(i) == x)
+            return (int)i;
+      }
 
       return -1;
     }

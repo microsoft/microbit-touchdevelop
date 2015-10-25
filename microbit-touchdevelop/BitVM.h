@@ -171,39 +171,36 @@ namespace bitvm {
     RefStruct(const T& i) : v(i) {}
   };
 
-  // A ref-counted collection of primitive objects (Number, Boolean)
-  class RefCollection
-    : public RefObject
-  {
-  public:
-    std::vector<uint32_t> data;
-
-    virtual void print()
-    {
-      printf("RefCollection %p r=%d size=%d\n", this, refcnt, data.size());
-    }
-  };
-
-  // A ref-counted collection of ref-counted objects (String, Image,
+  // A ref-counted collection of either primitive or ref-counted objects (String, Image,
   // user-defined record, another collection)
   class RefRefCollection
     : public RefObject
   {
   public:
+    // 1 - collection of refs (need decr)
+    // 2 - collection of strings (in fact we always have 3, never 2 alone)
+    uint16_t flags;
     std::vector<uint32_t> data;
+
+    RefRefCollection(uint16_t f)
+    {
+      flags = f;
+    }
+
     virtual ~RefRefCollection()
     {
       // printf("KILL "); this->print();
-      for (uint32_t i = 0; i < data.size(); ++i) {
-        decr(data[i]);
-        data[i] = 0;
-      }
+      if (flags & 1)
+        for (uint32_t i = 0; i < data.size(); ++i) {
+          decr(data[i]);
+          data[i] = 0;
+        }
       data.resize(0);
     }
 
     virtual void print()
     {
-      printf("RefRefCollection %p r=%d size=%d [%p, ...]\n", this, refcnt, data.size(), data.size() > 0 ? data[0] : NULL);
+      printf("RefRefCollection %p r=%d flags=%d size=%d [%p, ...]\n", this, refcnt, flags, data.size(), data.size() > 0 ? data[0] : NULL);
     }
   };
 
