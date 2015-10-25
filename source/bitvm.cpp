@@ -325,27 +325,41 @@ namespace bitvm {
     }
   }
 
+  typedef uint32_t Action;
+
   namespace action {
-    RefAction* mk(int reflen, int totallen, int startptr)
+    Action mk(int reflen, int totallen, int startptr)
     {
       check(0 <= reflen && reflen <= totallen, ERR_SIZE, 1);
       check(reflen <= totallen && totallen <= 255, ERR_SIZE, 2);
+      check(bytecode[startptr] == 0xffff, ERR_INVALID_BINARY_HEADER, 3);
+      check(bytecode[startptr + 1] == 0, ERR_INVALID_BINARY_HEADER, 4);
+
+
+      uint32_t tmp = (uint32_t)&bytecode[startptr];
+
+      if (totallen == 0) {
+        return tmp; // no closure needed
+      }
 
       void *ptr = ::operator new(sizeof(RefAction) + totallen * sizeof(uint32_t));
       RefAction *r = new (ptr) RefAction();
       r->len = totallen;
       r->reflen = reflen;
-      uint32_t tmp = (uint32_t)&bytecode[startptr];
-      r->func = (ActionCB)(tmp | 1);
+      r->func = (ActionCB)((tmp + 4) | 1);
       memset(r->fields, 0, r->len * sizeof(uint32_t));
 
-      return r;
+      return (Action)r;
     }
 
-    void run(RefAction *a)
+    void run(Action a)
     {
-      //DBG("run "); a->print();
-      a->run();
+      if (hasVTable(a))
+        ((RefAction*)a)->run();
+      else {
+        check(*(uint16_t*)a == 0xffff, ERR_INVALID_BINARY_HEADER, 4);
+        ((void (*)())((a + 4) | 1))();
+      }
     }
   }
 
@@ -361,10 +375,8 @@ namespace bitvm {
     // Helpers
     // -------------------------------------------------------------------------
 
-    typedef RefAction *Action;
-
     void callback(MicroBitEvent e, Action a) {
-      a->run();
+      action::run(a);
     }
 
 
@@ -373,8 +385,8 @@ namespace bitvm {
     // -------------------------------------------------------------------------
 
     void onPinPressed(int pin, Action a) {
-      if (a != NULL) {
-        a->ref();
+      if (a != 0) {
+        incr(a);
         // Forces the PIN to switch to makey-makey style detection.
         switch(pin) {
           case MICROBIT_ID_IO_P0:
@@ -404,8 +416,8 @@ namespace bitvm {
     // -------------------------------------------------------------------------
 
     void onButtonPressedExt(int button, int event, Action a) {
-      if (a != NULL) {
-        a->ref();
+      if (a != 0) {
+        incr(a);
         uBit.MessageBus.ignore(
           button,
           event,
@@ -427,36 +439,31 @@ namespace bitvm {
     // System
     // -------------------------------------------------------------------------
     
-    void fiberHelper(void *a)
-    {
-      ((Action)a)->run();
-    }
-
     void fiberDone(void *a)
     {
-      ((Action)a)->unref();
+      decr((Action)a);
       release_fiber();
     }
 
 
     void runInBackground(Action a) {
-      if (a != NULL) {
-        a->ref();
-        create_fiber(fiberHelper, a, fiberDone);
+      if (a != 0) {
+        incr(a);
+        create_fiber((void(*)(void*))action::run, (void*)a, fiberDone);
       }
     }
 
     void forever_stub(void *a) {
       while (true) {
-        ((Action)a)->run();
+        action::run((Action)a);
         micro_bit::pause(20);
       }
     }
 
     void forever(Action a) {
-      if (a != NULL) {
-        a->ref();
-        create_fiber(forever_stub, a);
+      if (a != 0) {
+        incr(a);
+        create_fiber(forever_stub, (void*)a);
       }
     }
 
