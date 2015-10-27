@@ -617,6 +617,7 @@ namespace bitvm {
     void compassCalibrateEnd() { uBit.compass.calibrateEnd(); }
     void compassCalibrateStart() { uBit.compass.calibrateStart(); }
     void reset() { uBit.reset(); }
+    int thermometerGetTemperature() { return uBit.thermometer.getTemperature(); }
 
     MicroBitPin *ioP0() { return &uBit.io.P0; }
     MicroBitPin *ioP1() { return &uBit.io.P1; }
