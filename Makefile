@@ -6,6 +6,7 @@ TD = ../TouchDevelop
 -include Makefile.local
 
 all:
+	mkdir -p build
 	node scripts/functionTable.js $(SRCCOMMON) $(HEADERS) yotta_modules/microbit-dal/inc/*.h
 	yotta build
 	node scripts/generateEmbedInfo.js $(TRG) $(SRCCOMMON) $(HEADERS)

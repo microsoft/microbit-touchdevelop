@@ -155,7 +155,7 @@ function write(fn, cont)
     fs.writeFileSync(fn, cont)
 }
 
-write("build/pointers.inc", ptrs)
+write("generated/pointers.inc", ptrs)
 write("build/protos.h", protos)
 write("build/metainfo.json", JSON.stringify(metainfo, null, 2))
 
