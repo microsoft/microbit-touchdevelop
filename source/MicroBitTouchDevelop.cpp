@@ -31,6 +31,12 @@ namespace touch_develop {
   // ---------------------------------------------------------------------------
 
   namespace string {
+    const ManagedString empty = ManagedString(ManagedString::EmptyString);
+
+    bool in_range(ManagedString s, int i) {
+      return i >= 0 && i < s.length();
+    }
+
     ManagedString concat(ManagedString s1, ManagedString s2) {
       return s1 + s2;
     }
@@ -39,8 +45,11 @@ namespace touch_develop {
       return concat(s1, s2);
     }
 
-    ManagedString substring(ManagedString s, int i, int j) {
-      return s.substring(i, j);
+    ManagedString substring(ManagedString s, int start, int len) {
+      if (!in_range(s, start) || len < start || len < 0)
+        return empty;
+
+      return s.substring(start, len);
     }
 
     bool equals(ManagedString s1, ManagedString s2) {
@@ -52,6 +61,9 @@ namespace touch_develop {
     }
 
     ManagedString at(ManagedString s, int i) {
+      if (!in_range(s, i))
+        return empty;
+
       return ManagedString(s.charAt(i));
     }
 
@@ -60,7 +72,7 @@ namespace touch_develop {
     }
 
     int code_at(ManagedString s, int i) {
-      return i < s.length() && i >= 0 ? s.charAt(i) : '\0';
+      return in_range(s, i) ? s.charAt(i) : '\0';
     }
 
     int to_number(ManagedString s) {
@@ -98,7 +110,7 @@ namespace touch_develop {
 
     int pow(int x, int n) {
       if (n < 0)
-      return 0;
+        return 0;
       int r = 1;
       while (n) {
         if (n & 1)
@@ -182,7 +194,10 @@ namespace touch_develop {
 
   namespace collection {
     template<typename T> Number count(Collection_of<T> c) {
-      return c->size();
+      if (c.get() != NULL)
+        return c->size();
+      else
+        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
     }
 
     template<typename T> void add(Collection_of<T> c, T x) {
@@ -317,6 +332,8 @@ namespace touch_develop {
     // Pins
     // -------------------------------------------------------------------------
 
+    // The functions below use the "enum" feature of TouchDevelop, meaning that
+    // the references they are passed are always valid (hence the &-passing).
     int analogReadPin(MicroBitPin& p) {
       return p.getAnalogValue();
     }
@@ -468,12 +485,18 @@ namespace touch_develop {
     // Screen (reading/modifying the global, mutable state of the display)
     // -------------------------------------------------------------------------
 
+    // Closed interval.
+    inline bool in_range(int x, int l, int h) {
+      return l <= x && x <= h;
+    }
+
     int getBrightness() {
       return uBit.display.getBrightness();
     }
 
-    void setBrightness(int percentage) {
-      uBit.display.setBrightness(percentage);
+    void setBrightness(int v) {
+      if (in_range(v, 0, 155))
+        uBit.display.setBrightness(v);
     }
 
     void clearScreen() {
@@ -481,15 +504,20 @@ namespace touch_develop {
     }
 
     void plot(int x, int y) {
-      uBit.display.image.setPixelValue(x, y, 1);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        uBit.display.image.setPixelValue(x, y, 1);
     }
 
     void unPlot(int x, int y) {
-      uBit.display.image.setPixelValue(x, y, 0);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        uBit.display.image.setPixelValue(x, y, 0);
     }
 
     bool point(int x, int y) {
-      return uBit.display.image.getPixelValue(x, y);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        return uBit.display.image.getPixelValue(x, y);
+      else
+        return false;
     }
 
     // -------------------------------------------------------------------------
@@ -511,11 +539,15 @@ namespace touch_develop {
     }
 
     int getImagePixel(MicroBitImage i, int x, int y) {
-      return i.getPixelValue(x, y);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        return i.getPixelValue(x, y);
+      else
+        return 0;
     }
 
     void setImagePixel(MicroBitImage i, int x, int y, int value) {
-      i.setPixelValue(x, y, value);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        i.setPixelValue(x, y, value);
     }
 
     int getImageWidth(MicroBitImage i) {
@@ -535,6 +567,9 @@ namespace touch_develop {
     }
 
     void scrollNumber(int n, int delay) {
+      if (delay < 0)
+        return;
+
       ManagedString t(n);
       if (n < 0 || n >= 10) {
         uBit.display.scroll(t, delay);
@@ -544,6 +579,9 @@ namespace touch_develop {
     }
 
     void scrollString(ManagedString s, int delay) {
+      if (delay < 0)
+        return;
+
       int l = s.length();
       if (l == 0) {
         uBit.display.clear();
