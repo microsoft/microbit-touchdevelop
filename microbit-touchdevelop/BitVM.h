@@ -4,6 +4,7 @@
 // #define DEBUG_MEMLEAKS 1
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#include "MicroBitCustomConfig.h"
 #include "MicroBit.h"
 #include "MicroBitImage.h"
 #include "ManagedString.h"
