@@ -57,6 +57,10 @@ namespace touch_develop {
    * above and a [run] method (suitable for passing to
    * [MicroBitMessageBus::listen]). Implicit conversions make sure the two
    * constructors below also work when passed a bare function pointer.
+   *
+   * NB: this could be done with a bunch of (void(*)(void*)) casts like I did
+   * with [forever_helper], but the version with the class has no casts, which
+   * is nicer imho.
    */
   class DalAdapter {
     public:
