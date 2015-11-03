@@ -13,6 +13,26 @@ namespace touch_develop {
   }
 
   // ---------------------------------------------------------------------------
+  // An adapter for the API expected by the run-time.
+  // ---------------------------------------------------------------------------
+
+  DalAdapter::DalAdapter(std::function<void()> f):
+    impl_([=] (MicroBitEvent e) -> void {
+      f();
+    })
+    {}
+
+  DalAdapter::DalAdapter(std::function<void(int)> f):
+    impl_([=] (MicroBitEvent e) -> void {
+      f(e.value);
+    })
+    {}
+
+  void DalAdapter::run(MicroBitEvent e) {
+    this->impl_(e);
+  }
+
+  // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop types
   // ---------------------------------------------------------------------------
 
@@ -350,12 +370,25 @@ namespace touch_develop {
       return false;
     }
 
+    void onButtonPressedExt(int button, int event, std::function<void(void)> f) {
+      if (f != NULL) {
+        // XXX keep a table and free the previous one
+        auto adapter = new DalAdapter(f);
+        uBit.MessageBus.listen(button, event, adapter, &DalAdapter::run);
+      }
+    }
+
+    void onButtonPressed(int button, std::function<void(void)> f) {
+      onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, f);
+    }
+
 
     // -------------------------------------------------------------------------
     // System
     // -------------------------------------------------------------------------
 
     void runInBackground(Action a) {
+      // XXX this one should work with std::function's too
       if (a != NULL)
         create_fiber(a);
     }
@@ -372,6 +405,7 @@ namespace touch_develop {
     }
 
     void forever(void (*f)()) {
+      // XXX this one should work with std::function's too
       if (f != NULL)
         create_fiber((void(*)(void*))forever_stub, (void*) f);
     }
@@ -543,6 +577,14 @@ namespace touch_develop {
 
     void generate_event(int id, int event) {
       MicroBitEvent e(id, event);
+    }
+
+    void on_event(int id, std::function<void(int)> f) {
+      if (f != NULL) {
+        // XXX same here, free the previous one
+        auto adapter = new DalAdapter(f);
+        uBit.MessageBus.listen(id, MICROBIT_EVT_ANY, adapter, &DalAdapter::run);
+      }
     }
 
     namespace events {

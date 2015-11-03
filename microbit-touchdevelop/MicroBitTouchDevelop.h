@@ -47,45 +47,25 @@ namespace touch_develop {
    * The DAL API for [MicroBitMessageBus::listen] takes a [T*] and a
    * [void (T::*method)(MicroBitEvent e)]. The TouchDevelop-to-C++ compiler
    * generates either:
-   * - a [void*(void)] (callback that does not capture variables)
-   * - a [std::function<void*(void)>*] (callback that does capture variables)
-   * - a [void*(int)] (where the integer is the [value] field of the event)
-   * - a [std::function<void*(void)>*] (same as above with capture)
+   * - a [void(void)] (callback that does not capture variables)
+   * - a [std::function<void(void)>] (callback that does capture variables)
+   * - a [void(int)] (where the integer is the [value] field of the event)
+   * - a [std::function<void(void)>] (same as above with capture)
    *
-   * The purpose of this class is to provide a generic [run] method (suitable
-   * for passing to [MicroBitMessageBus::listen]) that works with any of the
-   * four types above.
+   * The purpose of this class is to provide constructors for all the types
+   * above and a [run] method (suitable for passing to
+   * [MicroBitMessageBus::listen]). Implicit conversions make sure the two
+   * constructors below also work when passed a bare function pointer.
    */
-  template <typename T>
   class DalAdapter {
-    private:
-      T* f;
-
     public:
-      DalAdapter(T*);
+      explicit DalAdapter(std::function<void(void)>);
+      explicit DalAdapter(std::function<void(int)>);
       void run(MicroBitEvent);
+
+    private:
+      const std::function<void(MicroBitEvent)> impl_;
   };
-
-  template <typename T>
-  DalAdapter<T>::DalAdapter(T* f) {
-    this->f = f;
-  }
-
-  // This one covers both T = std::function<void*()> and T = void*(void)
-  template <typename T>
-  inline void DalAdapter<T>::run(MicroBitEvent) {
-    (*f)();
-  }
-
-  template<>
-  inline void DalAdapter<void*(int)>::run(MicroBitEvent e) {
-    (*f)(e.value);
-  }
-
-  template<>
-  inline void DalAdapter<std::function<void*(int)>>::run(MicroBitEvent e) {
-    (*f)(e.value);
-  }
 
 
   // ---------------------------------------------------------------------------
@@ -244,20 +224,8 @@ namespace touch_develop {
     // -------------------------------------------------------------------------
 
     bool isButtonPressed(int button);
-
-    template <typename T>
-    inline void onButtonPressedExt(int button, int event, T* f) {
-      if (f != NULL) {
-        DalAdapter<T>* adapter = new DalAdapter<T>(f);
-        uBit.MessageBus.listen(button, event, adapter, &DalAdapter<T>::run);
-      }
-    }
-
-    template <typename T>
-    inline void onButtonPressed(int button, T* f) {
-      onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, f);
-    }
-
+    void onButtonPressedExt(int button, int event, std::function<void(void)> f);
+    void onButtonPressed(int button, std::function<void(void)> f);
 
     // -------------------------------------------------------------------------
     // Pins
@@ -378,13 +346,7 @@ namespace touch_develop {
 
     void generate_event(int id, int event);
 
-    template <typename T>
-    void on_event(int id, T* f) {
-      if (f != NULL) {
-        DalAdapter<T>* adapter = new DalAdapter<T>(f);
-        uBit.MessageBus.listen(id, MICROBIT_EVT_ANY, adapter, &DalAdapter<T>::run);
-      }
-    }
+    void on_event(int id, std::function<void*(int)> f);
 
     namespace events {
       void remote_control(int event);
