@@ -379,8 +379,18 @@ namespace touch_develop {
 
     uint8_t bin2bcd(uint8_t val);
 
+    // The TouchDevelop type is marked as {shim:} an exactly matches this
+    // definition. It's kind of unfortunate that we have to duplicate the
+    // definition.
     namespace user_types {
-      struct DateTime_;
+      struct DateTime_ {
+        Number seconds;
+        Number minutes;
+        Number hours;
+        Number day;
+        Number month;
+        Number year;
+      };
       typedef ManagedType<DateTime_> DateTime;
     }
 
