@@ -32,6 +32,8 @@ namespace touch_develop {
     this->impl_(e);
   }
 
+  std::map<std::pair<int, int>, unique_ptr<DalAdapter>> handlersMap;
+
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop types
   // ---------------------------------------------------------------------------
@@ -389,11 +391,7 @@ namespace touch_develop {
     }
 
     void onButtonPressedExt(int button, int event, std::function<void()> f) {
-      if (f != NULL) {
-        // XXX keep a table and free the previous one
-        auto adapter = new DalAdapter(f);
-        uBit.MessageBus.listen(button, event, adapter, &DalAdapter::run);
-      }
+      registerWithDal(button, event, f);
     }
 
     void onButtonPressed(int button, std::function<void()> f) {
@@ -614,11 +612,7 @@ namespace touch_develop {
     }
 
     void on_event(int id, std::function<void(int)> f) {
-      if (f != NULL) {
-        // XXX same here, free the previous one
-        auto adapter = new DalAdapter(f);
-        uBit.MessageBus.listen(id, MICROBIT_EVT_ANY, adapter, &DalAdapter::run);
-      }
+      registerWithDal(id, MICROBIT_EVT_ANY, f);
     }
 
     namespace events {

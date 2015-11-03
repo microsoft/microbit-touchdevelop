@@ -12,6 +12,8 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include <map>
+#include <utility>
 
 #include "MicroBit.h"
 #include "MicroBitImage.h"
@@ -65,6 +67,26 @@ namespace touch_develop {
     private:
       const std::function<void(MicroBitEvent)> impl_;
   };
+
+  extern std::map<std::pair<int, int>, unique_ptr<DalAdapter>> handlersMap;
+
+  template <typename T> // T: std::function<void()> or T: std::function<void(int)>
+  inline void registerWithDal(int id, int event, T f) {
+    // This function implements the TouchDevelop semantics (a.k.a. at most one
+    // event handler for each button/event pair) using the global
+    // [handlersMap] to un-register any previous event handlers.
+    if (f != NULL) {
+      auto old_adapter = handlersMap.find({ id, event });
+      if (old_adapter != handlersMap.end())
+        // If there was something in the table already, un-register the event
+        // handler with the DAL.
+        uBit.MessageBus.ignore(id, event, old_adapter->second.get(), &DalAdapter::run);
+
+      DalAdapter* new_adapter = new DalAdapter(f);
+      uBit.MessageBus.listen(id, event, new_adapter, &DalAdapter::run);
+      handlersMap[{ id, event }] = unique_ptr<DalAdapter>(new_adapter);
+    }
+  }
 
 
   // ---------------------------------------------------------------------------
