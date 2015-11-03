@@ -356,7 +356,7 @@ namespace touch_develop {
       return pin.isTouched();
     }
 
-    void onPinPressed(int pin, std::function<void(void)> f) {
+    void onPinPressed(int pin, std::function<void()> f) {
       if (f != NULL) {
         // Forces the PIN to switch to makey-makey style detection.
         switch (pin) {
@@ -388,7 +388,7 @@ namespace touch_develop {
       return false;
     }
 
-    void onButtonPressedExt(int button, int event, std::function<void(void)> f) {
+    void onButtonPressedExt(int button, int event, std::function<void()> f) {
       if (f != NULL) {
         // XXX keep a table and free the previous one
         auto adapter = new DalAdapter(f);
@@ -396,7 +396,7 @@ namespace touch_develop {
       }
     }
 
-    void onButtonPressed(int button, std::function<void(void)> f) {
+    void onButtonPressed(int button, std::function<void()> f) {
       onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, f);
     }
 
@@ -405,27 +405,43 @@ namespace touch_develop {
     // System
     // -------------------------------------------------------------------------
 
-    void runInBackground(Action a) {
-      // XXX this one should work with std::function's too
-      if (a != NULL)
-        create_fiber(a);
+    void fun_helper(std::function<void()>* f) {
+      (*f)();
+    }
+
+    void fun_delete_helper(std::function<void()>* f) {
+      // The fiber is done, so release associated resources and free the
+      // heap-allocated closure.
+      delete f;
+      release_fiber();
+    }
+
+    void forever_helper(std::function<void()>* f) {
+      while (true) {
+        (*f)();
+        pause(20);
+      }
+    }
+
+    void runInBackground(std::function<void()> f) {
+      if (f != NULL) {
+        // The API provided by the DAL only offers a low-level, C-style,
+        // void*-based callback structure. Therefore, allocate the closure on
+        // the heap to make sure it fits in one word.
+        auto f_allocated = new std::function<void()>(f);
+        create_fiber((void(*)(void*)) fun_helper, (void*) f_allocated, (void(*)(void*)) fun_delete_helper);
+      }
     }
 
     void pause(int ms) {
       uBit.sleep(ms);
     }
 
-    void forever_stub(void (*f)()) {
-      while (true) {
-        f();
-        pause(20);
+    void forever(std::function<void()> f) {
+      if (f != NULL) {
+        auto f_allocated = new std::function<void()>(f);
+        create_fiber((void(*)(void*)) forever_helper, (void*) f_allocated, (void(*)(void*)) fun_delete_helper);
       }
-    }
-
-    void forever(void (*f)()) {
-      // XXX this one should work with std::function's too
-      if (f != NULL)
-        create_fiber((void(*)(void*))forever_stub, (void*) f);
     }
 
     int getCurrentTime() {

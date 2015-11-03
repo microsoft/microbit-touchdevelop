@@ -46,10 +46,10 @@ namespace touch_develop {
    * The DAL API for [MicroBitMessageBus::listen] takes a [T*] and a
    * [void (T::*method)(MicroBitEvent e)]. The TouchDevelop-to-C++ compiler
    * generates either:
-   * - a [void(void)] (callback that does not capture variables)
-   * - a [std::function<void(void)>] (callback that does capture variables)
+   * - a [void()] (callback that does not capture variables)
+   * - a [std::function<void()>] (callback that does capture variables)
    * - a [void(int)] (where the integer is the [value] field of the event)
-   * - a [std::function<void(void)>] (same as above with capture)
+   * - a [std::function<void(int)>] (same as above with capture)
    *
    * The purpose of this class is to provide constructors for all the types
    * above and a [run] method (suitable for passing to
@@ -58,7 +58,7 @@ namespace touch_develop {
    */
   class DalAdapter {
     public:
-      explicit DalAdapter(std::function<void(void)>);
+      explicit DalAdapter(std::function<void()>);
       explicit DalAdapter(std::function<void(int)>);
       void run(MicroBitEvent);
 
@@ -222,8 +222,8 @@ namespace touch_develop {
     // -------------------------------------------------------------------------
 
     bool isButtonPressed(int button);
-    void onButtonPressedExt(int button, int event, std::function<void(void)> f);
-    void onButtonPressed(int button, std::function<void(void)> f);
+    void onButtonPressedExt(int button, int event, std::function<void()> f);
+    void onButtonPressed(int button, std::function<void()> f);
 
     // -------------------------------------------------------------------------
     // Pins
@@ -241,19 +241,17 @@ namespace touch_develop {
 
     bool isPinTouched(MicroBitPin& pin);
 
-    void onPinPressed(int pin, std::function<void(void)> f);
+    void onPinPressed(int pin, std::function<void()> f);
 
     // -------------------------------------------------------------------------
     // System
     // -------------------------------------------------------------------------
 
-    void runInBackground(Action a);
+    void runInBackground(std::function<void()> f);
 
     void pause(int ms);
 
-    void forever_stub(void (*f)());
-
-    void forever(void (*f)());
+    void forever(std::function<void()> f);
 
     int getCurrentTime();
 
