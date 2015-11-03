@@ -17,7 +17,6 @@
 #include "MicroBitImage.h"
 #include "ManagedString.h"
 #include "ManagedType.h"
-#include "MemberFunctionCallback.h"
 
 #define TD_NOOP(...)
 #define TD_ID(x) x
