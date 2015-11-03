@@ -5,7 +5,6 @@
 (uint32_t)(void*)::touch_develop::bits::or_uint32,  // F2 {shim:bits::or_uint32}
 (uint32_t)(void*)::touch_develop::bits::rotate_left_uint32,  // F2 {shim:bits::rotate_left_uint32}
 (uint32_t)(void*)::touch_develop::bits::rotate_right_uint32,  // F2 {shim:bits::rotate_right_uint32}
-(uint32_t)(void*)::touch_develop::bits::rotl32c,  // F2 {shim:bits::rotl32c}
 (uint32_t)(void*)::touch_develop::bits::shift_left_uint32,  // F2 {shim:bits::shift_left_uint32}
 (uint32_t)(void*)::touch_develop::bits::shift_right_uint32,  // F2 {shim:bits::shift_right_uint32}
 (uint32_t)(void*)::touch_develop::bits::xor_uint32,  // F2 {shim:bits::xor_uint32}
@@ -115,6 +114,7 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onButtonPressedExt,  // P3 over {shim:micro_bit::onButtonPressedExt}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onPinPressed,  // P2 over {shim:micro_bit::onPinPressed}
 (uint32_t)(void*)::touch_develop::micro_bit::on_calibrate_required,  // P1 {shim:micro_bit::on_calibrate_required}
+(uint32_t)(void*)::touch_develop::micro_bit::on_event,  // P2 {shim:micro_bit::on_event}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::panic,  // P1 over {shim:micro_bit::panic}
 (uint32_t)(void*)::touch_develop::micro_bit::pause,  // P1 {shim:micro_bit::pause}
 (uint32_t)(void*)::touch_develop::micro_bit::pitch,  // P2 {shim:micro_bit::pitch}

@@ -1,20 +1,23 @@
 #include "MicroBitCustomConfig.h"
 
+#if __cplusplus <= 199711L
+  #error The glue layer no longer builds with ARMCC. Please use GCC.
+#endif
+
 #ifndef __MICROBIT_TOUCHDEVELOP_H
 #define __MICROBIT_TOUCHDEVELOP_H
 
 #include <climits>
 #include <cmath>
 #include <vector>
-
-#if __cplusplus > 199711L
+#include <memory>
 #include <functional>
-#endif
 
 #include "MicroBit.h"
 #include "MicroBitImage.h"
 #include "ManagedString.h"
 #include "ManagedType.h"
+#include "MemberFunctionCallback.h"
 
 #define TD_NOOP(...)
 #define TD_ID(x) x
@@ -35,6 +38,56 @@ namespace touch_develop {
     ManagedString mk_string(char* c);
   }
 
+
+  // ---------------------------------------------------------------------------
+  // An adapter for the API expected by the run-time.
+  // ---------------------------------------------------------------------------
+
+  /**
+   * The DAL API for [MicroBitMessageBus::listen] takes a [T*] and a
+   * [void (T::*method)(MicroBitEvent e)]. The TouchDevelop-to-C++ compiler
+   * generates either:
+   * - a [void*(void)] (callback that does not capture variables)
+   * - a [std::function<void*(void)>*] (callback that does capture variables)
+   * - a [void*(int)] (where the integer is the [value] field of the event)
+   * - a [std::function<void*(void)>*] (same as above with capture)
+   *
+   * The purpose of this class is to provide a generic [run] method (suitable
+   * for passing to [MicroBitMessageBus::listen]) that works with any of the
+   * four types above.
+   */
+  template <typename T>
+  class DalAdapter {
+    private:
+      T* f;
+
+    public:
+      DalAdapter(T*);
+      void run(MicroBitEvent);
+  };
+
+  template <typename T>
+  DalAdapter<T>::DalAdapter(T* f) {
+    this->f = f;
+  }
+
+  // This one covers both T = std::function<void*()> and T = void*(void)
+  template <typename T>
+  inline void DalAdapter<T>::run(MicroBitEvent) {
+    (*f)();
+  }
+
+  template<>
+  inline void DalAdapter<void*(int)>::run(MicroBitEvent e) {
+    (*f)(e.value);
+  }
+
+  template<>
+  inline void DalAdapter<std::function<void*(int)>>::run(MicroBitEvent e) {
+    (*f)(e.value);
+  }
+
+
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop types
   // ---------------------------------------------------------------------------
@@ -43,11 +96,9 @@ namespace touch_develop {
   typedef bool Boolean;
   typedef ManagedString String;
   typedef void (*Action)();
-#if __cplusplus > 199711L
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
   template <typename T> using Ref = ManagedType<T>;
-#endif
 
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop libraries and operations
@@ -112,11 +163,6 @@ namespace touch_develop {
   }
 
   namespace bits {
-
-    // See http://blog.regehr.org/archives/1063
-    uint32_t rotl32c (uint32_t x, uint32_t n)
-   ;
-
     int or_uint32(int x, int y);
     int and_uint32(int x, int y);
     int xor_uint32(int x, int y);
@@ -138,7 +184,6 @@ namespace touch_develop {
   // Some extra TouchDevelop libraries (Collection, Ref, ...)
   // ---------------------------------------------------------------------------
 
-#if __cplusplus > 199711L
   // Parameterized types only work if we have the C++11-style "using" typedef.
   namespace create {
     template<typename T> Collection_of<T> collection_of();
@@ -151,8 +196,6 @@ namespace touch_develop {
 
     template<typename T> void add(Collection_of<T> c, T x);
 
-    // First check that [c] is valid (panic if not), then proceed to check that
-    // [x] is within bounds.
     template<typename T> inline bool in_range(Collection_of<T> c, int x);
 
     template<typename T> T at(Collection_of<T> c, int x);
@@ -171,7 +214,6 @@ namespace touch_develop {
 
     template<typename T> void _set(Ref<T> x, T y);
   }
-#endif
 
 
   // ---------------------------------------------------------------------------
@@ -187,19 +229,6 @@ namespace touch_develop {
     }
 
     // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
-#if __cplusplus > 199711L
-    void callbackF(MicroBitEvent e, std::function<void()>* f);
-#endif
-
-    void callback(MicroBitEvent e, Action a);
-
-    void callback1(MicroBitEvent e, void (*a)(int));
-
-
-    // -------------------------------------------------------------------------
     // Sensors
     // -------------------------------------------------------------------------
 
@@ -208,6 +237,27 @@ namespace touch_develop {
     int getAcceleration(int dimension);
 
     void on_calibrate_required (MicroBitEvent e);
+
+
+    // -------------------------------------------------------------------------
+    // Buttons
+    // -------------------------------------------------------------------------
+
+    bool isButtonPressed(int button);
+
+    template <typename T>
+    inline void onButtonPressedExt(int button, int event, T* f) {
+      if (f != NULL) {
+        DalAdapter<T>* adapter = new DalAdapter<T>(f);
+        uBit.MessageBus.listen(button, event, adapter, &DalAdapter<T>::run);
+      }
+    }
+
+    template <typename T>
+    inline void onButtonPressed(int button, T* f) {
+      onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, f);
+    }
+
 
     // -------------------------------------------------------------------------
     // Pins
@@ -225,26 +275,24 @@ namespace touch_develop {
 
     bool isPinTouched(MicroBitPin& pin);
 
-    void onPinPressed(int pin, Action a);
-
-    // -------------------------------------------------------------------------
-    // Buttons
-    // -------------------------------------------------------------------------
-
-    bool isButtonPressed(int button);
-
-    void onButtonPressedExt(int button, int event, Action a);
-
-    void onButtonPressed(int button, Action a);
-
-
-#if __cplusplus > 199711L
-    // Experimental support for closures compiled as C++ functions. Only works
-    // for closures passed to [onButtonPressed] (all other functions would have
-    // to be updated, along with [in_background]). Must figure out a way to
-    // limit code duplication.
-    void onButtonPressed(int button, std::function<void()>* f);
-#endif
+    template <typename T>
+    void onPinPressed(int pin, T f) {
+      if (f != NULL) {
+        // Forces the PIN to switch to makey-makey style detection.
+        switch (pin) {
+          case MICROBIT_ID_IO_P0:
+            uBit.io.P0.isTouched();
+            break;
+          case MICROBIT_ID_IO_P1:
+            uBit.io.P1.isTouched();
+            break;
+          case MICROBIT_ID_IO_P2:
+            uBit.io.P2.isTouched();
+            break;
+        }
+        onButtonPressed(pin, f);
+      }
+    }
 
     // -------------------------------------------------------------------------
     // System
@@ -330,7 +378,13 @@ namespace touch_develop {
 
     void generate_event(int id, int event);
 
-    void on_event(int id, void (*a)(int));
+    template <typename T>
+    void on_event(int id, T* f) {
+      if (f != NULL) {
+        DalAdapter<T>* adapter = new DalAdapter<T>(f);
+        uBit.MessageBus.listen(id, MICROBIT_EVT_ANY, adapter, &DalAdapter<T>::run);
+      }
+    }
 
     namespace events {
       void remote_control(int event);
@@ -358,11 +412,8 @@ namespace touch_develop {
 
     uint8_t bin2bcd(uint8_t val);
 
-    // The TouchDevelop type is marked as {shim:} an exactly matches this
-    // definition. It's kind of unfortunate that we have to duplicate the
-    // definition.
     namespace user_types {
-      struct DateTime_ ;
+      struct DateTime_;
       typedef ManagedType<DateTime_> DateTime;
     }
 

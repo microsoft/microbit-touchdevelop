@@ -20,11 +20,9 @@ namespace touch_develop {
   typedef bool Boolean;
   typedef ManagedString String;
   typedef void (*Action)();
-#if __cplusplus > 199711L
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
   template <typename T> using Ref = ManagedType<T>;
-#endif
 
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop libraries and operations
@@ -180,7 +178,6 @@ namespace touch_develop {
   // Some extra TouchDevelop libraries (Collection, Ref, ...)
   // ---------------------------------------------------------------------------
 
-#if __cplusplus > 199711L
   // Parameterized types only work if we have the C++11-style "using" typedef.
   namespace create {
     template<typename T> Collection_of<T> collection_of() {
@@ -262,7 +259,6 @@ namespace touch_develop {
       *(x.get()) = y;
     }
   }
-#endif
 
 
   // ---------------------------------------------------------------------------
@@ -275,24 +271,6 @@ namespace touch_develop {
       // This one is marked as {shim:} in the TouchDevelop library, so let's
       // provide a definition for it.
       typedef MicroBitImage Image;
-    }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
-#if __cplusplus > 199711L
-    void callbackF(MicroBitEvent e, std::function<void()>* f) {
-      (*f)();
-    }
-#endif
-
-    void callback(MicroBitEvent e, Action a) {
-      a();
-    }
-
-    void callback1(MicroBitEvent e, void (*a)(int)) {
-      a(e.value);
     }
 
 
@@ -358,32 +336,6 @@ namespace touch_develop {
       return pin.isTouched();
     }
 
-    void onPinPressed(int pin, Action a) {
-      if (a != NULL) {
-        // Forces the PIN to switch to makey-makey style detection.
-        switch(pin) {
-          case MICROBIT_ID_IO_P0:
-            uBit.io.P0.isTouched();
-            break;
-          case MICROBIT_ID_IO_P1:
-            uBit.io.P1.isTouched();
-            break;
-          case MICROBIT_ID_IO_P2:
-            uBit.io.P2.isTouched();
-            break;
-        }
-        uBit.MessageBus.ignore(
-          pin,
-          MICROBIT_BUTTON_EVT_CLICK,
-          (void (*)(MicroBitEvent, void*)) callback);
-        uBit.MessageBus.listen(
-          pin,
-          MICROBIT_BUTTON_EVT_CLICK,
-          (void (*)(MicroBitEvent, void*)) callback,
-          (void*) a);
-      }
-    }
-
     // -------------------------------------------------------------------------
     // Buttons
     // -------------------------------------------------------------------------
@@ -398,42 +350,6 @@ namespace touch_develop {
       return false;
     }
 
-    void onButtonPressedExt(int button, int event, Action a) {
-      if (a != NULL) {
-        uBit.MessageBus.ignore(
-          button,
-          event,
-          (void (*)(MicroBitEvent, void*)) callback);
-        uBit.MessageBus.listen(
-          button,
-          event,
-          (void (*)(MicroBitEvent, void*)) callback,
-          (void*) a);
-      }
-    }
-
-    void onButtonPressed(int button, Action a) {
-      onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, a);
-    }
-
-
-#if __cplusplus > 199711L
-    // Experimental support for closures compiled as C++ functions. Only works
-    // for closures passed to [onButtonPressed] (all other functions would have
-    // to be updated, along with [in_background]). Must figure out a way to
-    // limit code duplication.
-    void onButtonPressed(int button, std::function<void()>* f) {
-      uBit.MessageBus.ignore(
-        button,
-        MICROBIT_BUTTON_EVT_CLICK,
-        (void (*)(MicroBitEvent, void*)) callbackF);
-      uBit.MessageBus.listen(
-        button,
-        MICROBIT_BUTTON_EVT_CLICK,
-        (void (*)(MicroBitEvent, void*)) callbackF,
-        (void*) f);
-    }
-#endif
 
     // -------------------------------------------------------------------------
     // System
@@ -627,20 +543,6 @@ namespace touch_develop {
 
     void generate_event(int id, int event) {
       MicroBitEvent e(id, event);
-    }
-
-    void on_event(int id, void (*a)(int)) {
-      if (a != NULL) {
-        uBit.MessageBus.ignore(
-          id,
-          MICROBIT_EVT_ANY,
-          (void (*)(MicroBitEvent, void*)) callback1);
-        uBit.MessageBus.listen(
-          id,
-          MICROBIT_EVT_ANY,
-          (void (*)(MicroBitEvent, void*)) callback1,
-          (void*) a);
-      }
     }
 
     namespace events {
