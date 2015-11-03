@@ -163,7 +163,6 @@ namespace touch_develop {
   // Some extra TouchDevelop libraries (Collection, Ref, ...)
   // ---------------------------------------------------------------------------
 
-  // Parameterized types only work if we have the C++11-style "using" typedef.
   namespace create {
     template<typename T> Collection_of<T> collection_of();
 
@@ -242,24 +241,7 @@ namespace touch_develop {
 
     bool isPinTouched(MicroBitPin& pin);
 
-    template <typename T>
-    void onPinPressed(int pin, T f) {
-      if (f != NULL) {
-        // Forces the PIN to switch to makey-makey style detection.
-        switch (pin) {
-          case MICROBIT_ID_IO_P0:
-            uBit.io.P0.isTouched();
-            break;
-          case MICROBIT_ID_IO_P1:
-            uBit.io.P1.isTouched();
-            break;
-          case MICROBIT_ID_IO_P2:
-            uBit.io.P2.isTouched();
-            break;
-        }
-        onButtonPressed(pin, f);
-      }
-    }
+    void onPinPressed(int pin, std::function<void(void)> f);
 
     // -------------------------------------------------------------------------
     // System

@@ -311,7 +311,7 @@ namespace touch_develop {
         return uBit.accelerometer.getZ();
     }
 
-    void on_calibrate_required (MicroBitEvent e) {
+    void on_calibrate_required (MicroBitEvent) {
       const int bitmap0_w = 10;
       const int bitmap0_h = 5;
       const uint8_t bitmap0[] = { 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, };
@@ -354,6 +354,24 @@ namespace touch_develop {
 
     bool isPinTouched(MicroBitPin& pin) {
       return pin.isTouched();
+    }
+
+    void onPinPressed(int pin, std::function<void(void)> f) {
+      if (f != NULL) {
+        // Forces the PIN to switch to makey-makey style detection.
+        switch (pin) {
+          case MICROBIT_ID_IO_P0:
+            uBit.io.P0.isTouched();
+            break;
+          case MICROBIT_ID_IO_P1:
+            uBit.io.P1.isTouched();
+            break;
+          case MICROBIT_ID_IO_P2:
+            uBit.io.P2.isTouched();
+            break;
+        }
+        onButtonPressed(pin, f);
+      }
     }
 
     // -------------------------------------------------------------------------
