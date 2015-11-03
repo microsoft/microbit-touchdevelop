@@ -17,7 +17,7 @@ namespace touch_develop {
   // ---------------------------------------------------------------------------
 
   DalAdapter::DalAdapter(std::function<void()> f):
-    impl_([=] (MicroBitEvent e) -> void {
+    impl_([=] (MicroBitEvent) -> void {
       f();
     })
     {}
