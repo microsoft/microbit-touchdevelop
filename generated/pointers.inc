@@ -142,17 +142,17 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::showLetter,  // P1 over {shim:micro_bit::showLetter}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::thermometerGetTemperature,  // F0 over {shim:micro_bit::thermometerGetTemperature}
 (uint32_t)(void*)::touch_develop::micro_bit::unPlot,  // P2 {shim:micro_bit::unPlot}
-(uint32_t)(void*)::touch_develop::number::div,  // F2 {shim:number::div}
+(uint32_t)(void*)::touch_develop::number::add,  // F2 {shim:number::add}
+(uint32_t)(void*)::touch_develop::number::divide,  // F2 {shim:number::divide}
 (uint32_t)(void*)::touch_develop::number::eq,  // F2 {shim:number::eq}
-(uint32_t)(void*)::touch_develop::number::geq,  // F2 {shim:number::geq}
+(uint32_t)(void*)::touch_develop::number::ge,  // F2 {shim:number::ge}
 (uint32_t)(void*)::touch_develop::number::gt,  // F2 {shim:number::gt}
-(uint32_t)(void*)::touch_develop::number::leq,  // F2 {shim:number::leq}
+(uint32_t)(void*)::touch_develop::number::le,  // F2 {shim:number::le}
 (uint32_t)(void*)::touch_develop::number::lt,  // F2 {shim:number::lt}
-(uint32_t)(void*)::touch_develop::number::minus,  // F2 {shim:number::minus}
+(uint32_t)(void*)::touch_develop::number::multiply,  // F2 {shim:number::multiply}
 (uint32_t)(void*)::touch_develop::number::neq,  // F2 {shim:number::neq}
-(uint32_t)(void*)::touch_develop::number::plus,  // F2 {shim:number::plus}
 (uint32_t)(void*)::bitvm::bitvm_number::post_to_wall,  // P1 over {shim:number::post_to_wall}
-(uint32_t)(void*)::touch_develop::number::times,  // F2 {shim:number::times}
+(uint32_t)(void*)::touch_develop::number::subtract,  // F2 {shim:number::subtract}
 (uint32_t)(void*)::bitvm::bitvm_number::to_character,  // F1 over {shim:number::to_character}
 (uint32_t)(void*)::bitvm::bitvm_number::to_string,  // F1 over {shim:number::to_string}
 (uint32_t)(void*)::bitvm::record::mk,  // F2 bvm {shim:record::mk}

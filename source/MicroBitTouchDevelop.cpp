@@ -156,15 +156,15 @@ namespace touch_develop {
 
   namespace number {
     bool lt(int x, int y) { return x < y; }
-    bool leq(int x, int y) { return x <= y; }
+    bool le(int x, int y) { return x <= y; }
     bool neq(int x, int y) { return x != y; }
     bool eq(int x, int y) { return x == y; }
     bool gt(int x, int y) { return x > y; }
-    bool geq(int x, int y) { return x >= y; }
-    int plus(int x, int y) { return x + y; }
-    int minus(int x, int y) { return x - y; }
-    int div(int x, int y) { return x / y; }
-    int times(int x, int y) { return x * y; }
+    bool ge(int x, int y) { return x >= y; }
+    int add(int x, int y) { return x + y; }
+    int subtract(int x, int y) { return x - y; }
+    int divide(int x, int y) { return x / y; }
+    int multiply(int x, int y) { return x * y; }
     ManagedString to_string(int x) { return ManagedString(x); }
     ManagedString to_character(int x) { return ManagedString((char) x); }
   }
