@@ -35,18 +35,6 @@ namespace touch_develop {
   std::map<std::pair<int, int>, unique_ptr<DalAdapter>> handlersMap;
 
   // ---------------------------------------------------------------------------
-  // Implementation of the base TouchDevelop types
-  // ---------------------------------------------------------------------------
-
-  typedef int Number;
-  typedef bool Boolean;
-  typedef ManagedString String;
-  typedef void (*Action)();
-  template <typename T> using Collection_of = ManagedType<vector<T>>;
-  template <typename T> using Collection = ManagedType<vector<T>>;
-  template <typename T> using Ref = ManagedType<T>;
-
-  // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop libraries and operations
   // ---------------------------------------------------------------------------
 
@@ -193,92 +181,6 @@ namespace touch_develop {
     bool equals(bool x, bool y) { return x == y; }
     ManagedString to_string(bool x) {
       return x ? ManagedString("true") : ManagedString("false");
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // Some extra TouchDevelop libraries (Collection, Ref, ...)
-  // ---------------------------------------------------------------------------
-
-  // Parameterized types only work if we have the C++11-style "using" typedef.
-  namespace create {
-    template<typename T> Collection_of<T> collection_of() {
-      return ManagedType<vector<T>>(new vector<T>());
-    }
-
-    template<typename T> Ref<T> ref_of() {
-      return Ref<T>();
-    }
-  }
-
-  namespace collection {
-    template<typename T> Number count(Collection_of<T> c) {
-      if (c.get() != NULL)
-        return c->size();
-      else
-        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
-    }
-
-    template<typename T> void add(Collection_of<T> c, T x) {
-      if (c.get() != NULL)
-        c->push_back(x);
-      else
-        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
-    }
-
-    // First check that [c] is valid (panic if not), then proceed to check that
-    // [x] is within bounds.
-    template<typename T> inline bool in_range(Collection_of<T> c, int x) {
-      if (c.get() != NULL)
-        return (0 <= x && x < c->size());
-      else
-        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
-    }
-
-    template<typename T> T at(Collection_of<T> c, int x) {
-      if (in_range(c, x))
-        return c->at(x);
-      else
-        uBit.panic(TD_OUT_OF_BOUNDS);
-    }
-
-    template<typename T> void remove_at(Collection_of<T> c, int x) {
-      if (!in_range(c, x))
-        return;
-
-      c->erase(c->begin()+x);
-    }
-
-    template<typename T> void set_at(Collection_of<T> c, int x, T y) {
-      if (!in_range(c, x))
-        return;
-
-      c->at(x) = y;
-    }
-
-    template<typename T> Number index_of(Collection_of<T> c, T x, int start) {
-      if (!in_range(c, start))
-        return -1;
-
-      int index = -1;
-      for (int i = start; i < c->size(); ++i)
-        if (c->at(i) == x)
-          index = i;
-      return index;
-    }
-
-    template<typename T> void remove(Collection_of<T> c, T x) {
-      remove_at(c, index_of(c, x, 0));
-    }
-  }
-
-  namespace ref {
-    template<typename T> T _get(Ref<T> x) {
-      return *(x.get());
-    }
-
-    template<typename T> void _set(Ref<T> x, T y) {
-      *(x.get()) = y;
     }
   }
 

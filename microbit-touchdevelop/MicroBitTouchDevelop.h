@@ -112,17 +112,18 @@ namespace touch_develop {
   // A short override of [ManagedType] to make the generated code more compact.
   template <typename T>
   class Ref: public ManagedType<T> {
-    Ref();
-  }
+    public:
+      Ref();
+  };
 
   template <typename T>
-  inline Ref::Ref() {
+  Ref<T>::Ref() {
     this->object = new T();
+    *(this->ref) = 1;
   }
 
   // Some short names to make the code more readable. The C++ emitter is aware
   // of these.
-
   typedef std::function<void ()> closure;
   typedef std::function<void (int)> closure1;
 
@@ -210,34 +211,98 @@ namespace touch_develop {
   // Some extra TouchDevelop libraries (Collection, Ref, ...)
   // ---------------------------------------------------------------------------
 
+  // Parameterized types only work if we have the C++11-style "using" typedef.
   namespace create {
-    template<typename T> Collection_of<T> collection_of();
+    template<typename T>
+    inline Collection_of<T> collection_of() {
+      return ManagedType<vector<T>>(new vector<T>());
+    }
 
-    template<typename T> Ref<T> ref_of();
+    template<typename T>
+    inline Ref<T> ref_of() {
+      return Ref<T>();
+    }
   }
 
   namespace collection {
-    template<typename T> Number count(Collection_of<T> c);
+    template<typename T>
+    inline Number count(Collection_of<T> c) {
+      if (c.get() != NULL)
+        return c->size();
+      else
+        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
+    }
 
-    template<typename T> void add(Collection_of<T> c, T x);
+    template<typename T>
+    inline void add(Collection_of<T> c, T x) {
+      if (c.get() != NULL)
+        c->push_back(x);
+      else
+        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
+    }
 
-    template<typename T> inline bool in_range(Collection_of<T> c, int x);
+    // First check that [c] is valid (panic if not), then proceed to check that
+    // [x] is within bounds.
+    template<typename T>
+    inline bool in_range(Collection_of<T> c, int x) {
+      if (c.get() != NULL)
+        return (0 <= x && x < c->size());
+      else
+        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
+    }
 
-    template<typename T> T at(Collection_of<T> c, int x);
+    template<typename T>
+    inline T at(Collection_of<T> c, int x) {
+      if (in_range(c, x))
+        return c->at(x);
+      else
+        uBit.panic(TD_OUT_OF_BOUNDS);
+    }
 
-    template<typename T> void remove_at(Collection_of<T> c, int x);
+    template<typename T>
+    inline void remove_at(Collection_of<T> c, int x) {
+      if (!in_range(c, x))
+        return;
 
-    template<typename T> void set_at(Collection_of<T> c, int x, T y);
+      c->erase(c->begin()+x);
+    }
 
-    template<typename T> Number index_of(Collection_of<T> c, T x, int start);
+    template<typename T>
+    inline void set_at(Collection_of<T> c, int x, T y) {
+      if (!in_range(c, x))
+        return;
 
-    template<typename T> void remove(Collection_of<T> c, T x);
+      c->at(x) = y;
+    }
+
+    template<typename T>
+    inline Number index_of(Collection_of<T> c, T x, int start) {
+      if (!in_range(c, start))
+        return -1;
+
+      int index = -1;
+      for (int i = start; i < c->size(); ++i)
+        if (c->at(i) == x)
+          index = i;
+      return index;
+    }
+
+    template<typename T>
+    inline void remove(Collection_of<T> c, T x) {
+      remove_at(c, index_of(c, x, 0));
+    }
   }
 
   namespace ref {
-    template<typename T> T _get(Ref<T> x);
+    template<typename T>
+    inline T _get(Ref<T> x) {
+      return *(x.get());
+    }
 
-    template<typename T> void _set(Ref<T> x, T y);
+    template<typename T>
+    inline void _set(Ref<T> x, T y) {
+      *(x.get()) = y;
+    }
   }
 
 
