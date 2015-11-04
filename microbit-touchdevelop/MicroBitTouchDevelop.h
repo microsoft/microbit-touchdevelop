@@ -71,7 +71,7 @@ namespace touch_develop {
     public:
       explicit DalAdapter(std::function<void()> f);
       explicit DalAdapter(std::function<void(int)> f);
-      void run(MicroBitEvent);
+      void run(MicroBitEvent e);
 
     private:
       const std::function<void(MicroBitEvent)> impl_;
