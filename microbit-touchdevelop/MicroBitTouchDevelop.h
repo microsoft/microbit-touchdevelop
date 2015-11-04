@@ -37,6 +37,11 @@ namespace touch_develop {
 
   namespace touch_develop {
     ManagedString mk_string(char* c);
+
+    template <typename T>
+    inline bool is_null(T* p) {
+      return p == NULL;
+    }
   }
 
 
@@ -225,12 +230,6 @@ namespace touch_develop {
   // ---------------------------------------------------------------------------
 
   namespace micro_bit {
-
-    namespace user_types {
-      // This one is marked as {shim:} in the TouchDevelop library, so let's
-      // provide a definition for it.
-      typedef MicroBitImage Image;
-    }
 
     // -------------------------------------------------------------------------
     // Sensors

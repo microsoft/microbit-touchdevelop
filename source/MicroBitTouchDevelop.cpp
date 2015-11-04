@@ -289,13 +289,6 @@ namespace touch_develop {
 
   namespace micro_bit {
 
-    namespace user_types {
-      // This one is marked as {shim:} in the TouchDevelop library, so let's
-      // provide a definition for it.
-      typedef MicroBitImage Image;
-    }
-
-
     // -------------------------------------------------------------------------
     // Sensors
     // -------------------------------------------------------------------------
