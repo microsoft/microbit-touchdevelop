@@ -110,6 +110,12 @@ namespace touch_develop {
   template <typename T> using Collection = ManagedType<vector<T>>;
   template <typename T> using Ref = ManagedType<T>;
 
+  // Some short names to make the code more readable. The C++ emitter is aware
+  // of these.
+
+  typedef std::function<void ()> closure;
+  typedef std::function<void (int)> closure1;
+
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop libraries and operations
   // ---------------------------------------------------------------------------
