@@ -155,6 +155,16 @@ namespace touch_develop {
   }
 
   namespace number {
+    bool lt(int x, int y) { return x < y; }
+    bool leq(int x, int y) { return x <= y; }
+    bool neq(int x, int y) { return x != y; }
+    bool eq(int x, int y) { return x == y; }
+    bool gt(int x, int y) { return x > y; }
+    bool geq(int x, int y) { return x >= y; }
+    int plus(int x, int y) { return x + y; }
+    int minus(int x, int y) { return x - y; }
+    int div(int x, int y) { return x / y; }
+    int times(int x, int y) { return x * y; }
     ManagedString to_string(int x) { return ManagedString(x); }
     ManagedString to_character(int x) { return ManagedString((char) x); }
   }
@@ -177,6 +187,9 @@ namespace touch_develop {
   }
 
   namespace boolean {
+    bool or_(bool x, bool y) { return x || y; }
+    bool and_(bool x, bool y) { return x && y; }
+    bool not_(bool x) { return !x; }
     bool equals(bool x, bool y) { return x == y; }
     ManagedString to_string(bool x) {
       return x ? ManagedString("true") : ManagedString("false");

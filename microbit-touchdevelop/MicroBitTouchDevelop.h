@@ -158,6 +158,16 @@ namespace touch_develop {
   }
 
   namespace number {
+    bool lt(int x, int y);
+    bool leq(int x, int y);
+    bool neq(int x, int y);
+    bool eq(int x, int y);
+    bool gt(int x, int y);
+    bool geq(int x, int y);
+    int plus(int x, int y);
+    int minus(int x, int y);
+    int div(int x, int y);
+    int times(int x, int y);
     ManagedString to_string(int x);
     ManagedString to_character(int x);
   }
@@ -173,6 +183,9 @@ namespace touch_develop {
   }
 
   namespace boolean {
+    bool or_(bool x, bool y);
+    bool and_(bool x, bool y);
+    bool not_(bool x);
     bool equals(bool x, bool y);
     ManagedString to_string(bool x);
   }
