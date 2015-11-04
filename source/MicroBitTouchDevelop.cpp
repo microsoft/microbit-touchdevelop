@@ -207,7 +207,7 @@ namespace touch_develop {
     }
 
     template<typename T> Ref<T> ref_of() {
-      return ManagedType<T>(new T);
+      return Ref<T>();
     }
   }
 

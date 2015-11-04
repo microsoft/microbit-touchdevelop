@@ -108,7 +108,17 @@ namespace touch_develop {
   typedef void (*Action)();
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
-  template <typename T> using Ref = ManagedType<T>;
+
+  // A short override of [ManagedType] to make the generated code more compact.
+  template <typename T>
+  class Ref: public ManagedType<T> {
+    Ref();
+  }
+
+  template <typename T>
+  inline Ref::Ref() {
+    this->object = new T();
+  }
 
   // Some short names to make the code more readable. The C++ emitter is aware
   // of these.
