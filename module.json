@@ -19,7 +19,7 @@
     "mbed-classic": "~0.0.4",
     "ble": "lancaster-university/BLE_API#td0",
     "ble-nrf51822": "lancaster-university/nRF51822#td0",
-    "microbit-dal": "lancaster-university/microbit-dal#v1.3.4"
+    "microbit-dal": "lancaster-university/microbit-dal#v1.3.5"
   },
   "targetDependencies": { },
   "bin": "./source",
