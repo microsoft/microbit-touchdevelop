@@ -106,6 +106,7 @@ namespace touch_develop {
   typedef bool Boolean;
   typedef ManagedString String;
   typedef void (*Action)();
+  template <typename T> using Action1 = void (T);
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
 
