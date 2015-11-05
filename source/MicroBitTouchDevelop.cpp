@@ -90,12 +90,15 @@ namespace touch_develop {
 
   namespace action {
     void run(Action a) {
-      if (a != NULL)
+      if (a)
         a();
     }
 
     bool is_invalid(Action a) {
-      return a == NULL;
+      if (a)
+        return true;
+      else
+        return false;
     }
   }
 

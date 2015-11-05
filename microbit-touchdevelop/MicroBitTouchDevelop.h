@@ -105,8 +105,8 @@ namespace touch_develop {
   typedef int Number;
   typedef bool Boolean;
   typedef ManagedString String;
-  typedef void (*Action)();
-  template <typename T> using Action1 = void (T);
+  typedef std::function<void()> Action;
+  template <typename T> using Action1 = std::function<void(T)>;
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
 
@@ -122,11 +122,6 @@ namespace touch_develop {
     this->object = new T();
     *(this->ref) = 1;
   }
-
-  // Some short names to make the code more readable. The C++ emitter is aware
-  // of these.
-  typedef std::function<void ()> closure;
-  typedef std::function<void (int)> closure1;
 
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop libraries and operations
@@ -156,6 +151,22 @@ namespace touch_develop {
     void run(Action a);
 
     bool is_invalid(Action a);
+  }
+
+  namespace action1 {
+    template <typename T>
+    inline void run(Action1<T> a, T arg) {
+      if (a)
+        a(arg);
+    }
+
+    template <typename T>
+    inline bool is_invalid(Action1<T> a) {
+      if (a)
+        return true;
+      else
+        return false;
+    }
   }
 
   namespace math {
