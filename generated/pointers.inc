@@ -71,6 +71,7 @@
 (uint32_t)(void*)::touch_develop::micro_bit::digitalReadPin,  // F1 {shim:micro_bit::digitalReadPin}
 (uint32_t)(void*)::touch_develop::micro_bit::digitalWritePin,  // P2 {shim:micro_bit::digitalWritePin}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::displayScreenShot,  // F0 over {shim:micro_bit::displayScreenShot}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::displayStopAnimation,  // P0 over {shim:micro_bit::displayStopAnimation}
 (uint32_t)(void*)::touch_develop::micro_bit::enablePitch,  // P1 {shim:micro_bit::enablePitch}
 (uint32_t)(void*)::touch_develop::micro_bit::events::alert,  // P1 {shim:micro_bit::events::alert}
 (uint32_t)(void*)::touch_develop::micro_bit::events::audio_recorder,  // P1 {shim:micro_bit::events::audio_recorder}

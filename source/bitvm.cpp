@@ -619,6 +619,10 @@ namespace bitvm {
     void reset() { uBit.reset(); }
     int thermometerGetTemperature() { return uBit.thermometer.getTemperature(); }
 
+    void displayStopAnimation() {
+      uBit.display.stopAnimation();
+    }
+
     MicroBitPin *ioP0() { return &uBit.io.P0; }
     MicroBitPin *ioP1() { return &uBit.io.P1; }
     MicroBitPin *ioP2() { return &uBit.io.P2; }
