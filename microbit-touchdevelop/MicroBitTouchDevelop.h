@@ -1,7 +1,7 @@
 #include "MicroBitCustomConfig.h"
 
 #if __cplusplus <= 199711L
-  #error The glue layer no longer builds with ARMCC. Please use GCC.
+  #error The glue layer requires C++11 support. Please use GCC 4.9.3 or greater.
 #endif
 
 #ifndef __MICROBIT_TOUCHDEVELOP_H
