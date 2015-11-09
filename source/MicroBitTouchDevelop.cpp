@@ -177,6 +177,9 @@ namespace touch_develop {
     int multiply(int x, int y) { return x * y; }
     ManagedString to_string(int x) { return ManagedString(x); }
     ManagedString to_character(int x) { return ManagedString((char) x); }
+    void post_to_wall(int s) {
+      uBit.serial.printf("%d\r\n", s);
+    }
   }
 
   namespace bits {

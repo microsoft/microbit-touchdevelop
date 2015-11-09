@@ -210,6 +210,7 @@ namespace touch_develop {
     int multiply(int x, int y);
     ManagedString to_string(int x);
     ManagedString to_character(int x);
+    void post_to_wall(int s);
   }
 
   namespace bits {
