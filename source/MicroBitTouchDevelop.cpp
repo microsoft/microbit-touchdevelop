@@ -38,6 +38,21 @@ namespace touch_develop {
   // Implementation of the base TouchDevelop libraries and operations
   // ---------------------------------------------------------------------------
 
+  namespace contract {
+    void assert(bool x, ManagedString msg) {
+      if (!x) {
+        uBit.display.scroll(msg);
+        uBit.panic(TD_CONTRACT_ERROR);
+      }
+    }
+  }
+
+  namespace invalid {
+    Action action() {
+      return NULL;
+    }
+  }
+
   namespace string {
     const ManagedString empty = ManagedString(ManagedString::EmptyString);
 
@@ -85,6 +100,10 @@ namespace touch_develop {
 
     int to_number(ManagedString s) {
       return atoi(s.toCharArray());
+    }
+
+    void post_to_wall(ManagedString s) {
+      uBit.serial.printf("%s\r\n", s.toCharArray());
     }
   }
 

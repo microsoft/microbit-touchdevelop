@@ -33,6 +33,7 @@ namespace touch_develop {
     TD_UNINITIALIZED_OBJECT_TYPE = 40,
     TD_OUT_OF_BOUNDS,
     TD_BAD_USAGE,
+    TD_CONTRACT_ERROR,
   };
 
   namespace touch_develop {
@@ -127,6 +128,14 @@ namespace touch_develop {
   // Implementation of the base TouchDevelop libraries and operations
   // ---------------------------------------------------------------------------
 
+  namespace contract {
+    void assert(bool x, ManagedString msg);
+  }
+
+  namespace invalid {
+    Action action();
+  }
+
   namespace string {
     ManagedString concat(ManagedString s1, ManagedString s2);
 
@@ -145,6 +154,8 @@ namespace touch_develop {
     int code_at(ManagedString s, int i);
 
     int to_number(ManagedString s);
+
+    void post_to_wall(ManagedString s);
   }
 
   namespace action {
