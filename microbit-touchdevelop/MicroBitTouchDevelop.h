@@ -25,6 +25,11 @@
 
 namespace touch_develop {
 
+  using std::map;
+  using std::unique_ptr;
+  using std::pair;
+  using std::function;
+
   // ---------------------------------------------------------------------------
   // Base definitions that may be referred to by the C++ compiler.
   // ---------------------------------------------------------------------------
@@ -50,52 +55,21 @@ namespace touch_develop {
   // An adapter for the API expected by the run-time.
   // ---------------------------------------------------------------------------
 
-  /**
-   * The DAL API for [MicroBitMessageBus::listen] takes a [T*] and a
-   * [void (T::*method)(MicroBitEvent e)]. The TouchDevelop-to-C++ compiler
-   * generates either:
-   * - a [void()] (callback that does not capture variables)
-   * - a [std::function<void()>] (callback that does capture variables)
-   * - a [void(int)] (where the integer is the [value] field of the event)
-   * - a [std::function<void(int)>] (same as above with capture)
-   *
-   * The purpose of this class is to provide constructors for all the types
-   * above and a [run] method (suitable for passing to
-   * [MicroBitMessageBus::listen]). Implicit conversions make sure the two
-   * constructors below also work when passed a bare function pointer.
-   *
-   * NB: this could be done with a bunch of (void(*)(void*)) casts like I did
-   * with [forever_helper], but the version with the class has no casts, which
-   * is nicer imho.
-   */
-  class DalAdapter {
-    public:
-      explicit DalAdapter(std::function<void()> f);
-      explicit DalAdapter(std::function<void(int)> f);
-      void run(MicroBitEvent e);
+  // We maintain a mapping from source/event to the current event handler. In
+  // order to implement the TouchDevelop semantics of "at most one event handler
+  // per source/event pair", every event is dispatched through [dispatchEvent],
+  // which then does a table lookup to figure out the current handler.
 
-    private:
-      const std::function<void(MicroBitEvent)> impl_;
-  };
+  extern map<pair<int, int>, function<void (MicroBitEvent)>> handlersMap;
+  void dispatchEvent(MicroBitEvent e);
+  void registerHandler(pair<int, int>, function<void()>);
+  void registerHandler(pair<int, int>, function<void(int)>);
 
-  extern std::map<std::pair<int, int>, unique_ptr<DalAdapter>> handlersMap;
-
-  template <typename T> // T: std::function<void()> or T: std::function<void(int)>
+  template <typename T> // T: function<void()> or T: function<void(int)>
   inline void registerWithDal(int id, int event, T f) {
-    // This function implements the TouchDevelop semantics (a.k.a. at most one
-    // event handler for each button/event pair) using the global
-    // [handlersMap] to un-register any previous event handlers.
-    if (f != NULL) {
-      auto old_adapter = handlersMap.find({ id, event });
-      if (old_adapter != handlersMap.end())
-        // If there was something in the table already, un-register the event
-        // handler with the DAL.
-        uBit.MessageBus.ignore(id, event, old_adapter->second.get(), &DalAdapter::run);
-
-      DalAdapter* new_adapter = new DalAdapter(f);
-      uBit.MessageBus.listen(id, event, new_adapter, &DalAdapter::run);
-      handlersMap[{ id, event }] = unique_ptr<DalAdapter>(new_adapter);
-    }
+    if (!handlersMap[{ id, event }])
+      uBit.MessageBus.listen(id, event, dispatchEvent);
+    registerHandler({ id, event }, f);
   }
 
 
@@ -106,8 +80,8 @@ namespace touch_develop {
   typedef int Number;
   typedef bool Boolean;
   typedef ManagedString String;
-  typedef std::function<void()> Action;
-  template <typename T> using Action1 = std::function<void(T)>;
+  typedef function<void()> Action;
+  template <typename T> using Action1 = function<void(T)>;
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
 
@@ -352,8 +326,8 @@ namespace touch_develop {
     // -------------------------------------------------------------------------
 
     bool isButtonPressed(int button);
-    void onButtonPressedExt(int button, int event, std::function<void()> f);
-    void onButtonPressed(int button, std::function<void()> f);
+    void onButtonPressedExt(int button, int event, function<void()> f);
+    void onButtonPressed(int button, function<void()> f);
 
     // -------------------------------------------------------------------------
     // Pins
@@ -371,17 +345,17 @@ namespace touch_develop {
 
     bool isPinTouched(MicroBitPin& pin);
 
-    void onPinPressed(int pin, std::function<void()> f);
+    void onPinPressed(int pin, function<void()> f);
 
     // -------------------------------------------------------------------------
     // System
     // -------------------------------------------------------------------------
 
-    void runInBackground(std::function<void()> f);
+    void runInBackground(function<void()> f);
 
     void pause(int ms);
 
-    void forever(std::function<void()> f);
+    void forever(function<void()> f);
 
     int getCurrentTime();
 
@@ -455,7 +429,7 @@ namespace touch_develop {
 
     void generate_event(int id, int event);
 
-    void on_event(int id, std::function<void*(int)> f);
+    void on_event(int id, function<void*(int)> f);
 
     namespace events {
       void remote_control(int event);

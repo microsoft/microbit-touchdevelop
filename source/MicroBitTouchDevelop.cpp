@@ -2,6 +2,11 @@
 
 namespace touch_develop {
 
+  using std::map;
+  using std::unique_ptr;
+  using std::pair;
+  using std::function;
+
   // ---------------------------------------------------------------------------
   // Base definitions that may be referred to by the C++ compiler.
   // ---------------------------------------------------------------------------
@@ -16,23 +21,26 @@ namespace touch_develop {
   // An adapter for the API expected by the run-time.
   // ---------------------------------------------------------------------------
 
-  DalAdapter::DalAdapter(std::function<void()> f):
-    impl_([f] (MicroBitEvent) {
-      f();
-    })
-    {}
+  map<pair<int, int>, function<void (MicroBitEvent)>> handlersMap;
 
-  DalAdapter::DalAdapter(std::function<void(int)> f):
-    impl_([f] (MicroBitEvent e) {
-      f(e.value);
-    })
-    {}
-
-  void DalAdapter::run(MicroBitEvent e) {
-    this->impl_(e);
+  // We have the invariant that if [dispatchEvent] is registered against the DAL
+  // for a given event, then [handlersMap] contains a valid entry for that
+  // event.
+  void dispatchEvent(MicroBitEvent e) {
+    handlersMap[{ e.source, e.value }](e);
   }
 
-  std::map<std::pair<int, int>, unique_ptr<DalAdapter>> handlersMap;
+  void registerHandler(pair<int, int> k, function<void(int)> f) {
+    handlersMap[k] = [f] (MicroBitEvent e) {
+      f(e.value);
+    };
+  }
+
+  void registerHandler(pair<int, int> k, function<void()> f) {
+    handlersMap[k] = [f] (MicroBitEvent) {
+      f();
+    };
+  }
 
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop libraries and operations
@@ -278,7 +286,7 @@ namespace touch_develop {
       return pin.isTouched();
     }
 
-    void onPinPressed(int pin, std::function<void()> f) {
+    void onPinPressed(int pin, function<void()> f) {
       if (f != NULL) {
         // Forces the PIN to switch to makey-makey style detection.
         switch (pin) {
@@ -310,11 +318,11 @@ namespace touch_develop {
       return false;
     }
 
-    void onButtonPressedExt(int button, int event, std::function<void()> f) {
+    void onButtonPressedExt(int button, int event, function<void()> f) {
       registerWithDal(button, event, f);
     }
 
-    void onButtonPressed(int button, std::function<void()> f) {
+    void onButtonPressed(int button, function<void()> f) {
       onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, f);
     }
 
@@ -323,30 +331,30 @@ namespace touch_develop {
     // System
     // -------------------------------------------------------------------------
 
-    void fun_helper(std::function<void()>* f) {
+    void fun_helper(function<void()>* f) {
       (*f)();
     }
 
-    void fun_delete_helper(std::function<void()>* f) {
+    void fun_delete_helper(function<void()>* f) {
       // The fiber is done, so release associated resources and free the
       // heap-allocated closure.
       delete f;
       release_fiber();
     }
 
-    void forever_helper(std::function<void()>* f) {
+    void forever_helper(function<void()>* f) {
       while (true) {
         (*f)();
         pause(20);
       }
     }
 
-    void runInBackground(std::function<void()> f) {
+    void runInBackground(function<void()> f) {
       if (f != NULL) {
         // The API provided by the DAL only offers a low-level, C-style,
         // void*-based callback structure. Therefore, allocate the closure on
         // the heap to make sure it fits in one word.
-        auto f_allocated = new std::function<void()>(f);
+        auto f_allocated = new function<void()>(f);
         create_fiber((void(*)(void*)) fun_helper, (void*) f_allocated, (void(*)(void*)) fun_delete_helper);
       }
     }
@@ -355,9 +363,9 @@ namespace touch_develop {
       uBit.sleep(ms);
     }
 
-    void forever(std::function<void()> f) {
+    void forever(function<void()> f) {
       if (f != NULL) {
-        auto f_allocated = new std::function<void()>(f);
+        auto f_allocated = new function<void()>(f);
         create_fiber((void(*)(void*)) forever_helper, (void*) f_allocated, (void(*)(void*)) fun_delete_helper);
       }
     }
@@ -531,7 +539,7 @@ namespace touch_develop {
       MicroBitEvent e(id, event);
     }
 
-    void on_event(int id, std::function<void(int)> f) {
+    void on_event(int id, function<void(int)> f) {
       registerWithDal(id, MICROBIT_EVT_ANY, f);
     }
 
