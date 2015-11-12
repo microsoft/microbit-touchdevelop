@@ -350,7 +350,7 @@ namespace touch_develop {
     }
 
     void runInBackground(function<void()> f) {
-      if (f != NULL) {
+      if (f) {
         // The API provided by the DAL only offers a low-level, C-style,
         // void*-based callback structure. Therefore, allocate the closure on
         // the heap to make sure it fits in one word.
@@ -364,7 +364,7 @@ namespace touch_develop {
     }
 
     void forever(function<void()> f) {
-      if (f != NULL) {
+      if (f) {
         auto f_allocated = new function<void()>(f);
         create_fiber((void(*)(void*)) forever_helper, (void*) f_allocated, (void(*)(void*)) fun_delete_helper);
       }
