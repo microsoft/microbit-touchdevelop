@@ -62,8 +62,6 @@ namespace touch_develop {
   }
 
   namespace string {
-    const ManagedString empty = ManagedString(ManagedString::EmptyString);
-
     bool in_range(ManagedString s, int i) {
       return i >= 0 && i < s.length();
     }
@@ -78,7 +76,7 @@ namespace touch_develop {
 
     ManagedString substring(ManagedString s, int start, int len) {
       if (!in_range(s, start) || len < start || len < 0)
-        return empty;
+        return ManagedString::EmptyString;
 
       return s.substring(start, len);
     }
@@ -93,7 +91,7 @@ namespace touch_develop {
 
     ManagedString at(ManagedString s, int i) {
       if (!in_range(s, i))
-        return empty;
+        return ManagedString::EmptyString;
 
       return ManagedString(s.charAt(i));
     }
