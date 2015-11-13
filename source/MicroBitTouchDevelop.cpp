@@ -2,6 +2,11 @@
 
 namespace touch_develop {
 
+  using std::map;
+  using std::unique_ptr;
+  using std::pair;
+  using std::function;
+
   // ---------------------------------------------------------------------------
   // Base definitions that may be referred to by the C++ compiler.
   // ---------------------------------------------------------------------------
@@ -13,24 +18,56 @@ namespace touch_develop {
   }
 
   // ---------------------------------------------------------------------------
-  // Implementation of the base TouchDevelop types
+  // An adapter for the API expected by the run-time.
   // ---------------------------------------------------------------------------
 
-  typedef int Number;
-  typedef bool Boolean;
-  typedef ManagedString String;
-  typedef void (*Action)();
-#if __cplusplus > 199711L
-  template <typename T> using Collection_of = ManagedType<vector<T>>;
-  template <typename T> using Collection = ManagedType<vector<T>>;
-  template <typename T> using Ref = ManagedType<T>;
-#endif
+  map<pair<int, int>, function<void (MicroBitEvent)>> handlersMap;
+
+  // We have the invariant that if [dispatchEvent] is registered against the DAL
+  // for a given event, then [handlersMap] contains a valid entry for that
+  // event.
+  void dispatchEvent(MicroBitEvent e) {
+    handlersMap[{ e.source, e.value }](e);
+  }
+
+  void registerHandler(pair<int, int> k, function<void(int)> f) {
+    handlersMap[k] = [f] (MicroBitEvent e) {
+      f(e.value);
+    };
+  }
+
+  void registerHandler(pair<int, int> k, function<void()> f) {
+    handlersMap[k] = [f] (MicroBitEvent) {
+      f();
+    };
+  }
 
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop libraries and operations
   // ---------------------------------------------------------------------------
 
+  namespace contract {
+    void assert(bool x, ManagedString msg) {
+      if (!x) {
+        uBit.display.scroll(msg);
+        uBit.panic(TD_CONTRACT_ERROR);
+      }
+    }
+  }
+
+  namespace invalid {
+    Action action() {
+      return NULL;
+    }
+  }
+
   namespace string {
+    const ManagedString empty = ManagedString(ManagedString::EmptyString);
+
+    bool in_range(ManagedString s, int i) {
+      return i >= 0 && i < s.length();
+    }
+
     ManagedString concat(ManagedString s1, ManagedString s2) {
       return s1 + s2;
     }
@@ -39,8 +76,11 @@ namespace touch_develop {
       return concat(s1, s2);
     }
 
-    ManagedString substring(ManagedString s, int i, int j) {
-      return s.substring(i, j);
+    ManagedString substring(ManagedString s, int start, int len) {
+      if (!in_range(s, start) || len < start || len < 0)
+        return empty;
+
+      return s.substring(start, len);
     }
 
     bool equals(ManagedString s1, ManagedString s2) {
@@ -52,6 +92,9 @@ namespace touch_develop {
     }
 
     ManagedString at(ManagedString s, int i) {
+      if (!in_range(s, i))
+        return empty;
+
       return ManagedString(s.charAt(i));
     }
 
@@ -60,22 +103,29 @@ namespace touch_develop {
     }
 
     int code_at(ManagedString s, int i) {
-      return i < s.length() && i >= 0 ? s.charAt(i) : '\0';
+      return in_range(s, i) ? s.charAt(i) : '\0';
     }
 
     int to_number(ManagedString s) {
       return atoi(s.toCharArray());
     }
+
+    void post_to_wall(ManagedString s) {
+      uBit.serial.printf("%s\r\n", s.toCharArray());
+    }
   }
 
   namespace action {
     void run(Action a) {
-      if (a != NULL)
+      if (a)
         a();
     }
 
     bool is_invalid(Action a) {
-      return a == NULL;
+      if (a)
+        return true;
+      else
+        return false;
     }
   }
 
@@ -98,7 +148,7 @@ namespace touch_develop {
 
     int pow(int x, int n) {
       if (n < 0)
-      return 0;
+        return 0;
       int r = 1;
       while (n) {
         if (n & 1)
@@ -124,17 +174,20 @@ namespace touch_develop {
 
   namespace number {
     bool lt(int x, int y) { return x < y; }
-    bool leq(int x, int y) { return x <= y; }
+    bool le(int x, int y) { return x <= y; }
     bool neq(int x, int y) { return x != y; }
     bool eq(int x, int y) { return x == y; }
     bool gt(int x, int y) { return x > y; }
-    bool geq(int x, int y) { return x >= y; }
-    int plus(int x, int y) { return x + y; }
-    int minus(int x, int y) { return x - y; }
-    int div(int x, int y) { return x / y; }
-    int times(int x, int y) { return x * y; }
+    bool ge(int x, int y) { return x >= y; }
+    int add(int x, int y) { return x + y; }
+    int subtract(int x, int y) { return x - y; }
+    int divide(int x, int y) { return x / y; }
+    int multiply(int x, int y) { return x * y; }
     ManagedString to_string(int x) { return ManagedString(x); }
     ManagedString to_character(int x) { return ManagedString((char) x); }
+    void post_to_wall(int s) {
+      uBit.serial.printf("%d\r\n", s);
+    }
   }
 
   namespace bits {
@@ -164,122 +217,12 @@ namespace touch_develop {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Some extra TouchDevelop libraries (Collection, Ref, ...)
-  // ---------------------------------------------------------------------------
-
-#if __cplusplus > 199711L
-  // Parameterized types only work if we have the C++11-style "using" typedef.
-  namespace create {
-    template<typename T> Collection_of<T> collection_of() {
-      return ManagedType<vector<T>>(new vector<T>());
-    }
-
-    template<typename T> Ref<T> ref_of() {
-      return ManagedType<T>(new T);
-    }
-  }
-
-  namespace collection {
-    template<typename T> Number count(Collection_of<T> c) {
-      return c->size();
-    }
-
-    template<typename T> void add(Collection_of<T> c, T x) {
-      if (c.get() != NULL)
-        c->push_back(x);
-      else
-        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
-    }
-
-    // First check that [c] is valid (panic if not), then proceed to check that
-    // [x] is within bounds.
-    template<typename T> inline bool in_range(Collection_of<T> c, int x) {
-      if (c.get() != NULL)
-        return (0 <= x && x < c->size());
-      else
-        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
-    }
-
-    template<typename T> T at(Collection_of<T> c, int x) {
-      if (in_range(c, x))
-        return c->at(x);
-      else
-        uBit.panic(TD_OUT_OF_BOUNDS);
-    }
-
-    template<typename T> void remove_at(Collection_of<T> c, int x) {
-      if (!in_range(c, x))
-        return;
-
-      c->erase(c->begin()+x);
-    }
-
-    template<typename T> void set_at(Collection_of<T> c, int x, T y) {
-      if (!in_range(c, x))
-        return;
-
-      c->at(x) = y;
-    }
-
-    template<typename T> Number index_of(Collection_of<T> c, T x, int start) {
-      if (!in_range(c, start))
-        return -1;
-
-      int index = -1;
-      for (int i = start; i < c->size(); ++i)
-        if (c->at(i) == x)
-          index = i;
-      return index;
-    }
-
-    template<typename T> void remove(Collection_of<T> c, T x) {
-      remove_at(c, index_of(c, x, 0));
-    }
-  }
-
-  namespace ref {
-    template<typename T> T _get(Ref<T> x) {
-      return *(x.get());
-    }
-
-    template<typename T> void _set(Ref<T> x, T y) {
-      *(x.get()) = y;
-    }
-  }
-#endif
-
 
   // ---------------------------------------------------------------------------
   // Implementation of the BBC micro:bit features
   // ---------------------------------------------------------------------------
 
   namespace micro_bit {
-
-    namespace user_types {
-      // This one is marked as {shim:} in the TouchDevelop library, so let's
-      // provide a definition for it.
-      typedef MicroBitImage Image;
-    }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
-#if __cplusplus > 199711L
-    void callbackF(MicroBitEvent e, std::function<void()>* f) {
-      (*f)();
-    }
-#endif
-
-    void callback(MicroBitEvent e, Action a) {
-      a();
-    }
-
-    void callback1(MicroBitEvent e, void (*a)(int)) {
-      a(e.value);
-    }
-
 
     // -------------------------------------------------------------------------
     // Sensors
@@ -298,7 +241,7 @@ namespace touch_develop {
         return uBit.accelerometer.getZ();
     }
 
-    void on_calibrate_required (MicroBitEvent e) {
+    void on_calibrate_required (MicroBitEvent) {
       const int bitmap0_w = 10;
       const int bitmap0_h = 5;
       const uint8_t bitmap0[] = { 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, };
@@ -317,6 +260,8 @@ namespace touch_develop {
     // Pins
     // -------------------------------------------------------------------------
 
+    // The functions below use the "enum" feature of TouchDevelop, meaning that
+    // the references they are passed are always valid (hence the &-passing).
     int analogReadPin(MicroBitPin& p) {
       return p.getAnalogValue();
     }
@@ -341,10 +286,10 @@ namespace touch_develop {
       return pin.isTouched();
     }
 
-    void onPinPressed(int pin, Action a) {
-      if (a != NULL) {
+    void onPinPressed(int pin, function<void()> f) {
+      if (f != NULL) {
         // Forces the PIN to switch to makey-makey style detection.
-        switch(pin) {
+        switch (pin) {
           case MICROBIT_ID_IO_P0:
             uBit.io.P0.isTouched();
             break;
@@ -355,15 +300,7 @@ namespace touch_develop {
             uBit.io.P2.isTouched();
             break;
         }
-        uBit.MessageBus.ignore(
-          pin,
-          MICROBIT_BUTTON_EVT_CLICK,
-          (void (*)(MicroBitEvent, void*)) callback);
-        uBit.MessageBus.listen(
-          pin,
-          MICROBIT_BUTTON_EVT_CLICK,
-          (void (*)(MicroBitEvent, void*)) callback,
-          (void*) a);
+        onButtonPressed(pin, f);
       }
     }
 
@@ -381,66 +318,56 @@ namespace touch_develop {
       return false;
     }
 
-    void onButtonPressedExt(int button, int event, Action a) {
-      if (a != NULL) {
-        uBit.MessageBus.ignore(
-          button,
-          event,
-          (void (*)(MicroBitEvent, void*)) callback);
-        uBit.MessageBus.listen(
-          button,
-          event,
-          (void (*)(MicroBitEvent, void*)) callback,
-          (void*) a);
-      }
+    void onButtonPressedExt(int button, int event, function<void()> f) {
+      registerWithDal(button, event, f);
     }
 
-    void onButtonPressed(int button, Action a) {
-      onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, a);
+    void onButtonPressed(int button, function<void()> f) {
+      onButtonPressedExt(button, MICROBIT_BUTTON_EVT_CLICK, f);
     }
 
-
-#if __cplusplus > 199711L
-    // Experimental support for closures compiled as C++ functions. Only works
-    // for closures passed to [onButtonPressed] (all other functions would have
-    // to be updated, along with [in_background]). Must figure out a way to
-    // limit code duplication.
-    void onButtonPressed(int button, std::function<void()>* f) {
-      uBit.MessageBus.ignore(
-        button,
-        MICROBIT_BUTTON_EVT_CLICK,
-        (void (*)(MicroBitEvent, void*)) callbackF);
-      uBit.MessageBus.listen(
-        button,
-        MICROBIT_BUTTON_EVT_CLICK,
-        (void (*)(MicroBitEvent, void*)) callbackF,
-        (void*) f);
-    }
-#endif
 
     // -------------------------------------------------------------------------
     // System
     // -------------------------------------------------------------------------
 
-    void runInBackground(Action a) {
-      if (a != NULL)
-        create_fiber(a);
+    void fun_helper(function<void()>* f) {
+      (*f)();
+    }
+
+    void fun_delete_helper(function<void()>* f) {
+      // The fiber is done, so release associated resources and free the
+      // heap-allocated closure.
+      delete f;
+      release_fiber();
+    }
+
+    void forever_helper(function<void()>* f) {
+      while (true) {
+        (*f)();
+        pause(20);
+      }
+    }
+
+    void runInBackground(function<void()> f) {
+      if (f) {
+        // The API provided by the DAL only offers a low-level, C-style,
+        // void*-based callback structure. Therefore, allocate the closure on
+        // the heap to make sure it fits in one word.
+        auto f_allocated = new function<void()>(f);
+        create_fiber((void(*)(void*)) fun_helper, (void*) f_allocated, (void(*)(void*)) fun_delete_helper);
+      }
     }
 
     void pause(int ms) {
       uBit.sleep(ms);
     }
 
-    void forever_stub(void (*f)()) {
-      while (true) {
-        f();
-        pause(20);
+    void forever(function<void()> f) {
+      if (f) {
+        auto f_allocated = new function<void()>(f);
+        create_fiber((void(*)(void*)) forever_helper, (void*) f_allocated, (void(*)(void*)) fun_delete_helper);
       }
-    }
-
-    void forever(void (*f)()) {
-      if (f != NULL)
-        create_fiber((void(*)(void*))forever_stub, (void*) f);
     }
 
     int getCurrentTime() {
@@ -468,12 +395,18 @@ namespace touch_develop {
     // Screen (reading/modifying the global, mutable state of the display)
     // -------------------------------------------------------------------------
 
+    // Closed interval.
+    inline bool in_range(int x, int l, int h) {
+      return l <= x && x <= h;
+    }
+
     int getBrightness() {
       return uBit.display.getBrightness();
     }
 
-    void setBrightness(int percentage) {
-      uBit.display.setBrightness(percentage);
+    void setBrightness(int v) {
+      if (in_range(v, 0, 155))
+        uBit.display.setBrightness(v);
     }
 
     void clearScreen() {
@@ -481,15 +414,20 @@ namespace touch_develop {
     }
 
     void plot(int x, int y) {
-      uBit.display.image.setPixelValue(x, y, 1);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        uBit.display.image.setPixelValue(x, y, 1);
     }
 
     void unPlot(int x, int y) {
-      uBit.display.image.setPixelValue(x, y, 0);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        uBit.display.image.setPixelValue(x, y, 0);
     }
 
     bool point(int x, int y) {
-      return uBit.display.image.getPixelValue(x, y);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        return uBit.display.image.getPixelValue(x, y);
+      else
+        return false;
     }
 
     // -------------------------------------------------------------------------
@@ -511,11 +449,15 @@ namespace touch_develop {
     }
 
     int getImagePixel(MicroBitImage i, int x, int y) {
-      return i.getPixelValue(x, y);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        return i.getPixelValue(x, y);
+      else
+        return 0;
     }
 
     void setImagePixel(MicroBitImage i, int x, int y, int value) {
-      i.setPixelValue(x, y, value);
+      if (in_range(x, 0, 4) && in_range(y, 0, 4))
+        i.setPixelValue(x, y, value);
     }
 
     int getImageWidth(MicroBitImage i) {
@@ -535,6 +477,9 @@ namespace touch_develop {
     }
 
     void scrollNumber(int n, int delay) {
+      if (delay < 0)
+        return;
+
       ManagedString t(n);
       if (n < 0 || n >= 10) {
         uBit.display.scroll(t, delay);
@@ -544,6 +489,9 @@ namespace touch_develop {
     }
 
     void scrollString(ManagedString s, int delay) {
+      if (delay < 0)
+        return;
+
       int l = s.length();
       if (l == 0) {
         uBit.display.clear();
@@ -591,18 +539,8 @@ namespace touch_develop {
       MicroBitEvent e(id, event);
     }
 
-    void on_event(int id, void (*a)(int)) {
-      if (a != NULL) {
-        uBit.MessageBus.ignore(
-          id,
-          MICROBIT_EVT_ANY,
-          (void (*)(MicroBitEvent, void*)) callback1);
-        uBit.MessageBus.listen(
-          id,
-          MICROBIT_EVT_ANY,
-          (void (*)(MicroBitEvent, void*)) callback1,
-          (void*) a);
-      }
+    void on_event(int id, function<void(int)> f) {
+      registerWithDal(id, MICROBIT_EVT_ANY, f);
     }
 
     namespace events {
@@ -655,21 +593,6 @@ namespace touch_develop {
 
     uint8_t bin2bcd(uint8_t val) {
       return val + 6 * (val / 10);
-    }
-
-    // The TouchDevelop type is marked as {shim:} an exactly matches this
-    // definition. It's kind of unfortunate that we have to duplicate the
-    // definition.
-    namespace user_types {
-      struct DateTime_ {
-        Number seconds;
-        Number minutes;
-        Number hours;
-        Number day;
-        Number month;
-        Number year;
-      };
-      typedef ManagedType<DateTime_> DateTime;
     }
 
     void adjust(user_types::DateTime d) {

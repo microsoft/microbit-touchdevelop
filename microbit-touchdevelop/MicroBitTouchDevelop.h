@@ -1,15 +1,19 @@
 #include "MicroBitCustomConfig.h"
 
+#if __cplusplus <= 199711L
+  #error The glue layer requires C++11 support. Please use GCC 4.9.3 or greater.
+#endif
+
 #ifndef __MICROBIT_TOUCHDEVELOP_H
 #define __MICROBIT_TOUCHDEVELOP_H
 
 #include <climits>
 #include <cmath>
 #include <vector>
-
-#if __cplusplus > 199711L
+#include <memory>
 #include <functional>
-#endif
+#include <map>
+#include <utility>
 
 #include "MicroBit.h"
 #include "MicroBitImage.h"
@@ -21,6 +25,11 @@
 
 namespace touch_develop {
 
+  using std::map;
+  using std::unique_ptr;
+  using std::pair;
+  using std::function;
+
   // ---------------------------------------------------------------------------
   // Base definitions that may be referred to by the C++ compiler.
   // ---------------------------------------------------------------------------
@@ -29,11 +38,40 @@ namespace touch_develop {
     TD_UNINITIALIZED_OBJECT_TYPE = 40,
     TD_OUT_OF_BOUNDS,
     TD_BAD_USAGE,
+    TD_CONTRACT_ERROR,
   };
 
   namespace touch_develop {
     ManagedString mk_string(char* c);
+
+    template <typename T>
+    inline bool is_null(T* p) {
+      return p == NULL;
+    }
   }
+
+
+  // ---------------------------------------------------------------------------
+  // An adapter for the API expected by the run-time.
+  // ---------------------------------------------------------------------------
+
+  // We maintain a mapping from source/event to the current event handler. In
+  // order to implement the TouchDevelop semantics of "at most one event handler
+  // per source/event pair", every event is dispatched through [dispatchEvent],
+  // which then does a table lookup to figure out the current handler.
+
+  extern map<pair<int, int>, function<void (MicroBitEvent)>> handlersMap;
+  void dispatchEvent(MicroBitEvent e);
+  void registerHandler(pair<int, int>, function<void()>);
+  void registerHandler(pair<int, int>, function<void(int)>);
+
+  template <typename T> // T: function<void()> or T: function<void(int)>
+  inline void registerWithDal(int id, int event, T f) {
+    if (!handlersMap[{ id, event }])
+      uBit.MessageBus.listen(id, event, dispatchEvent);
+    registerHandler({ id, event }, f);
+  }
+
 
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop types
@@ -42,16 +80,35 @@ namespace touch_develop {
   typedef int Number;
   typedef bool Boolean;
   typedef ManagedString String;
-  typedef void (*Action)();
-#if __cplusplus > 199711L
+  typedef function<void()> Action;
+  template <typename T> using Action1 = function<void(T)>;
   template <typename T> using Collection_of = ManagedType<vector<T>>;
   template <typename T> using Collection = ManagedType<vector<T>>;
-  template <typename T> using Ref = ManagedType<T>;
-#endif
+
+  // A short override of [ManagedType] to make the generated code more compact.
+  template <typename T>
+  class Ref: public ManagedType<T> {
+    public:
+      Ref();
+  };
+
+  template <typename T>
+  Ref<T>::Ref() {
+    this->object = new T();
+    *(this->ref) = 1;
+  }
 
   // ---------------------------------------------------------------------------
   // Implementation of the base TouchDevelop libraries and operations
   // ---------------------------------------------------------------------------
+
+  namespace contract {
+    void assert(bool x, ManagedString msg);
+  }
+
+  namespace invalid {
+    Action action();
+  }
 
   namespace string {
     ManagedString concat(ManagedString s1, ManagedString s2);
@@ -71,12 +128,30 @@ namespace touch_develop {
     int code_at(ManagedString s, int i);
 
     int to_number(ManagedString s);
+
+    void post_to_wall(ManagedString s);
   }
 
   namespace action {
     void run(Action a);
 
     bool is_invalid(Action a);
+  }
+
+  namespace action1 {
+    template <typename T>
+    inline void run(Action1<T> a, T arg) {
+      if (a)
+        a(arg);
+    }
+
+    template <typename T>
+    inline bool is_invalid(Action1<T> a) {
+      if (a)
+        return true;
+      else
+        return false;
+    }
   }
 
   namespace math {
@@ -98,25 +173,21 @@ namespace touch_develop {
 
   namespace number {
     bool lt(int x, int y);
-    bool leq(int x, int y);
+    bool le(int x, int y);
     bool neq(int x, int y);
     bool eq(int x, int y);
     bool gt(int x, int y);
-    bool geq(int x, int y);
-    int plus(int x, int y);
-    int minus(int x, int y);
-    int div(int x, int y);
-    int times(int x, int y);
+    bool ge(int x, int y);
+    int add(int x, int y);
+    int subtract(int x, int y);
+    int divide(int x, int y);
+    int multiply(int x, int y);
     ManagedString to_string(int x);
     ManagedString to_character(int x);
+    void post_to_wall(int s);
   }
 
   namespace bits {
-
-    // See http://blog.regehr.org/archives/1063
-    uint32_t rotl32c (uint32_t x, uint32_t n)
-   ;
-
     int or_uint32(int x, int y);
     int and_uint32(int x, int y);
     int xor_uint32(int x, int y);
@@ -138,40 +209,99 @@ namespace touch_develop {
   // Some extra TouchDevelop libraries (Collection, Ref, ...)
   // ---------------------------------------------------------------------------
 
-#if __cplusplus > 199711L
   // Parameterized types only work if we have the C++11-style "using" typedef.
   namespace create {
-    template<typename T> Collection_of<T> collection_of();
+    template<typename T>
+    inline Collection_of<T> collection_of() {
+      return ManagedType<vector<T>>(new vector<T>());
+    }
 
-    template<typename T> Ref<T> ref_of();
+    template<typename T>
+    inline Ref<T> ref_of() {
+      return Ref<T>();
+    }
   }
 
   namespace collection {
-    template<typename T> Number count(Collection_of<T> c);
+    template<typename T>
+    inline Number count(Collection_of<T> c) {
+      if (c.get() != NULL)
+        return c->size();
+      else
+        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
+    }
 
-    template<typename T> void add(Collection_of<T> c, T x);
+    template<typename T>
+    inline void add(Collection_of<T> c, T x) {
+      if (c.get() != NULL)
+        c->push_back(x);
+      else
+        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
+    }
 
     // First check that [c] is valid (panic if not), then proceed to check that
     // [x] is within bounds.
-    template<typename T> inline bool in_range(Collection_of<T> c, int x);
+    template<typename T>
+    inline bool in_range(Collection_of<T> c, int x) {
+      if (c.get() != NULL)
+        return (0 <= x && x < c->size());
+      else
+        uBit.panic(TD_UNINITIALIZED_OBJECT_TYPE);
+    }
 
-    template<typename T> T at(Collection_of<T> c, int x);
+    template<typename T>
+    inline T at(Collection_of<T> c, int x) {
+      if (in_range(c, x))
+        return c->at(x);
+      else
+        uBit.panic(TD_OUT_OF_BOUNDS);
+    }
 
-    template<typename T> void remove_at(Collection_of<T> c, int x);
+    template<typename T>
+    inline void remove_at(Collection_of<T> c, int x) {
+      if (!in_range(c, x))
+        return;
 
-    template<typename T> void set_at(Collection_of<T> c, int x, T y);
+      c->erase(c->begin()+x);
+    }
 
-    template<typename T> Number index_of(Collection_of<T> c, T x, int start);
+    template<typename T>
+    inline void set_at(Collection_of<T> c, int x, T y) {
+      if (!in_range(c, x))
+        return;
 
-    template<typename T> void remove(Collection_of<T> c, T x);
+      c->at(x) = y;
+    }
+
+    template<typename T>
+    inline Number index_of(Collection_of<T> c, T x, int start) {
+      if (!in_range(c, start))
+        return -1;
+
+      int index = -1;
+      for (int i = start; i < c->size(); ++i)
+        if (c->at(i) == x)
+          index = i;
+      return index;
+    }
+
+    template<typename T>
+    inline void remove(Collection_of<T> c, T x) {
+      remove_at(c, index_of(c, x, 0));
+    }
   }
 
   namespace ref {
-    template<typename T> T _get(Ref<T> x);
+    template<typename T>
+    inline T _get(Ref<T> x) {
+      return *(x.get());
+    }
 
-    template<typename T> void _set(Ref<T> x, T y);
+    template<typename T>
+    inline void _set(Ref<T> x, T y) {
+      *(x.get()) = y;
+    }
   }
-#endif
 
 
   // ---------------------------------------------------------------------------
@@ -179,25 +309,6 @@ namespace touch_develop {
   // ---------------------------------------------------------------------------
 
   namespace micro_bit {
-
-    namespace user_types {
-      // This one is marked as {shim:} in the TouchDevelop library, so let's
-      // provide a definition for it.
-      typedef MicroBitImage Image;
-    }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
-#if __cplusplus > 199711L
-    void callbackF(MicroBitEvent e, std::function<void()>* f);
-#endif
-
-    void callback(MicroBitEvent e, Action a);
-
-    void callback1(MicroBitEvent e, void (*a)(int));
-
 
     // -------------------------------------------------------------------------
     // Sensors
@@ -208,6 +319,15 @@ namespace touch_develop {
     int getAcceleration(int dimension);
 
     void on_calibrate_required (MicroBitEvent e);
+
+
+    // -------------------------------------------------------------------------
+    // Buttons
+    // -------------------------------------------------------------------------
+
+    bool isButtonPressed(int button);
+    void onButtonPressedExt(int button, int event, function<void()> f);
+    void onButtonPressed(int button, function<void()> f);
 
     // -------------------------------------------------------------------------
     // Pins
@@ -225,38 +345,17 @@ namespace touch_develop {
 
     bool isPinTouched(MicroBitPin& pin);
 
-    void onPinPressed(int pin, Action a);
-
-    // -------------------------------------------------------------------------
-    // Buttons
-    // -------------------------------------------------------------------------
-
-    bool isButtonPressed(int button);
-
-    void onButtonPressedExt(int button, int event, Action a);
-
-    void onButtonPressed(int button, Action a);
-
-
-#if __cplusplus > 199711L
-    // Experimental support for closures compiled as C++ functions. Only works
-    // for closures passed to [onButtonPressed] (all other functions would have
-    // to be updated, along with [in_background]). Must figure out a way to
-    // limit code duplication.
-    void onButtonPressed(int button, std::function<void()>* f);
-#endif
+    void onPinPressed(int pin, function<void()> f);
 
     // -------------------------------------------------------------------------
     // System
     // -------------------------------------------------------------------------
 
-    void runInBackground(Action a);
+    void runInBackground(function<void()> f);
 
     void pause(int ms);
 
-    void forever_stub(void (*f)());
-
-    void forever(void (*f)());
+    void forever(function<void()> f);
 
     int getCurrentTime();
 
@@ -330,7 +429,7 @@ namespace touch_develop {
 
     void generate_event(int id, int event);
 
-    void on_event(int id, void (*a)(int));
+    void on_event(int id, function<void*(int)> f);
 
     namespace events {
       void remote_control(int event);
@@ -362,7 +461,14 @@ namespace touch_develop {
     // definition. It's kind of unfortunate that we have to duplicate the
     // definition.
     namespace user_types {
-      struct DateTime_ ;
+      struct DateTime_ {
+        Number seconds;
+        Number minutes;
+        Number hours;
+        Number day;
+        Number month;
+        Number year;
+      };
       typedef ManagedType<DateTime_> DateTime;
     }
 
