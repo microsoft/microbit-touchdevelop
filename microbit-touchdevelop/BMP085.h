@@ -15,6 +15,9 @@
 #include "MicroBitTouchDevelop.h"
 #include "I2CCommon.h"
 
+#ifndef __MICROBIT_BMP085_H
+#define __MICROBIT_BMP085_H
+
 namespace touch_develop {
 namespace bmp085 {
 
@@ -85,3 +88,5 @@ namespace bmp085 {
   int getIntTemperature();
 } // namespace bmp085
 } // namespace touch_develop
+
+#endif

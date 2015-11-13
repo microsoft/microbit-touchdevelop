@@ -39,6 +39,7 @@ namespace touch_develop {
     TD_OUT_OF_BOUNDS,
     TD_BAD_USAGE,
     TD_CONTRACT_ERROR,
+    TD_PERIPHERAL_ERROR,
   };
 
   namespace touch_develop {
