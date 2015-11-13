@@ -372,6 +372,10 @@ namespace touch_develop {
       return uBit.systemTime();
     }
 
+    // These functions are exposed via the "micro:bit extras" library. They are
+    // simplified; for any serious hardware, write the i2c communication thing
+    // in C++.
+
     int i2c_read(int addr) {
       char c;
       uBit.i2c.read(addr << 1, &c, 1);
