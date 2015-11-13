@@ -5,34 +5,11 @@ namespace bmp085 {
 
   const int addr = 0x77;
 
-  static uint8_t _bmp085Mode;
-  static bmp085_calib_data _bmp085_coeffs;
-
-  static uint8_t read8(char i1){
-      char cmd2[] = { i1 };
-      uBit.i2c.write(addr << 1, cmd2, 1);
-      char buf[1];
-      uBit.i2c.read(addr << 1, buf, 1);
-
-      return buf[0];
-  }
-
-  static uint16_t read16(char i1){
-      char cmd2[] = { i1 };
-      uBit.i2c.write(addr << 1, cmd2, 1);
-      char buf[2];
-      uBit.i2c.read(addr << 1, buf, 2);
-
-      return (((uint16_t) buf[0]) << 8) + buf[1];
-  }
-
-  static int readS16(char i2){
-       int16_t i = read16(i2);
-       return (int16_t)i;
-  }
+  uint8_t _bmp085Mode;
+  bmp085_calib_data _bmp085_coeffs;
 
 
-  static void readCoefficients() {
+  void readCoefficients() {
 #if BMP085_USE_DATASHEET_VALS
       _bmp085_coeffs.ac1 = 408;
       _bmp085_coeffs.ac2 = -72;
@@ -47,17 +24,17 @@ namespace bmp085 {
       _bmp085_coeffs.md  = 2868;
       _bmp085Mode        = 0;
 #else
-      _bmp085_coeffs.ac1 = readS16(BMP085_REGISTER_CAL_AC1);
-      _bmp085_coeffs.ac2 = readS16(BMP085_REGISTER_CAL_AC2);
-      _bmp085_coeffs.ac3 = readS16(BMP085_REGISTER_CAL_AC3);
-      _bmp085_coeffs.ac4 = read16(BMP085_REGISTER_CAL_AC4);
-      _bmp085_coeffs.ac5 = read16(BMP085_REGISTER_CAL_AC5);
-      _bmp085_coeffs.ac6 = read16(BMP085_REGISTER_CAL_AC6);
-      _bmp085_coeffs.b1 = readS16(BMP085_REGISTER_CAL_B1);
-      _bmp085_coeffs.b2 = readS16(BMP085_REGISTER_CAL_B2);
-      _bmp085_coeffs.mb = readS16(BMP085_REGISTER_CAL_MB);
-      _bmp085_coeffs.mc = readS16(BMP085_REGISTER_CAL_MC);
-      _bmp085_coeffs.md = readS16(BMP085_REGISTER_CAL_MD);
+      _bmp085_coeffs.ac1 = readS16(addr, BMP085_REGISTER_CAL_AC1);
+      _bmp085_coeffs.ac2 = readS16(addr, BMP085_REGISTER_CAL_AC2);
+      _bmp085_coeffs.ac3 = readS16(addr, BMP085_REGISTER_CAL_AC3);
+      _bmp085_coeffs.ac4 = read16(addr, BMP085_REGISTER_CAL_AC4);
+      _bmp085_coeffs.ac5 = read16(addr, BMP085_REGISTER_CAL_AC5);
+      _bmp085_coeffs.ac6 = read16(addr, BMP085_REGISTER_CAL_AC6);
+      _bmp085_coeffs.b1 = readS16(addr, BMP085_REGISTER_CAL_B1);
+      _bmp085_coeffs.b2 = readS16(addr, BMP085_REGISTER_CAL_B2);
+      _bmp085_coeffs.mb = readS16(addr, BMP085_REGISTER_CAL_MB);
+      _bmp085_coeffs.mc = readS16(addr, BMP085_REGISTER_CAL_MC);
+      _bmp085_coeffs.md = readS16(addr, BMP085_REGISTER_CAL_MD);
 #endif
   }
 
@@ -72,7 +49,7 @@ namespace bmp085 {
       char cmd[] = { BMP085_REGISTER_CONTROL, BMP085_REGISTER_READTEMPCMD };
       uBit.i2c.write(addr << 1, cmd, 2);
       wait_ms(5);
-      return read16(BMP085_REGISTER_TEMPDATA);
+      return read16(addr, BMP085_REGISTER_TEMPDATA);
 #endif
   }
 
@@ -105,9 +82,9 @@ namespace bmp085 {
           break;
       }
 
-      p16 = read16(BMP085_REGISTER_PRESSUREDATA);
+      p16 = read16(addr, BMP085_REGISTER_PRESSUREDATA);
       p32 = (uint32_t)p16 << 8;
-      p8 = read8(BMP085_REGISTER_PRESSUREDATA+2);
+      p8 = read8(addr, BMP085_REGISTER_PRESSUREDATA+2);
       p32 += p8;
       p32 >>= (8 - _bmp085Mode);
       return p32;
@@ -122,7 +99,7 @@ namespace bmp085 {
 
   void begin(bmp085_mode_t mode)
   {
-    if (read8(BMP085_REGISTER_CHIPID) != 0x55)
+    if (read8(addr, BMP085_REGISTER_CHIPID) != 0x55)
       uBit.panic(12);
 
     /* Set the mode indicator */

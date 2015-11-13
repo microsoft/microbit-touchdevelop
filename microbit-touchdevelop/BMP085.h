@@ -13,6 +13,7 @@
  ***************************************************************************/
 
 #include "MicroBitTouchDevelop.h"
+#include "I2CCommon.h"
 
 namespace touch_develop {
 namespace bmp085 {
@@ -63,14 +64,8 @@ namespace bmp085 {
     int16_t  md;
   } bmp085_calib_data;
 
-  static uint8_t read8(char i1);
 
-  static uint16_t read16(char i1);
-
-  static int readS16(char i2);
-
-
-  static void readCoefficients();
+  void readCoefficients();
 
   void setMode(bmp085_mode_t mode);
 
