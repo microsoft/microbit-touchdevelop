@@ -201,7 +201,7 @@ namespace bitvm {
 
     virtual void print()
     {
-      printf("RefCollection %p r=%d flags=%d size=%d [%p, ...]\n", this, refcnt, flags, data.size(), data.size() > 0 ? data[0] : NULL);
+      printf("RefCollection %p r=%d flags=%d size=%d [%p, ...]\n", this, refcnt, flags, data.size(), data.size() > 0 ? data[0] : 0);
     }
   };
 
