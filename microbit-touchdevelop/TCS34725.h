@@ -119,7 +119,6 @@ namespace tcs34725 {
   void     clearInterrupt(void);
   void     setIntLimits(uint16_t l, uint16_t h);
   void     enable(void);
-
   void     disable(void);
 
 }}

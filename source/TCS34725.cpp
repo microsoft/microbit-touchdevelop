@@ -47,6 +47,7 @@ namespace tcs34725 {
     /* Make sure we're actually connected */
     uint8_t x = i2c.read8(TCS34725_ID);
     if (x != 0x44 && x != 0x10) {
+      uBit.serial.printf("Bad peripheral id: %x\n", x);
       uBit.panic(TD_PERIPHERAL_ERROR);
     }
     _tcs34725Initialised = true;

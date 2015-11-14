@@ -10,7 +10,6 @@ namespace i2c {
     uBit.i2c.write(addr << 1, cmd2, 1);
     char buf[1];
     uBit.i2c.read(addr << 1, buf, 1);
-
     return buf[0];
   }
 
@@ -21,11 +20,10 @@ namespace i2c {
     char buf[2];
     uBit.i2c.read(addr << 1, buf, 2);
 
-    return (((uint16_t) buf[0]) << 8) + buf[1];
+    return (((uint16_t) buf[0]) << 8) + ((uint8_t) buf[1]);
   }
 
   int16_t I2CSimple::readS16(char reg){
-    reg |= mask;
     int16_t i = read16(reg);
     return (int16_t)i;
   }
