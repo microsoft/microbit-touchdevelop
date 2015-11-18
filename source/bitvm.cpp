@@ -371,14 +371,28 @@ namespace bitvm {
 
   namespace bitvm_micro_bit {
 
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // An adapter for the API expected by the run-time.
+    // ---------------------------------------------------------------------------
 
-    void callback(MicroBitEvent e, Action a) {
-      action::run(a);
+    map<pair<int, int>, Action> handlersMap;
+
+    // We have the invariant that if [dispatchEvent] is registered against the DAL
+    // for a given event, then [handlersMap] contains a valid entry for that
+    // event.
+    void dispatchEvent(MicroBitEvent e) {
+      action::run(handlersMap[{ e.source, e.value }]);
     }
 
+    void registerWithDal(int id, int event, Action a) {
+      Action prev = handlersMap[{ id, event }];
+      if (prev)
+        decr(prev);
+      else
+        uBit.MessageBus.listen(id, event, dispatchEvent);
+      incr(a);
+      handlersMap[{ id, event }] = a;
+    }
 
     // -------------------------------------------------------------------------
     // Pins
@@ -399,15 +413,7 @@ namespace bitvm {
             uBit.io.P2.isTouched();
             break;
         }
-        uBit.MessageBus.ignore(
-          pin,
-          MICROBIT_BUTTON_EVT_CLICK,
-          (void (*)(MicroBitEvent, void*)) callback);
-        uBit.MessageBus.listen(
-          pin,
-          MICROBIT_BUTTON_EVT_CLICK,
-          (void (*)(MicroBitEvent, void*)) callback,
-          (void*) a);
+        registerWithDal(pin, MICROBIT_BUTTON_EVT_CLICK, a);
       }
     }
 
@@ -417,16 +423,7 @@ namespace bitvm {
 
     void onButtonPressedExt(int button, int event, Action a) {
       if (a != 0) {
-        incr(a);
-        uBit.MessageBus.ignore(
-          button,
-          event,
-          (void (*)(MicroBitEvent, void*)) callback);
-        uBit.MessageBus.listen(
-          button,
-          event,
-          (void (*)(MicroBitEvent, void*)) callback,
-          (void*) a);
+        registerWithDal(button, event, a);
       }
     }
 

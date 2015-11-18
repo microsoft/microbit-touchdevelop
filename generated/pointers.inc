@@ -62,7 +62,6 @@
 (uint32_t)(void*)::touch_develop::math::sqrt,  // F1 {shim:math::sqrt}
 (uint32_t)(void*)::touch_develop::micro_bit::analogReadPin,  // F1 {shim:micro_bit::analogReadPin}
 (uint32_t)(void*)::touch_develop::micro_bit::analogWritePin,  // P2 {shim:micro_bit::analogWritePin}
-(uint32_t)(void*)::bitvm::bitvm_micro_bit::callback,  // P2 over {shim:micro_bit::callback}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::clearImage,  // P1 over {shim:micro_bit::clearImage}
 (uint32_t)(void*)::touch_develop::micro_bit::clearScreen,  // P0 {shim:micro_bit::clearScreen}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::compassCalibrateEnd,  // P0 over {shim:micro_bit::compassCalibrateEnd}
@@ -73,6 +72,7 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createReadOnlyImage,  // F1 over {shim:micro_bit::createReadOnlyImage}
 (uint32_t)(void*)::touch_develop::micro_bit::digitalReadPin,  // F1 {shim:micro_bit::digitalReadPin}
 (uint32_t)(void*)::touch_develop::micro_bit::digitalWritePin,  // P2 {shim:micro_bit::digitalWritePin}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::dispatchEvent,  // P1 over {shim:micro_bit::dispatchEvent}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::displayScreenShot,  // F0 over {shim:micro_bit::displayScreenShot}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::displayStopAnimation,  // P0 over {shim:micro_bit::displayStopAnimation}
 (uint32_t)(void*)::touch_develop::micro_bit::enablePitch,  // P1 {shim:micro_bit::enablePitch}
@@ -127,6 +127,7 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::plotImage,  // P2 over {shim:micro_bit::plotImage}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::plotLeds,  // P1 over {shim:micro_bit::plotLeds}
 (uint32_t)(void*)::touch_develop::micro_bit::point,  // F2 {shim:micro_bit::point}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::registerWithDal,  // P3 over {shim:micro_bit::registerWithDal}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::reset,  // P0 over {shim:micro_bit::reset}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::runInBackground,  // P1 over {shim:micro_bit::runInBackground}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::scrollImage,  // P3 over {shim:micro_bit::scrollImage}
