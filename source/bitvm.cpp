@@ -635,8 +635,6 @@ namespace bitvm {
 
   void exec_binary(uint16_t *pc)
   {
-    printf("start!\n");
-
     // XXX re-enable once the calibration code is fixed and [editor/embedded.ts]
     // properly prepends a call to [internal_main].
     // ::touch_develop::internal_main();
@@ -650,7 +648,6 @@ namespace bitvm {
     uint32_t startptr = (uint32_t)pc;
     startptr |= 1; // Thumb state
     startptr = ((uint32_t (*)())startptr)();
-    printf("stop main\n");
 
 #ifdef DEBUG_MEMLEAKS
     bitvm::debugMemLeaks();
