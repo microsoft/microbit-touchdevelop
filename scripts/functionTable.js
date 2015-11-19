@@ -74,9 +74,8 @@ process.argv.slice(2).forEach(function (fn) {
                 return;
             }
             var ns = nsStack.slice(1).map(s => s.ns).filter(s => !!s).join("::")
-            if (ns == "")
-                return;
             var name = ns + "::" + m[4]
+            if (ns == "") name = m[4]
             var tp = "F"
             if (m[2] == "void" && m[3].trim() == "")
                 tp = "P"

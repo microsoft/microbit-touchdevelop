@@ -351,4 +351,9 @@ namespace bitvm {
 
 #endif
 
+/* mbed functions to import. The pointer-table generation script will pick these up. */
+#if POINTER_GENERATOR_DOESNT_REALLY_DO_IFDEFS
+void wait_us(int us);
+#endif
+
 // vim: ts=2 sw=2 expandtab

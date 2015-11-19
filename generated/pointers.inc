@@ -90,6 +90,8 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::getImageHeight,  // F1 over {shim:micro_bit::getImageHeight}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::getImagePixel,  // F3 over {shim:micro_bit::getImagePixel}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::getImageWidth,  // F1 over {shim:micro_bit::getImageWidth}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::i2cReadRaw,  // F4 over {shim:micro_bit::i2cReadRaw}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::i2cWriteRaw,  // F4 over {shim:micro_bit::i2cWriteRaw}
 (uint32_t)(void*)::touch_develop::micro_bit::i2c_read,  // F1 {shim:micro_bit::i2c_read}
 (uint32_t)(void*)::touch_develop::micro_bit::i2c_write,  // P2 {shim:micro_bit::i2c_write}
 (uint32_t)(void*)::touch_develop::micro_bit::i2c_write2,  // P3 {shim:micro_bit::i2c_write2}
@@ -178,3 +180,4 @@
 (uint32_t)(void*)::touch_develop::dispatchEvent,  // P1 {shim:touch_develop::dispatchEvent}
 (uint32_t)(void*)::touch_develop::internal_main,  // P0 {shim:touch_develop::internal_main}
 (uint32_t)(void*)::touch_develop::touch_develop::mk_string,  // F1 {shim:touch_develop::mk_string}
+(uint32_t)(void*)::wait_us,  // P1 {shim:wait_us}

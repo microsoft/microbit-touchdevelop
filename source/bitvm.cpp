@@ -613,6 +613,16 @@ namespace bitvm {
 
     void serialSendDisplayState() { uBit.serial.sendDisplayState(); }
     void serialReadDisplayState() { uBit.serial.readDisplayState(); }
+
+    int i2cReadRaw(int address, const char *data, int length, int repeated)
+    {
+      return uBit.i2c.write(address, data, length, repeated);
+    }
+
+    int i2cWriteRaw(int address, const char *data, int length, int repeated)
+    {
+      return uBit.i2c.write(address, data, length, repeated);
+    }
   }
 
 
