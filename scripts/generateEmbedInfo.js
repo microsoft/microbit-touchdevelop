@@ -10,7 +10,7 @@ var fs = require('fs');
 
 var hex = fs.readFileSync(process.argv[2], "utf8").split(/\r?\n/)
 var fotahex = fs.readFileSync(process.argv[2].replace(/-combined/, ""), "utf8").split(/\r?\n/)
-var metainfo = JSON.parse(fs.readFileSync("build/metainfo.json", "utf8"))
+var metainfo = JSON.parse(fs.readFileSync("generated/metainfo.json", "utf8"))
 
 var s = "TDev.bytecodeInfo = {\n";
 s += "functions: [\n";

@@ -156,7 +156,7 @@ function write(fn, cont)
 
 write("generated/pointers.inc", ptrs)
 write("build/protos.h", protos)
-write("build/metainfo.json", JSON.stringify(metainfo, null, 2))
+write("generated/metainfo.json", JSON.stringify(metainfo, null, 2))
 
 
 // vim: ts=4 sw=4
