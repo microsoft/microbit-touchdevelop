@@ -12,6 +12,9 @@
 #define printf(...) uBit.serial.printf(__VA_ARGS__)
 // #define printf(...)
 
+// for marking glue functions
+#define GLUE /*glue*/
+
 #include <stdio.h>
 #include <string.h>
 #include <vector>
