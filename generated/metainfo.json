@@ -1004,6 +1004,12 @@
       "full": "bitvm::bitvm_micro_bit::showLetter"
     },
     {
+      "proto": "void           micro_bit::stopAnimation      ();                                     ",
+      "name": "micro_bit::stopAnimation",
+      "type": "P",
+      "args": 0
+    },
+    {
       "proto": "int            micro_bit::thermometerGetTemperature ();                                     ",
       "name": "micro_bit::thermometerGetTemperature",
       "type": "F",

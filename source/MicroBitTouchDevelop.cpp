@@ -532,6 +532,10 @@ namespace touch_develop {
     void showAnimation(int w, int h, const uint8_t* bitmap, int ms) {
       uBit.display.animate(MicroBitImage(w, h, bitmap), ms, 5, 0);
     }
+    
+    void stopAnimation() {
+      uBit.display.stopAnimation();
+    }
 
     // -------------------------------------------------------------------------
     // BLE Events

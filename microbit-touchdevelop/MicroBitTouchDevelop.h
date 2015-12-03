@@ -423,6 +423,8 @@ namespace touch_develop {
     void scrollImage(MicroBitImage i, int offset, int delay);
 
     void showAnimation(int w, int h, const uint8_t* bitmap, int ms);
+    
+    void stopAnimation();
 
     // -------------------------------------------------------------------------
     // BLE Events
