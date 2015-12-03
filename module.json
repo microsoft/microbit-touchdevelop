@@ -1,9 +1,9 @@
 {
   "name": "microbit-touchdevelop",
   "version": "0.0.1",
-  "description": "The glue layer that binds together TouchDevelop programs compiled to C++ and the micro:bit runtime system.",
+  "description": "The glue layer that binds together Touch Develop programs compiled to C++ and the BBC micro:bit runtime system.",
   "keywords": [],
-  "author": "Jonathan Protzenko <protz@microsoft.com>",
+  "author": "Microsoft Corporation",
   "repository": {
     "url": "ssh://git@github.com:Microsoft/microbit-touchdevelop.git",
     "type": "git"
@@ -19,7 +19,7 @@
     "mbed-classic": "~0.0.4",
     "ble": "lancaster-university/BLE_API#td0",
     "ble-nrf51822": "lancaster-university/nRF51822#td0",
-    "microbit-dal": "lancaster-university/microbit-dal#v1.3.8"
+    "microbit-dal": "lancaster-university/microbit-dal#v1.3.9"
   },
   "targetDependencies": { },
   "bin": "./source",
