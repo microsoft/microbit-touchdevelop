@@ -235,14 +235,10 @@ namespace bitvm {
       printf("RefRecord %p r=%d size=%d (%d refs)\n", this, refcnt, len, reflen);
     }
 
-    // All of the functions below unref() self. This is for performance reasons -
-    // the code emitter will not emit the unrefs for them.
     inline uint32_t ld(int idx)
     {
       check(reflen <= idx && idx < len, ERR_OUT_OF_BOUNDS, 1);
-      uint32_t tmp = fields[idx];
-      unref();
-      return tmp;
+      return fields[idx];
     }
 
     inline uint32_t ldref(int idx)
@@ -251,7 +247,6 @@ namespace bitvm {
       check(0 <= idx && idx < reflen, ERR_OUT_OF_BOUNDS, 2);
       uint32_t tmp = fields[idx];
       incr(tmp);
-      unref();
       return tmp;
     }
 
@@ -259,7 +254,6 @@ namespace bitvm {
     {
       check(reflen <= idx && idx < len, ERR_OUT_OF_BOUNDS, 3);
       fields[idx] = v;
-      unref();
     }
 
     inline void stref(int idx, uint32_t v)
@@ -268,7 +262,6 @@ namespace bitvm {
       check(0 <= idx && idx < reflen, ERR_OUT_OF_BOUNDS, 4);
       decr(fields[idx]);
       fields[idx] = v;
-      unref();
     }
   };
 

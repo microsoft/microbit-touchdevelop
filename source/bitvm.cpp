@@ -23,7 +23,6 @@ namespace bitvm {
 
   uint32_t ldloc(RefLocal *r)
   {
-    //DBG("LD "); r->print();
     return r->v;
   }
 
@@ -37,7 +36,6 @@ namespace bitvm {
   void stloc(RefLocal *r, uint32_t v)
   {
     r->v = v;
-    //DBG("ST "); r->print();
   }
 
   void stlocRef(RefRefLocal *r, uint32_t v)
@@ -56,24 +54,33 @@ namespace bitvm {
     return new RefRefLocal();
   }
 
+  // All of the functions below unref() self. This is for performance reasons -
+  // the code emitter will not emit the unrefs for them.
+  
   uint32_t ldfld(RefRecord *r, int idx)
   {
-    return r->ld(idx);
+    auto tmp = r->ld(idx);
+    r->unref();
+    return tmp;
   }
 
   uint32_t ldfldRef(RefRecord *r, int idx)
   {
-    return r->ldref(idx);
+    auto tmp = r->ldref(idx);
+    r->unref();
+    return tmp;
   }
 
   void stfld(RefRecord *r, int idx, uint32_t val)
   {
     r->st(idx, val);
+    r->unref();
   }
 
   void stfldRef(RefRecord *r, int idx, uint32_t val)
   {
     r->stref(idx, val);
+    r->unref();
   }
 
   uint32_t ldglb(int idx)
