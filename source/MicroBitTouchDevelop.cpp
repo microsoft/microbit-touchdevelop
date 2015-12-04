@@ -575,13 +575,20 @@ namespace touch_develop {
     }
 
     void pitch(int freq, int ms) {
-      if (freq <= 0 || ms < 0 || pitchPin == NULL)
+      if (pitchPin == NULL) return;
+      if (freq <= 0) {
+        pitchPin->setAnalogValue(0);
         return;
+      } 
+
       pitchPin->setAnalogValue(512);
       pitchPin->setAnalogPeriodUs(1000000/freq);
-      wait_ms(ms);
-      pitchPin->setAnalogValue(0);
-      wait_ms(40);
+      
+      if (ms > 0) {
+        wait_ms(ms);
+        pitchPin->setAnalogValue(0);
+        wait_ms(40);
+      }
     }
   }
 
