@@ -3,10 +3,13 @@
  *
  * The contents of this file goes in "glue.cpp" string resource in a Touch Develop library.
  *
+ * This file is actually compiled, so make sure there are *no* static initlizers and it is thus not linked.
+ *
  */
 
 // You can use any includes you want. This one comes from the microbit-touchdevelop module.
 #include "I2CCommon.h"
+
 
 // TODO we're still working on possiblity of including additional yotta modules.
 
@@ -191,6 +194,47 @@ namespace coolwidget {
             outp->data[i] = inp->data[i] ^ 42;
         return outp;
     }
+    
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Records
+    // 
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // Records are constructed with `record::mk(refLen, totalLen)` function.
+    // If there are only primitive fields (Numbers, Booleans) in the records,
+    // refLen=0 and things are simple.
+    GLUE RefRecord *readData()
+    {
+        RefRecord *res = record::mk(0, 2);
+        res->st(0, 42);
+        res->st(1, 74);
+        return rec;
+    }
+
+    /*
+     * object MyData {
+     *    x: Number
+     *    y: Number
+     * }
+     *
+     * function read data() returns MyData
+     * {
+     *     // {shim::coolwidget::readData}
+     *     var r := MyData->create
+     *     // Dummy values for simulator.
+     *     r->x := 42
+     *     r->y := 74
+     *     return r
+     * }
+     *
+     */
+
+    // Records always have all the reference type fields first, followed by all the primitive fields.
     
 }
 
