@@ -229,6 +229,15 @@ namespace bitvm {
     }
   }
 
+  StringData *mkStringData(uint32_t len)
+  {
+    StringData *r = (StringData*)malloc(sizeof(StringData)+len+1);
+    r->init();
+    r->len = len;
+    memset(r->data, '\0', len + 1);
+    return r;
+  }
+
   // The proper StringData* representation is already laid out in memory by the code generator.
   uint32_t stringData(uint32_t lit)
   {

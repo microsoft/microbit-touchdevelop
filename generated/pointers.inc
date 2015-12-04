@@ -23,6 +23,7 @@
 (uint32_t)(void*)::bitvm::ldglbRef,  // F1 {shim:bitvm::ldglbRef}
 (uint32_t)(void*)::bitvm::ldloc,  // F1 {shim:bitvm::ldloc}
 (uint32_t)(void*)::bitvm::ldlocRef,  // F1 {shim:bitvm::ldlocRef}
+(uint32_t)(void*)::bitvm::mkStringData,  // F1 {shim:bitvm::mkStringData}
 (uint32_t)(void*)::bitvm::mkloc,  // F0 {shim:bitvm::mkloc}
 (uint32_t)(void*)::bitvm::mklocRef,  // F0 {shim:bitvm::mklocRef}
 (uint32_t)(void*)::bitvm::stclo,  // F3 {shim:bitvm::stclo}

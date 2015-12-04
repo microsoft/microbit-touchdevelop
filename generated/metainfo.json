@@ -168,6 +168,13 @@
       "full": "bitvm::ldlocRef"
     },
     {
+      "proto": "StringData*    bitvm::mkStringData           (uint32_t len);                         ",
+      "name": "bitvm::mkStringData",
+      "type": "F",
+      "args": 1,
+      "full": "bitvm::mkStringData"
+    },
+    {
       "proto": "RefLocal*      bitvm::mkloc                  ();                                     ",
       "name": "bitvm::mkloc",
       "type": "F",
