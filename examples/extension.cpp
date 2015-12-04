@@ -213,7 +213,7 @@ namespace coolwidget {
         RefRecord *res = record::mk(0, 2);
         res->st(0, 42);
         res->st(1, 74);
-        return rec;
+        return res;
     }
 
     /*

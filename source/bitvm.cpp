@@ -683,6 +683,8 @@ namespace bitvm {
   }
 }  
 
+using namespace bitvm;
+
 #include "generated/extensions.inc"
 
 namespace bitvm {
