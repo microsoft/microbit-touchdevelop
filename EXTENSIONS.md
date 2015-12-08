@@ -1,7 +1,8 @@
 # BITVM extensions
 
 This file documents the process of creating C++ extensions for the Touch
-Develop's in-browser ARM Thumb compiler called BITVM.
+Develop's in-browser ARM Thumb compiler 
+[called BITVM](https://www.touchdevelop.com/docs/touch-develop-in-208-bits).
 
 Disclaimer: The functions in this extension do not necessarily make much sense.
 They are only for illustrative purposes.
@@ -37,8 +38,8 @@ the user is using more than one extension.
 ## Testing your extension
 
 You need to make sure your extension compiles before you put it in the
-`glue.cpp` resource. This is because the error reporting is nearly
-non-existent. 
+`glue.cpp` resource. This is because the error reporting from the cloud
+compiler is nearly non-existent in the current setup.
 
 * follow instructions for building this package (microbit-touchdevelop),
   including installing yotta
