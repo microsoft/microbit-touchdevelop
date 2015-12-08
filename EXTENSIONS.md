@@ -34,6 +34,43 @@ You need to provide exactly one namespace declaration and put all your
 classes/functions in there.  Make sure your namespace name is unique, in case
 the user is using more than one extension.
 
+## Testing your extension
+
+You need to make sure your extension compiles before you put it in the
+`glue.cpp` resource. This is because the error reporting is nearly
+non-existent. 
+
+* follow instructions for building this package (microbit-touchdevelop),
+  including installing yotta
+
+* replace contents of `examples/extension.cpp` with your extension
+
+* include a test function in the extension source, for example `void test();`
+
+* replace `source/main.cpp` with the following:
+
+```cpp
+namespace coolwidget {
+  void test();
+}
+void app_main() {
+  coolwidget::test();
+}
+
+```
+
+* run `yotta build` as usual; fix errors; rinse; repeat
+
+* copy `build/bbc-microbit-classic-gcc/source/microbit-touchdevelop-combined.hex` to your micro:bit drive and make sure it works
+
+* copy&paste contents of `examples/extension.cpp` to the `glue.cpp` resource in your library
+
+The `printf()` function is `#defined` to serial printf. You can use it for debugging.
+
+Never put `app_main()` in `glue.cpp` resource (and thus best not put it in
+`extension.cpp` file either - keep it simple and always copy the whole file)
+
+
 ## Basic usage
 
 The macro GLUE marks a function to be exposed to the TD library. Here we write
