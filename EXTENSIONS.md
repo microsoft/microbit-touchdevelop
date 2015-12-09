@@ -7,6 +7,10 @@ Develop's in-browser ARM Thumb compiler
 Disclaimer: The functions in this extension do not necessarily make much sense.
 They are only for illustrative purposes.
 
+You can check out some examples:
+* [I2C FRAM](https://microbit.co.uk/jrwwor)
+* [TCS 34725](https://microbit.co.uk/vfsaap)
+
 ## Extension structure
 
 An extension consists of Touch Develop (TD) library with an embedded string
