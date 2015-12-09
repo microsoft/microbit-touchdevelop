@@ -2,6 +2,7 @@
 (uint32_t)(void*)::bitvm::action::mk,  // F3 bvm {shim:action::mk}
 (uint32_t)(void*)::bitvm::action::run,  // P1 bvm {shim:action::run}
 (uint32_t)(void*)::touch_develop::bits::and_uint32,  // F2 {shim:bits::and_uint32}
+(uint32_t)(void*)::bitvm::bitvm_bits::create_buffer,  // F1 over {shim:bits::create_buffer}
 (uint32_t)(void*)::touch_develop::bits::or_uint32,  // F2 {shim:bits::or_uint32}
 (uint32_t)(void*)::touch_develop::bits::rotate_left_uint32,  // F2 {shim:bits::rotate_left_uint32}
 (uint32_t)(void*)::touch_develop::bits::rotate_right_uint32,  // F2 {shim:bits::rotate_right_uint32}
@@ -39,6 +40,14 @@
 (uint32_t)(void*)::touch_develop::boolean::not_,  // F1 {shim:boolean::not_}
 (uint32_t)(void*)::touch_develop::boolean::or_,  // F2 {shim:boolean::or_}
 (uint32_t)(void*)::bitvm::bitvm_boolean::to_string,  // F1 over {shim:boolean::to_string}
+(uint32_t)(void*)::bitvm::buffer::add,  // P2 bvm {shim:buffer::add}
+(uint32_t)(void*)::bitvm::buffer::at,  // F2 bvm {shim:buffer::at}
+(uint32_t)(void*)::bitvm::buffer::count,  // F1 bvm {shim:buffer::count}
+(uint32_t)(void*)::bitvm::buffer::cptr,  // F1 bvm {shim:buffer::cptr}
+(uint32_t)(void*)::bitvm::buffer::fill,  // P2 bvm {shim:buffer::fill}
+(uint32_t)(void*)::bitvm::buffer::fill_random,  // P1 bvm {shim:buffer::fill_random}
+(uint32_t)(void*)::bitvm::buffer::mk,  // F1 bvm {shim:buffer::mk}
+(uint32_t)(void*)::bitvm::buffer::set,  // P3 bvm {shim:buffer::set}
 (uint32_t)(void*)::bitvm::collection::add,  // P2 bvm {shim:collection::add}
 (uint32_t)(void*)::bitvm::collection::at,  // F2 bvm {shim:collection::at}
 (uint32_t)(void*)::bitvm::collection::count,  // F1 bvm {shim:collection::count}
@@ -91,7 +100,9 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::getImageHeight,  // F1 over {shim:micro_bit::getImageHeight}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::getImagePixel,  // F3 over {shim:micro_bit::getImagePixel}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::getImageWidth,  // F1 over {shim:micro_bit::getImageWidth}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::i2cReadBuffer,  // P2 over {shim:micro_bit::i2cReadBuffer}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::i2cReadRaw,  // F4 over {shim:micro_bit::i2cReadRaw}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::i2cWriteBuffer,  // P2 over {shim:micro_bit::i2cWriteBuffer}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::i2cWriteRaw,  // F4 over {shim:micro_bit::i2cWriteRaw}
 (uint32_t)(void*)::touch_develop::micro_bit::i2c_read,  // F1 {shim:micro_bit::i2c_read}
 (uint32_t)(void*)::touch_develop::micro_bit::i2c_write,  // P2 {shim:micro_bit::i2c_write}

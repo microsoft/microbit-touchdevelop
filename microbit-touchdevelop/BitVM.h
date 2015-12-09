@@ -208,6 +208,24 @@ namespace bitvm {
     }
   };
 
+  // A ref-counted byte buffer
+  class RefBuffer
+    : public RefObject
+  {
+  public:
+    std::vector<uint8_t> data;
+
+    virtual ~RefBuffer()
+    {
+      data.resize(0);
+    }
+
+    virtual void print()
+    {
+      printf("RefBuffer %p r=%d size=%d [%p, ...]\n", this, refcnt, data.size(), data.size() > 0 ? data[0] : 0);
+    }
+  };
+
   // A ref-counted, user-defined Touch Develop object.
   class RefRecord
     : public RefObject

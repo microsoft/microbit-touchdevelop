@@ -27,6 +27,13 @@
       "args": 2
     },
     {
+      "proto": "RefBuffer*     bits::create_buffer           (int size);                             ",
+      "name": "bits::create_buffer",
+      "type": "F",
+      "args": 1,
+      "full": "bitvm::bitvm_bits::create_buffer"
+    },
+    {
       "proto": "int            bits::or_uint32               (int x, int y);                         ",
       "name": "bits::or_uint32",
       "type": "F",
@@ -274,6 +281,62 @@
       "type": "F",
       "args": 1,
       "full": "bitvm::bitvm_boolean::to_string"
+    },
+    {
+      "proto": "void           buffer::add                   (RefBuffer *c, uint32_t x);             ",
+      "name": "buffer::add",
+      "type": "P",
+      "args": 2,
+      "full": "bitvm::buffer::add"
+    },
+    {
+      "proto": "uint32_t       buffer::at                    (RefBuffer *c, int x);                  ",
+      "name": "buffer::at",
+      "type": "F",
+      "args": 2,
+      "full": "bitvm::buffer::at"
+    },
+    {
+      "proto": "int            buffer::count                 (RefBuffer *c);                         ",
+      "name": "buffer::count",
+      "type": "F",
+      "args": 1,
+      "full": "bitvm::buffer::count"
+    },
+    {
+      "proto": "char*          buffer::cptr                  (RefBuffer *c);                         ",
+      "name": "buffer::cptr",
+      "type": "F",
+      "args": 1,
+      "full": "bitvm::buffer::cptr"
+    },
+    {
+      "proto": "void           buffer::fill                  (RefBuffer *c, int v);                  ",
+      "name": "buffer::fill",
+      "type": "P",
+      "args": 2,
+      "full": "bitvm::buffer::fill"
+    },
+    {
+      "proto": "void           buffer::fill_random           (RefBuffer *c);                         ",
+      "name": "buffer::fill_random",
+      "type": "P",
+      "args": 1,
+      "full": "bitvm::buffer::fill_random"
+    },
+    {
+      "proto": "RefBuffer*     buffer::mk                    (uint32_t size);                        ",
+      "name": "buffer::mk",
+      "type": "F",
+      "args": 1,
+      "full": "bitvm::buffer::mk"
+    },
+    {
+      "proto": "void           buffer::set                   (RefBuffer *c, int x, uint32_t y);      ",
+      "name": "buffer::set",
+      "type": "P",
+      "args": 3,
+      "full": "bitvm::buffer::set"
     },
     {
       "proto": "void           collection::add               (RefCollection *c, uint32_t x);         ",
@@ -612,11 +675,25 @@
       "full": "bitvm::bitvm_micro_bit::getImageWidth"
     },
     {
-      "proto": "int            micro_bit::i2cReadRaw         (int address, const char *data, int length, int repeated); ",
+      "proto": "void           micro_bit::i2cReadBuffer      (int address, RefBuffer *buf);          ",
+      "name": "micro_bit::i2cReadBuffer",
+      "type": "P",
+      "args": 2,
+      "full": "bitvm::bitvm_micro_bit::i2cReadBuffer"
+    },
+    {
+      "proto": "int            micro_bit::i2cReadRaw         (int address, char *data, int length, int repeated); ",
       "name": "micro_bit::i2cReadRaw",
       "type": "F",
       "args": 4,
       "full": "bitvm::bitvm_micro_bit::i2cReadRaw"
+    },
+    {
+      "proto": "void           micro_bit::i2cWriteBuffer     (int address, RefBuffer *buf);          ",
+      "name": "micro_bit::i2cWriteBuffer",
+      "type": "P",
+      "args": 2,
+      "full": "bitvm::bitvm_micro_bit::i2cWriteBuffer"
     },
     {
       "proto": "int            micro_bit::i2cWriteRaw        (int address, const char *data, int length, int repeated); ",

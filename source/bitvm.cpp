@@ -326,6 +326,66 @@ namespace bitvm {
     }
   }
 
+  namespace buffer {
+
+    RefBuffer *mk(uint32_t size)
+    {
+      RefBuffer *r = new RefBuffer();
+      r->data.resize(size);
+      return r;
+    }
+
+    char *cptr(RefBuffer *c)
+    {
+      return (char*)&c->data[0];
+    }
+
+    int count(RefBuffer *c) { return c->data.size(); }
+
+    void fill(RefBuffer *c, int v)
+    {
+      memset(cptr(c), v, count(c));
+    }
+
+    void fill_random(RefBuffer *c)
+    {
+      int len = count(c);
+      for (int i = 0; i < len; ++i)
+        c->data[i] = uBit.random(0x100);
+    }
+
+    void add(RefBuffer *c, uint32_t x) {
+      c->data.push_back(x);
+    }
+
+    inline bool in_range(RefBuffer *c, int x) {
+      return (0 <= x && x < (int)c->data.size());
+    }
+
+    uint32_t at(RefBuffer *c, int x) {
+      if (in_range(c, x)) {
+        return c->data[x];
+      }
+      else {
+        error(ERR_OUT_OF_BOUNDS);
+        return 0;
+      }
+    }
+
+    void set(RefBuffer *c, int x, uint32_t y) {
+      if (!in_range(c, x))
+        return;
+      c->data[x] = y;
+    }
+  }
+
+  namespace bitvm_bits {
+    RefBuffer *create_buffer(int size)
+    {
+      return buffer::mk(size);
+    }
+  }
+
   namespace record {
     RefRecord* mk(int reflen, int totallen)
     {
@@ -630,9 +690,19 @@ namespace bitvm {
     void serialSendDisplayState() { uBit.serial.sendDisplayState(); }
     void serialReadDisplayState() { uBit.serial.readDisplayState(); }
 
-    int i2cReadRaw(int address, const char *data, int length, int repeated)
+    void i2cReadBuffer(int address, RefBuffer *buf)
     {
-      return uBit.i2c.write(address, data, length, repeated);
+      uBit.i2c.read(address << 1, buffer::cptr(buf), buffer::count(buf));
+    }
+
+    void i2cWriteBuffer(int address, RefBuffer *buf)
+    {
+      uBit.i2c.write(address << 1, buffer::cptr(buf), buffer::count(buf));
+    }
+
+    int i2cReadRaw(int address, char *data, int length, int repeated)
+    {
+      return uBit.i2c.read(address, data, length, repeated);
     }
 
     int i2cWriteRaw(int address, const char *data, int length, int repeated)
