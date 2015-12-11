@@ -39,6 +39,10 @@ You need to provide exactly one namespace declaration and put all your
 classes/functions in there.  Make sure your namespace name is unique, in case
 the user is using more than one extension.
 
+Optionally, you can also include `glue.json` string resource, which allows for
+inclusion of additional yotta dependencies and modifying the compile-time
+configuration of the micro:bit, in particular disabling the BLE stack.
+
 ## Testing your extension
 
 You need to make sure your extension compiles before you put it in the
@@ -326,5 +330,34 @@ TODO
 ## Defining custom ref-counted types
 
 TODO
+
+## glue.json configuration
+
+### Additional yotta dependencies
+
+You can define additional dependencies in `glue.json`:
+
+```json
+{
+  "dependencies": {
+    "mymodule": "account/GitHubRepo#TagName"
+  }
+}
+```
+
+Do not use a branch name instead of tag name. It will break caching.
+
+### Compile-time configuration of micro:bit
+
+You can specify `#defines` to be put in custom `MicroBitConfig.h`. For example,
+to disable the BLE stack, do:
+
+```json
+{
+    "config": {
+        "MICROBIT_BLE_ENABLED": "0"
+    }
+}
+```
 
 vim: sw=4 ts=4 ai
