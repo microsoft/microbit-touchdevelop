@@ -407,7 +407,7 @@ namespace touch_develop {
     }
 
     void setBrightness(int v) {
-      if (in_range(v, 0, 155))
+      if (in_range(v, 0, 255))
         uBit.display.setBrightness(v);
     }
 
