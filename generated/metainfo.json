@@ -14,10 +14,10 @@
       "full": "bitvm::action::mk"
     },
     {
-      "proto": "void           action::run                   (Action a);                             ",
+      "proto": "void           action::run                   (Action a, int arg = 0);                ",
       "name": "action::run",
       "type": "P",
-      "args": 1,
+      "args": 2,
       "full": "bitvm::action::run"
     },
     {
@@ -905,6 +905,13 @@
       "name": "micro_bit::on_calibrate_required",
       "type": "P",
       "args": 1
+    },
+    {
+      "proto": "void           micro_bit::on_event           (int id, Action a);                     ",
+      "name": "micro_bit::on_event",
+      "type": "P",
+      "args": 2,
+      "full": "bitvm::bitvm_micro_bit::on_event"
     },
     {
       "proto": "void           micro_bit::panic              (int code);                             ",

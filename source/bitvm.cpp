@@ -428,13 +428,13 @@ namespace bitvm {
       return (Action)r;
     }
 
-    void run(Action a)
+    void run(Action a, int arg = 0)
     {
       if (hasVTable(a))
-        ((RefAction*)a)->run();
+        ((RefAction*)a)->run(arg);
       else {
         check(*(uint16_t*)a == 0xffff, ERR_INVALID_BINARY_HEADER, 4);
-        ((void (*)())((a + 4) | 1))();
+        ((ActionCB)((a + 4) | 1))(NULL, NULL, arg);
       }
     }
   }
@@ -457,7 +457,13 @@ namespace bitvm {
     // for a given event, then [handlersMap] contains a valid entry for that
     // event.
     void dispatchEvent(MicroBitEvent e) {
-      action::run(handlersMap[{ e.source, e.value }]);
+      Action curr = handlersMap[{ e.source, e.value }];
+      if (curr)
+        action::run(curr);
+
+      curr = handlersMap[{ e.source, MICROBIT_EVT_ANY }];
+      if (curr)
+        action::run(curr, e.value);
     }
 
     void registerWithDal(int id, int event, Action a) {
@@ -470,13 +476,18 @@ namespace bitvm {
       handlersMap[{ id, event }] = a;
     }
 
+    void on_event(int id, Action a) {
+      if (a != 0) {
+        registerWithDal(id, MICROBIT_EVT_ANY, a);
+      }
+    }
+
     // -------------------------------------------------------------------------
     // Pins
     // -------------------------------------------------------------------------
 
     void onPinPressed(int pin, Action a) {
       if (a != 0) {
-        incr(a);
         // Forces the PIN to switch to makey-makey style detection.
         switch(pin) {
           case MICROBIT_ID_IO_P0:

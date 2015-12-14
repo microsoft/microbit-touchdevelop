@@ -284,7 +284,7 @@ namespace bitvm {
   };
 
   class RefAction;
-  typedef uint32_t (*ActionCB)(RefAction *, uint32_t *);
+  typedef uint32_t (*ActionCB)(RefAction *, uint32_t *, uint32_t arg);
 
   // Ref-counted function pointer. It's currently always a ()=>void procedure pointer.
   class RefAction
@@ -319,10 +319,10 @@ namespace bitvm {
       fields[idx] = v;
     }
 
-    inline uint32_t run()
+    inline uint32_t run(int arg)
     {
       this->ref();
-      uint32_t r = this->func(this, &this->fields[0]);
+      uint32_t r = this->func(this, &this->fields[0], arg);
       this->unref();
       return r;
     }
