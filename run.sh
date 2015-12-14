@@ -12,5 +12,4 @@ node scripts/functionTable.js $SRCCOMMON $HEADERS yotta_modules/microbit-dal/inc
 yotta build
 node scripts/generateEmbedInfo.js $TRG $SRCCOMMON $HEADERS
 cp build/bytecode.js $TD/microbit/bytecode.js
-cp build/protos.h $TD/microbit/protos.h
 cd $TD && jake
