@@ -1,6 +1,7 @@
 (uint32_t)(void*)::touch_develop::action::is_invalid,  // F1 {shim:action::is_invalid}
 (uint32_t)(void*)::bitvm::action::mk,  // F3 bvm {shim:action::mk}
-(uint32_t)(void*)::bitvm::action::run,  // P2 bvm {shim:action::run}
+(uint32_t)(void*)::bitvm::action::run,  // P1 bvm {shim:action::run}
+(uint32_t)(void*)::bitvm::action::run1,  // P2 bvm {shim:action::run1}
 (uint32_t)(void*)::touch_develop::bits::and_uint32,  // F2 {shim:bits::and_uint32}
 (uint32_t)(void*)::bitvm::bitvm_bits::create_buffer,  // F1 over {shim:bits::create_buffer}
 (uint32_t)(void*)::touch_develop::bits::or_uint32,  // F2 {shim:bits::or_uint32}

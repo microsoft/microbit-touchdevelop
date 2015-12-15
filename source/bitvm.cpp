@@ -428,7 +428,7 @@ namespace bitvm {
       return (Action)r;
     }
 
-    void run(Action a, int arg = 0)
+    void run1(Action a, int arg)
     {
       if (hasVTable(a))
         ((RefAction*)a)->run(arg);
@@ -436,6 +436,11 @@ namespace bitvm {
         check(*(uint16_t*)a == 0xffff, ERR_INVALID_BINARY_HEADER, 4);
         ((ActionCB)((a + 4) | 1))(NULL, NULL, arg);
       }
+    }
+
+    void run(Action a)
+    {
+      action::run1(a, 0);
     }
   }
 
@@ -463,7 +468,7 @@ namespace bitvm {
 
       curr = handlersMap[{ e.source, MICROBIT_EVT_ANY }];
       if (curr)
-        action::run(curr, e.value);
+        action::run1(curr, e.value);
     }
 
     void registerWithDal(int id, int event, Action a) {

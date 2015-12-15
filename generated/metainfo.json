@@ -14,11 +14,18 @@
       "full": "bitvm::action::mk"
     },
     {
-      "proto": "void           action::run                   (Action a, int arg = 0);                ",
+      "proto": "void           action::run                   (Action a);                             ",
       "name": "action::run",
       "type": "P",
-      "args": 2,
+      "args": 1,
       "full": "bitvm::action::run"
+    },
+    {
+      "proto": "void           action::run1                  (Action a, int arg);                    ",
+      "name": "action::run1",
+      "type": "P",
+      "args": 2,
+      "full": "bitvm::action::run1"
     },
     {
       "proto": "int            bits::and_uint32              (int x, int y);                         ",
