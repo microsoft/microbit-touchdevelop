@@ -154,7 +154,7 @@ namespace bmp085 {
 
   float getTemperature()
   {
-    int32_t UT, X1, X2, B5;     // following ds convention
+    int32_t UT, B5;     // following ds convention
     float t;
 
     UT = readRawTemperature();
