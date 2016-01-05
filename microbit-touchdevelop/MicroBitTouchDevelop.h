@@ -170,6 +170,8 @@ namespace touch_develop {
     int sqrt(int x);
 
     int sign(int x);
+    
+    int map(int x, int in_min, int in_max, int out_min, int out_max);
   }
 
   namespace number {
