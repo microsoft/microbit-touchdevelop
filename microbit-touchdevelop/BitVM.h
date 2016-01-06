@@ -33,7 +33,7 @@ namespace bitvm {
     ERR_SIZE = 9,
   } ERROR;
 
-  const int V5BINARY = 0x4205;
+  const int V6BINARY = 0x4206;
 
   extern uint32_t *globals;
   extern int numGlobals;
@@ -50,7 +50,8 @@ namespace bitvm {
 
   void exec_binary(uint16_t *pc);
 
-  extern const uint32_t functionsAndBytecode[16000];
+  extern const uint32_t functionsAndBytecode[];
+  extern uint16_t *bytecode;
 
 
 #ifdef DEBUG_MEMLEAKS
@@ -308,7 +309,7 @@ namespace bitvm {
 
     virtual void print()
     {
-      printf("RefAction %p r=%d pc=0x%lx size=%d (%d refs)\n", this, refcnt, (const uint8_t*)func - (const uint8_t*)functionsAndBytecode, len, reflen);
+      printf("RefAction %p r=%d pc=0x%lx size=%d (%d refs)\n", this, refcnt, (const uint8_t*)func - (const uint8_t*)bytecode, len, reflen);
     }
 
     inline void st(int idx, uint32_t v)
