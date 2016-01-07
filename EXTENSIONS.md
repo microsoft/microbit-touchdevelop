@@ -11,9 +11,28 @@ You can check out some examples:
 * [I2C FRAM](https://microbit.co.uk/jrwwor)
 * [TCS 34725](https://microbit.co.uk/vfsaap)
 
+## How extensions works
+
+When compiling your script, Touch Develop (TD) web app will collect the C++
+source code and configuration data for all extensions (note that this can be
+empty) and the requested version of the runtime, and compute a SHA256 hash of
+all that data.  The hash does *not include* your TD source code (or inline ARM
+Thumb assembly).  The web app will then look for a hex file named after this
+hash, first in its in-browser cache, if not found on the CDN in the cloud, and
+if that fails it will ask the TD cloud service to compile the extension. The
+results of this compilation are then stored in the CDN.
+
+Once the web app has the hex file, it compiles the TD source code, and appends
+the resulting ARM binary code at the end. The resulting hex file is then
+downloaded and you can transfer it to the device.
+
+Thus, the cloud performs one compilation per given set of extensions used by
+the script (times runtime version). Thus in the vast majority of cases,
+the hex file is found in the in-browser cache or the CDN.
+
 ## Extension structure
 
-An extension consists of Touch Develop (TD) library with an embedded string
+An extension consists of Touch Develop library with an embedded string
 resource named `glue.cpp`.
 
 The `glue.cpp` looks something like this:
@@ -78,7 +97,6 @@ The `printf()` function is `#defined` to serial printf. You can use it for debug
 
 Never put `app_main()` in `glue.cpp` resource (and thus best not put it in
 `extension.cpp` file either - keep it simple and always copy the whole file)
-
 
 ## Basic usage
 
