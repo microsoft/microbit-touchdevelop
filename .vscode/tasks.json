@@ -1,0 +1,14 @@
+{
+    "version": "0.1.0",
+    "command": "yotta",
+    "isShellCommand": true,
+    "args": [],
+    "tasks": [
+        {
+            "taskName": "build",
+            "args": [],
+            "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
