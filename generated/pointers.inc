@@ -64,7 +64,6 @@
 (uint32_t)(void*)::touch_develop::invalid::action,  // F0 {shim:invalid::action}
 (uint32_t)(void*)::touch_develop::math::abs,  // F1 {shim:math::abs}
 (uint32_t)(void*)::touch_develop::math::clamp,  // F3 {shim:math::clamp}
-(uint32_t)(void*)::touch_develop::math::map,  // F5 {shim:math::map}
 (uint32_t)(void*)::touch_develop::math::max,  // F2 {shim:math::max}
 (uint32_t)(void*)::touch_develop::math::min,  // F2 {shim:math::min}
 (uint32_t)(void*)::touch_develop::math::mod,  // F2 {shim:math::mod}
