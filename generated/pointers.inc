@@ -81,16 +81,15 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createImage,  // F1 over {shim:micro_bit::createImage}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createImageFromString,  // F1 over {shim:micro_bit::createImageFromString}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createReadOnlyImage,  // F1 over {shim:micro_bit::createReadOnlyImage}
+(uint32_t)(void*)::touch_develop::micro_bit::devices::alert,  // P1 {shim:micro_bit::devices::alert}
+(uint32_t)(void*)::touch_develop::micro_bit::devices::camera,  // P1 {shim:micro_bit::devices::camera}
+(uint32_t)(void*)::touch_develop::micro_bit::devices::remote_control,  // P1 {shim:micro_bit::devices::remote_control}
 (uint32_t)(void*)::touch_develop::micro_bit::digitalReadPin,  // F1 {shim:micro_bit::digitalReadPin}
 (uint32_t)(void*)::touch_develop::micro_bit::digitalWritePin,  // P2 {shim:micro_bit::digitalWritePin}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::dispatchEvent,  // P1 over {shim:micro_bit::dispatchEvent}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::displayScreenShot,  // F0 over {shim:micro_bit::displayScreenShot}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::displayStopAnimation,  // P0 over {shim:micro_bit::displayStopAnimation}
 (uint32_t)(void*)::touch_develop::micro_bit::enablePitch,  // P1 {shim:micro_bit::enablePitch}
-(uint32_t)(void*)::touch_develop::micro_bit::events::alert,  // P1 {shim:micro_bit::events::alert}
-(uint32_t)(void*)::touch_develop::micro_bit::events::audio_recorder,  // P1 {shim:micro_bit::events::audio_recorder}
-(uint32_t)(void*)::touch_develop::micro_bit::events::camera,  // P1 {shim:micro_bit::events::camera}
-(uint32_t)(void*)::touch_develop::micro_bit::events::remote_control,  // P1 {shim:micro_bit::events::remote_control}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::fiberDone,  // P1 over {shim:micro_bit::fiberDone}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::forever,  // P1 over {shim:micro_bit::forever}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::forever_stub,  // P1 over {shim:micro_bit::forever_stub}

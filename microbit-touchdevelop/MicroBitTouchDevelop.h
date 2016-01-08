@@ -434,10 +434,9 @@ namespace touch_develop {
 
     void on_event(int id, function<void*(int)> f);
 
-    namespace events {
+    namespace devices {
       void remote_control(int event);
       void camera(int event);
-      void audio_recorder(int event);
       void alert(int event);
     }
 

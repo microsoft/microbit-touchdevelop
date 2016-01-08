@@ -549,15 +549,12 @@ namespace touch_develop {
       registerWithDal(id, MICROBIT_EVT_ANY, f);
     }
 
-    namespace events {
+    namespace devices {
       void remote_control(int event) {
         micro_bit::generate_event(MES_REMOTE_CONTROL_ID,event);
       }
       void camera(int event) {
         micro_bit::generate_event(MES_CAMERA_ID, event);
-      }
-      void audio_recorder(int event) {
-        micro_bit::generate_event(MES_AUDIO_RECORDER_ID, event);
       }
       void alert(int event) {
         micro_bit::generate_event(MES_ALERTS_ID, event);

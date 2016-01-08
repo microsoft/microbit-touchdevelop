@@ -553,6 +553,24 @@
       "full": "bitvm::bitvm_micro_bit::createReadOnlyImage"
     },
     {
+      "proto": "void           micro_bit::devices::alert     (int event);                            ",
+      "name": "micro_bit::devices::alert",
+      "type": "P",
+      "args": 1
+    },
+    {
+      "proto": "void           micro_bit::devices::camera    (int event);                            ",
+      "name": "micro_bit::devices::camera",
+      "type": "P",
+      "args": 1
+    },
+    {
+      "proto": "void           micro_bit::devices::remote_control (int event);                            ",
+      "name": "micro_bit::devices::remote_control",
+      "type": "P",
+      "args": 1
+    },
+    {
       "proto": "int            micro_bit::digitalReadPin     (MicroBitPin& p);                       ",
       "name": "micro_bit::digitalReadPin",
       "type": "F",
@@ -588,30 +606,6 @@
     {
       "proto": "void           micro_bit::enablePitch        (MicroBitPin& p);                       ",
       "name": "micro_bit::enablePitch",
-      "type": "P",
-      "args": 1
-    },
-    {
-      "proto": "void           micro_bit::events::alert      (int event);                            ",
-      "name": "micro_bit::events::alert",
-      "type": "P",
-      "args": 1
-    },
-    {
-      "proto": "void           micro_bit::events::audio_recorder (int event);                            ",
-      "name": "micro_bit::events::audio_recorder",
-      "type": "P",
-      "args": 1
-    },
-    {
-      "proto": "void           micro_bit::events::camera     (int event);                            ",
-      "name": "micro_bit::events::camera",
-      "type": "P",
-      "args": 1
-    },
-    {
-      "proto": "void           micro_bit::events::remote_control (int event);                            ",
-      "name": "micro_bit::events::remote_control",
       "type": "P",
       "args": 1
     },
