@@ -592,7 +592,7 @@ namespace touch_develop {
       if (ms > 0) {
         wait_ms(ms);
         pitchPin->setAnalogValue(0);
-        wait_ms(40);
+        wait_ms(5);
       }
     }
   }
