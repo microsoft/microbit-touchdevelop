@@ -416,20 +416,15 @@ namespace touch_develop {
     }
 
     void plot(int x, int y) {
-      if (in_range(x, 0, 4) && in_range(y, 0, 4))
-        uBit.display.image.setPixelValue(x, y, 1);
+      uBit.display.image.setPixelValue(x, y, 1);
     }
 
     void unPlot(int x, int y) {
-      if (in_range(x, 0, 4) && in_range(y, 0, 4))
-        uBit.display.image.setPixelValue(x, y, 0);
+      uBit.display.image.setPixelValue(x, y, 0);
     }
 
     bool point(int x, int y) {
-      if (in_range(x, 0, 4) && in_range(y, 0, 4))
-        return uBit.display.image.getPixelValue(x, y);
-      else
-        return false;
+      return getImagePixel(uBit.display.image, x, y);
     }
 
     // -------------------------------------------------------------------------
@@ -451,15 +446,16 @@ namespace touch_develop {
     }
 
     int getImagePixel(MicroBitImage i, int x, int y) {
-      if (in_range(x, 0, 4) && in_range(y, 0, 4))
-        return i.getPixelValue(x, y);
-      else
+      int pix = i.getPixelValue(x, y); 
+      if (pix < 0) // out of range
         return 0;
+      else
+        return pix;
     }
 
     void setImagePixel(MicroBitImage i, int x, int y, int value) {
-      if (in_range(x, 0, 4) && in_range(y, 0, 4))
-        i.setPixelValue(x, y, value);
+      // DAL does range checking
+      i.setPixelValue(x, y, value);
     }
 
     int getImageWidth(MicroBitImage i) {
