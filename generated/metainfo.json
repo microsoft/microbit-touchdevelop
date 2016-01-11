@@ -84,6 +84,13 @@
       "full": "bitvm::allocate"
     },
     {
+      "proto": "void           bitvm::checkStr               (bool cond, const char *msg);           ",
+      "name": "bitvm::checkStr",
+      "type": "P",
+      "args": 2,
+      "full": "bitvm::checkStr"
+    },
+    {
       "proto": "uint32_t       bitvm::const3                 ();                                     ",
       "name": "bitvm::const3",
       "type": "F",
@@ -203,6 +210,13 @@
       "full": "bitvm::mklocRef"
     },
     {
+      "proto": "int            bitvm::programHash            ();                                     ",
+      "name": "bitvm::programHash",
+      "type": "F",
+      "args": 0,
+      "full": "bitvm::programHash"
+    },
+    {
       "proto": "RefAction*     bitvm::stclo                  (RefAction *a, int idx, uint32_t v);    ",
       "name": "bitvm::stclo",
       "type": "F",
@@ -257,6 +271,13 @@
       "type": "F",
       "args": 1,
       "full": "bitvm::stringData"
+    },
+    {
+      "proto": "int            bitvm::templateHash           ();                                     ",
+      "name": "bitvm::templateHash",
+      "type": "F",
+      "args": 0,
+      "full": "bitvm::templateHash"
     },
     {
       "proto": "bool           boolean::and_                 (bool x, bool y);                       ",

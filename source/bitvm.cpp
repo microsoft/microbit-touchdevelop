@@ -744,24 +744,50 @@ namespace bitvm {
     return arr;
   }
 
+  void checkStr(bool cond, const char *msg)
+  {
+    if (!cond) {
+      while (true) {
+        micro_bit::scrollString(msg, 100);
+        micro_bit::pause(100);
+      }
+    }
+  }
+
+  int templateHash()
+  {
+    return ((int*)bytecode)[4];
+  }
+
+  int programHash()
+  {
+    return ((int*)bytecode)[6];
+  }
+
   void exec_binary(uint16_t *pc)
   {
     // XXX re-enable once the calibration code is fixed and [editor/embedded.ts]
     // properly prepends a call to [internal_main].
     // ::touch_develop::internal_main();
     
-
     uint32_t ver = *pc++;
-    check(ver == V6BINARY, ERR_INVALID_BINARY_HEADER);
+    checkStr(ver == 0x4207, ":( Bad runtime version");
     numGlobals = *pc++;
     globals = allocate(numGlobals);
 
-    pc = *((uint16_t**)pc);  // the actual bytecode is here
-    bytecode = pc;
+    bytecode = *((uint16_t**)pc);  // the actual bytecode is here
+    pc += 2;
 
-    uint32_t startptr = (uint32_t)pc;
+    // just compare the first word
+    checkStr(((uint32_t*)bytecode)[0] == 0x923B8E70 &&
+             templateHash() == ((int*)pc)[0],
+             ":( Failed partial flash");
+
+    uint32_t startptr = (uint32_t)bytecode;
+    startptr += 48; // header
     startptr |= 1; // Thumb state
-    startptr = ((uint32_t (*)())startptr)();
+
+    ((uint32_t (*)())startptr)();
 
 #ifdef DEBUG_MEMLEAKS
     bitvm::debugMemLeaks();

@@ -33,8 +33,6 @@ namespace bitvm {
     ERR_SIZE = 9,
   } ERROR;
 
-  const int V6BINARY = 0x4206;
-
   extern uint32_t *globals;
   extern int numGlobals;
 
