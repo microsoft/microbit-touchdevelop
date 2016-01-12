@@ -16,7 +16,7 @@
     }
   ],
   "dependencies": {
-    "microbit-dal": "lancaster-university/microbit-dal#v1.4.2"
+    "microbit-dal": "lancaster-university/microbit-dal#v1.4.4"
   },
   "targetDependencies": { },
   "bin": "./source",
