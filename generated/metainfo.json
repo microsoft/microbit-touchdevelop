@@ -683,6 +683,12 @@
       "full": "bitvm::bitvm_micro_bit::getImageWidth"
     },
     {
+      "proto": "int            micro_bit::getMagneticForce   (int dimension);                        ",
+      "name": "micro_bit::getMagneticForce",
+      "type": "F",
+      "args": 1
+    },
+    {
       "proto": "void           micro_bit::i2cReadBuffer      (int address, RefBuffer *buf);          ",
       "name": "micro_bit::i2cReadBuffer",
       "type": "P",

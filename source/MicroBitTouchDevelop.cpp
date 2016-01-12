@@ -230,6 +230,15 @@ namespace touch_develop {
       return uBit.compass.heading();
     }
 
+    int getMagneticForce(int dimension) {
+      if (dimension == 0)
+        return uBit.compass.getX();
+      else if (dimension == 1)
+        return uBit.compass.getY();
+      else
+        return uBit.compass.getZ();
+    }
+
     int getAcceleration(int dimension) {
       if (dimension == 0)
         return uBit.accelerometer.getX();

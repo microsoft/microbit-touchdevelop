@@ -101,6 +101,7 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::getImageHeight,  // F1 over {shim:micro_bit::getImageHeight}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::getImagePixel,  // F3 over {shim:micro_bit::getImagePixel}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::getImageWidth,  // F1 over {shim:micro_bit::getImageWidth}
+(uint32_t)(void*)::touch_develop::micro_bit::getMagneticForce,  // F1 {shim:micro_bit::getMagneticForce}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::i2cReadBuffer,  // P2 over {shim:micro_bit::i2cReadBuffer}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::i2cReadRaw,  // F4 over {shim:micro_bit::i2cReadRaw}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::i2cWriteBuffer,  // P2 over {shim:micro_bit::i2cWriteBuffer}

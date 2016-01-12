@@ -317,6 +317,8 @@ namespace touch_develop {
 
     int compassHeading();
 
+    int getMagneticForce(int dimension);
+
     int getAcceleration(int dimension);
 
     // -------------------------------------------------------------------------
