@@ -438,6 +438,9 @@ namespace touch_develop {
       void remote_control(int event);
       void camera(int event);
       void alert(int event);
+      
+      void onSignalStrength(function<void*(int)> f);
+      void onDeviceInfo(int event, function<void()> f);
     }
 
     // -------------------------------------------------------------------------
