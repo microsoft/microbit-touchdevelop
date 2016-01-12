@@ -654,8 +654,6 @@ namespace bitvm {
     // scheme only works with the C-style calling convention 
     // -------------------------------------------------------------------------
 
-    void compassCalibrateEnd() { uBit.compass.calibrateEnd(); }
-    void compassCalibrateStart() { uBit.compass.calibrateStart(); }
     void reset() { uBit.reset(); }
     int thermometerGetTemperature() { return uBit.thermometer.getTemperature(); }
 

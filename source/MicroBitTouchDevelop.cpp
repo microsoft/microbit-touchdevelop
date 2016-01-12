@@ -239,21 +239,6 @@ namespace touch_develop {
         return uBit.accelerometer.getZ();
     }
 
-    void on_calibrate_required (MicroBitEvent) {
-      const int bitmap0_w = 10;
-      const int bitmap0_h = 5;
-      const uint8_t bitmap0[] = { 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, };
-
-      uBit.compass.calibrateStart();
-      uBit.display.print("Turn me around!");
-      MicroBitImage img = MicroBitImage(bitmap0_w, bitmap0_h, bitmap0);
-      for (Number i = 0; i < 10; ++i) {
-        uBit.display.scroll(img, 5, 400);
-      }
-      uBit.compass.calibrateEnd();
-      uBit.display.print("Please restart.");
-    }
-
     // -------------------------------------------------------------------------
     // Pins
     // -------------------------------------------------------------------------
@@ -642,10 +627,6 @@ namespace touch_develop {
   // Called at start-up by the generated code (currently not enabled).
   // -------------------------------------------------------------------------
   void internal_main() {
-    uBit.MessageBus.listen(
-      MICROBIT_ID_COMPASS,
-      MICROBIT_COMPASS_EVT_CAL_REQUIRED,
-      micro_bit::on_calibrate_required);
   }
 }
 

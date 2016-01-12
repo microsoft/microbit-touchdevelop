@@ -319,9 +319,6 @@ namespace touch_develop {
 
     int getAcceleration(int dimension);
 
-    void on_calibrate_required (MicroBitEvent e);
-
-
     // -------------------------------------------------------------------------
     // Buttons
     // -------------------------------------------------------------------------

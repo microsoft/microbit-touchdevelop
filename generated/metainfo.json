@@ -533,20 +533,6 @@
       "args": 0
     },
     {
-      "proto": "void           micro_bit::compassCalibrateEnd ();                                     ",
-      "name": "micro_bit::compassCalibrateEnd",
-      "type": "P",
-      "args": 0,
-      "full": "bitvm::bitvm_micro_bit::compassCalibrateEnd"
-    },
-    {
-      "proto": "void           micro_bit::compassCalibrateStart ();                                     ",
-      "name": "micro_bit::compassCalibrateStart",
-      "type": "P",
-      "args": 0,
-      "full": "bitvm::bitvm_micro_bit::compassCalibrateStart"
-    },
-    {
       "proto": "int            micro_bit::compassHeading     ();                                     ",
       "name": "micro_bit::compassHeading",
       "type": "F",
@@ -928,12 +914,6 @@
       "type": "P",
       "args": 2,
       "full": "bitvm::bitvm_micro_bit::onPinPressed"
-    },
-    {
-      "proto": "void           micro_bit::on_calibrate_required (MicroBitEvent e);                      ",
-      "name": "micro_bit::on_calibrate_required",
-      "type": "P",
-      "args": 1
     },
     {
       "proto": "void           micro_bit::on_event           (int id, Action a);                     ",
