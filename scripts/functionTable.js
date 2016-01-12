@@ -1,7 +1,7 @@
 "use strict";
 
 if (process.argv.length < 3) {
-  console.log("Genarete JSON metadata and .cpp file with function table.")
+  console.log("Generate JSON metadata and .cpp file with function table.")
   console.log("USAGE: node generateEmbedInfo.js file.cpp/h...")
   process.exit(1)
 }
@@ -85,6 +85,7 @@ process.argv.slice(2).forEach(function (fn) {
             else
                 args = m[5].replace(/[^,]/g, "").length + 1
 
+            console.log(fn + ": found " + name);
             var inf = fullfuns[name] = {
                 proto: "",
                 name: name,

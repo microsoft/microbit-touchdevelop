@@ -486,6 +486,12 @@ namespace bitvm {
       }
     }
 
+    void onDeviceInfo(int event, Action a) {
+      if (a != 0) {
+        registerWithDal(MES_DEVICE_INFO_ID, event, a);
+      }
+    }
+
     // -------------------------------------------------------------------------
     // Pins
     // -------------------------------------------------------------------------

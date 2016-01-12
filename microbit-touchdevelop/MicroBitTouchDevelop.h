@@ -433,14 +433,14 @@ namespace touch_develop {
     void generate_event(int id, int event);
 
     void on_event(int id, function<void*(int)> f);
+    
+    void onDeviceInfo(int event, function<void()> f);
 
     namespace devices {
       void remote_control(int event);
       void camera(int event);
       void alert(int event);
       
-      void onSignalStrength(function<void*(int)> f);
-      void onDeviceInfo(int event, function<void()> f);
     }
 
     // -------------------------------------------------------------------------

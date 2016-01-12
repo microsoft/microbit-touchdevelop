@@ -135,6 +135,7 @@
 (uint32_t)(void*)::touch_develop::micro_bit::isPinTouched,  // F1 {shim:micro_bit::isPinTouched}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onButtonPressed,  // P2 over {shim:micro_bit::onButtonPressed}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onButtonPressedExt,  // P3 over {shim:micro_bit::onButtonPressedExt}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::onDeviceInfo,  // P2 over {shim:micro_bit::onDeviceInfo}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onPinPressed,  // P2 over {shim:micro_bit::onPinPressed}
 (uint32_t)(void*)::touch_develop::micro_bit::on_calibrate_required,  // P1 {shim:micro_bit::on_calibrate_required}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::on_event,  // P2 over {shim:micro_bit::on_event}

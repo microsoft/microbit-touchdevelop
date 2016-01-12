@@ -1,7 +1,7 @@
 "use strict";
 
 if (process.argv.length < 4) {
-  console.log("Genarete JSON/JavaScript file embeddeding a given hex file and meta-information about it.")
+  console.log("Generate JSON/JavaScript file embeddeding a given hex file and meta-information about it.")
   console.log("USAGE: node generateEmbedInfo.js file.hex")
   process.exit(1)
 }

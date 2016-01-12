@@ -545,6 +545,10 @@ namespace touch_develop {
       registerWithDal(id, MICROBIT_EVT_ANY, f);
     }
 
+    void onDeviceInfo(int event, function<void()> f) {
+        registerWithDal(MES_DEVICE_INFO_ID, event, f);
+    }
+
     namespace devices {
       void remote_control(int event) {
         micro_bit::generate_event(MES_REMOTE_CONTROL_ID,event);
@@ -555,13 +559,8 @@ namespace touch_develop {
       void alert(int event) {
         micro_bit::generate_event(MES_ALERTS_ID, event);
       }
-      void onSignalStrength(function<void*(int)> f) {
-          registerWithDal(MES_SIGNAL_STRENGTH_ID, MICROBIT_EVT_ANY, f);
-      }
-      void onDeviceInfo(int event, function<void()> f) {
-          registerWithDal(MES_DEVICE_INFO_ID, event, f);
-      }
     }
+     
 
     // -------------------------------------------------------------------------
     // Music
