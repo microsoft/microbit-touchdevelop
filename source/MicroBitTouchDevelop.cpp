@@ -162,7 +162,7 @@ namespace touch_develop {
     }
 
     int sqrt(int x) {
-      return sqrt(x);
+      return ::sqrt(x);
     }
 
     int sign(int x) {
