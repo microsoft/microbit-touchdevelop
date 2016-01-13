@@ -8,6 +8,7 @@ TD=../TouchDevelop
 set -x
 set -e
 mkdir -p build
+yotta update
 node scripts/functionTable.js $SRCCOMMON $HEADERS yotta_modules/microbit-dal/inc/*.h
 yotta build
 node scripts/generateEmbedInfo.js $TRG $SRCCOMMON $HEADERS
