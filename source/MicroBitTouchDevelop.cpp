@@ -235,8 +235,10 @@ namespace touch_develop {
         return uBit.compass.getX() / 1000;
       else if (dimension == 1)
         return uBit.compass.getY() / 1000;
-      else
+      else if (dimension == 2)
         return uBit.compass.getZ() / 1000;
+      else
+        return uBit.compass.getFieldStrength() / 1000;
     }
 
     int getAcceleration(int dimension) {
