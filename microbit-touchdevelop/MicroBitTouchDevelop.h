@@ -338,7 +338,11 @@ namespace touch_develop {
 
     void analogWritePin(MicroBitPin& p, int value);
 
-    void setAnalogPeriodUs(MicroBitPin& p, int value);
+    void setAnalogPeriodUs(MicroBitPin& p, int micros);
+    
+    void servoWritePin(MicroBitPin& p, int value);
+    
+    void setServoPulseUs(MicroBitPin& p, int micros);
 
     int digitalReadPin(MicroBitPin& p);
 

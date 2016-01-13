@@ -1057,7 +1057,13 @@
       "full": "bitvm::bitvm_micro_bit::serialSendString"
     },
     {
-      "proto": "void           micro_bit::setAnalogPeriodUs  (MicroBitPin& p, int value);            ",
+      "proto": "void           micro_bit::servoWritePin      (MicroBitPin& p, int value);            ",
+      "name": "micro_bit::servoWritePin",
+      "type": "P",
+      "args": 2
+    },
+    {
+      "proto": "void           micro_bit::setAnalogPeriodUs  (MicroBitPin& p, int micros);           ",
       "name": "micro_bit::setAnalogPeriodUs",
       "type": "P",
       "args": 2
@@ -1074,6 +1080,12 @@
       "type": "P",
       "args": 4,
       "full": "bitvm::bitvm_micro_bit::setImagePixel"
+    },
+    {
+      "proto": "void           micro_bit::setServoPulseUs    (MicroBitPin& p, int micros);           ",
+      "name": "micro_bit::setServoPulseUs",
+      "type": "P",
+      "args": 2
     },
     {
       "proto": "void           micro_bit::showAnimation      (uint32_t lit, int ms);                 ",

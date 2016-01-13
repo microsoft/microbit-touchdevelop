@@ -264,8 +264,16 @@ namespace touch_develop {
       p.setAnalogValue(value);
     }
 
-    void setAnalogPeriodUs(MicroBitPin& p, int value) {
-      p.setAnalogPeriodUs(value);
+    void setAnalogPeriodUs(MicroBitPin& p, int micros) {
+      p.setAnalogPeriodUs(micros);
+    }
+    
+    void servoWritePin(MicroBitPin& p, int value) {
+        p.setServoValue(value);
+    }
+    
+    void setServoPulseUs(MicroBitPin& p, int micros) {
+        p.setServoPulseUs(micros);
     }
 
     int digitalReadPin(MicroBitPin& p) {

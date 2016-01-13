@@ -156,9 +156,11 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::serialSendDisplayState,  // P0 over {shim:micro_bit::serialSendDisplayState}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::serialSendImage,  // P1 over {shim:micro_bit::serialSendImage}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::serialSendString,  // P1 over {shim:micro_bit::serialSendString}
+(uint32_t)(void*)::touch_develop::micro_bit::servoWritePin,  // P2 {shim:micro_bit::servoWritePin}
 (uint32_t)(void*)::touch_develop::micro_bit::setAnalogPeriodUs,  // P2 {shim:micro_bit::setAnalogPeriodUs}
 (uint32_t)(void*)::touch_develop::micro_bit::setBrightness,  // P1 {shim:micro_bit::setBrightness}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::setImagePixel,  // P4 over {shim:micro_bit::setImagePixel}
+(uint32_t)(void*)::touch_develop::micro_bit::setServoPulseUs,  // P2 {shim:micro_bit::setServoPulseUs}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::showAnimation,  // P2 over {shim:micro_bit::showAnimation}
 (uint32_t)(void*)::touch_develop::micro_bit::showDigit,  // P1 {shim:micro_bit::showDigit}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::showImage,  // P2 over {shim:micro_bit::showImage}
