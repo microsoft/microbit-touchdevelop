@@ -593,7 +593,9 @@ namespace bitvm {
     }
 
     int getImagePixel(ImageData *i, int x, int y) {
-      return MicroBitImage(i).getPixelValue(x, y);
+      int pix = MicroBitImage(i).getPixelValue(x, y);
+      if (pix < 0) return 0;
+      return pix;
     }
 
     void setImagePixel(ImageData *i, int x, int y, int value) {
