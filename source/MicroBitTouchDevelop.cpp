@@ -232,11 +232,11 @@ namespace touch_develop {
 
     int getMagneticForce(int dimension) {
       if (dimension == 0)
-        return uBit.compass.getX();
+        return uBit.compass.getX() / 1000;
       else if (dimension == 1)
-        return uBit.compass.getY();
+        return uBit.compass.getY() / 1000;
       else
-        return uBit.compass.getZ();
+        return uBit.compass.getZ() / 1000;
     }
 
     int getAcceleration(int dimension) {

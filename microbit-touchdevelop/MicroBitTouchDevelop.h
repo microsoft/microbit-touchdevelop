@@ -317,6 +317,7 @@ namespace touch_develop {
 
     int compassHeading();
 
+    // in micro Tesla
     int getMagneticForce(int dimension);
 
     int getAcceleration(int dimension);
