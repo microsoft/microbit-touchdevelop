@@ -231,6 +231,8 @@ namespace touch_develop {
     }
 
     int getMagneticForce(int dimension) {
+      if (!uBit.compass.isCalibrated())
+        uBit.compass.calibrate();
       if (dimension == 0)
         return uBit.compass.getX() / 1000;
       else if (dimension == 1)
