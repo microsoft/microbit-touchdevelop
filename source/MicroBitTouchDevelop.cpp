@@ -239,8 +239,17 @@ namespace touch_develop {
         return uBit.compass.getY() / 1000;
       else if (dimension == 2)
         return uBit.compass.getZ() / 1000;
-      else
+      else if (dimension == 3)
         return uBit.compass.getFieldStrength() / 1000;
+      // unknown
+      else return 0;
+    }
+    
+    int getAccelerationStrength() {
+        double x = uBit.accelerometer.getX();
+        double y = uBit.accelerometer.getY();
+        double z = uBit.accelerometer.getZ();
+        return (int)sqrt(x*x+y*y+z*z);
     }
 
     int getAcceleration(int dimension) {
@@ -248,8 +257,12 @@ namespace touch_develop {
         return uBit.accelerometer.getX();
       else if (dimension == 1)
         return uBit.accelerometer.getY();
-      else
+      else if (dimension == 2)
         return uBit.accelerometer.getZ();
+      else if (dimension == 3)
+        return getAccelerationStrength();
+      // unknown
+      else return 0;        
     }
 
     // -------------------------------------------------------------------------
