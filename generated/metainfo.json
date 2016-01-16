@@ -689,6 +689,12 @@
       "args": 1
     },
     {
+      "proto": "int            micro_bit::getRotation        (int dimension);                        ",
+      "name": "micro_bit::getRotation",
+      "type": "F",
+      "args": 1
+    },
+    {
       "proto": "void           micro_bit::i2cReadBuffer      (int address, RefBuffer *buf);          ",
       "name": "micro_bit::i2cReadBuffer",
       "type": "P",

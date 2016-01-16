@@ -265,6 +265,15 @@ namespace touch_develop {
       else return 0;        
     }
 
+    int getRotation(int dimension) {
+      if (dimension == 0)
+        return uBit.accelerometer.getPitch();
+      else if (dimension == 1)
+        return uBit.accelerometer.getRoll();
+      // unknown
+      else return 0;        
+    }
+
     // -------------------------------------------------------------------------
     // Pins
     // -------------------------------------------------------------------------
