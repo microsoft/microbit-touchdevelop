@@ -611,9 +611,9 @@ namespace touch_develop {
       pitchPin->setAnalogPeriodUs(1000000/freq);
       
       if (ms > 0) {
-        wait_ms(ms);
-        pitchPin->setAnalogValue(0);
-        wait_ms(5);
+          uBit.sleep(ms);
+          pitchPin->setAnalogValue(0);
+          wait_ms(5);
       }
     }
   }
