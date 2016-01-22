@@ -11,7 +11,7 @@ var fs = require('fs');
 var hex = fs.readFileSync(process.argv[2], "utf8").split(/\r?\n/)
 var metainfo = JSON.parse(fs.readFileSync("generated/metainfo.json", "utf8"))
 
-var s = "TDev.bytecodeInfo = {\n";
+var s = "{\n";
 s += "functions: [\n";
 metainfo.functions.forEach(f => {
     s += "  " + JSON.stringify(f) + ",\n"
@@ -23,6 +23,7 @@ function addfld(n, v) {
 addfld("enums", metainfo.enums)
 addfld("hex", hex)
 s += "}\n"
-fs.writeFileSync("build/bytecode.js", s)
+fs.writeFileSync("build/bytecode.js", "TDev.bytecodeInfo = " + s)
+fs.writeFileSync("build/hexinfo.js", "module.exports = " + s)
 
 // vim: ts=4 sw=4
