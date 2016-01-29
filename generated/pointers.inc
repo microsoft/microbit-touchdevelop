@@ -160,6 +160,7 @@
 (uint32_t)(void*)::touch_develop::micro_bit::servoWritePin,  // P2 {shim:micro_bit::servoWritePin}
 (uint32_t)(void*)::touch_develop::micro_bit::setAnalogPeriodUs,  // P2 {shim:micro_bit::setAnalogPeriodUs}
 (uint32_t)(void*)::touch_develop::micro_bit::setBrightness,  // P1 {shim:micro_bit::setBrightness}
+(uint32_t)(void*)::touch_develop::micro_bit::setDisplayMode,  // P1 {shim:micro_bit::setDisplayMode}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::setImagePixel,  // P4 over {shim:micro_bit::setImagePixel}
 (uint32_t)(void*)::touch_develop::micro_bit::setServoPulseUs,  // P2 {shim:micro_bit::setServoPulseUs}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::showAnimation,  // P2 over {shim:micro_bit::showAnimation}

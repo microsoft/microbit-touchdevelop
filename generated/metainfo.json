@@ -1081,6 +1081,12 @@
       "args": 1
     },
     {
+      "proto": "void           micro_bit::setDisplayMode     (DisplayMode mode);                     ",
+      "name": "micro_bit::setDisplayMode",
+      "type": "P",
+      "args": 1
+    },
+    {
       "proto": "void           micro_bit::setImagePixel      (ImageData *i, int x, int y, int value); ",
       "name": "micro_bit::setImagePixel",
       "type": "P",
@@ -1421,6 +1427,7 @@
     "MICROBIT_ACCELEROMETER_GESTURE_DAMPING": 10,
     "MICROBIT_ACCELEROMETER_SHAKE_DAMPING": 10,
     "MICROBIT_ACCELEROMETER_SHAKE_COUNT_THRESHOLD": 4,
+    "MICROBIT_BLE_PAIRING_TIMEOUT": 90,
     "MICROBIT_BUTTON_EVT_DOWN": 1,
     "MICROBIT_BUTTON_EVT_UP": 2,
     "MICROBIT_BUTTON_EVT_CLICK": 3,
@@ -1488,6 +1495,9 @@
     "MICROBIT_BLE_ENABLED": 1,
     "MICROBIT_BLE_PAIRING_MODE": 1,
     "MICROBIT_BLE_PRIVATE_ADDRESSES": 0,
+    "MICROBIT_BLE_WHITELIST": 1,
+    "MICROBIT_BLE_ADVERTISING_TIMEOUT": 0,
+    "MICROBIT_BLE_DEFAULT_TX_POWER": 0,
     "MICROBIT_BLE_DFU_SERVICE": 1,
     "MICROBIT_BLE_EVENT_SERVICE": 1,
     "MICROBIT_BLE_DEVICE_INFORMATION_SERVICE": 1,

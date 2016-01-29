@@ -384,6 +384,8 @@ namespace touch_develop {
     void setBrightness(int percentage);
 
     void clearScreen();
+    
+    void setDisplayMode(DisplayMode mode);
 
     void plot(int x, int y);
 
