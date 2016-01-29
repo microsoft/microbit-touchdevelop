@@ -1081,7 +1081,7 @@
       "args": 1
     },
     {
-      "proto": "void           micro_bit::setDisplayMode     (DisplayMode mode);                     ",
+      "proto": "void           micro_bit::setDisplayMode     (int mode);                             ",
       "name": "micro_bit::setDisplayMode",
       "type": "P",
       "args": 1

@@ -385,7 +385,7 @@ namespace touch_develop {
 
     void clearScreen();
     
-    void setDisplayMode(DisplayMode mode);
+    void setDisplayMode(int mode);
 
     void plot(int x, int y);
 

@@ -439,8 +439,8 @@ namespace touch_develop {
         uBit.display.setBrightness(v);
     }
     
-    void setDisplayMode(DisplayMode mode) {
-        uBit.display.setDisplayMode(mode);
+    void setDisplayMode(int mode) {
+        uBit.display.setDisplayMode((DisplayMode)mode);
     }
 
     void clearScreen() {
