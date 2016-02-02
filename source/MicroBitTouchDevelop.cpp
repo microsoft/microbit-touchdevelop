@@ -247,7 +247,7 @@ namespace touch_develop {
     void broadcastMessage(int message) {
         if (radioEnable() != MICROBIT_OK) return;
 
-        uBit.radio.event.eventReceived(MicroBitEvent(MES_BROADCAST_GENERAL_ID, message));
+        uBit.radio.event.eventReceived(MicroBitEvent(MES_BROADCAST_GENERAL_ID, message, CREATE_ONLY));
     }
         
     void onBroadcastMessageReceived(int message, function<void()> f) {
