@@ -518,8 +518,7 @@ namespace bitvm {
     // Radio
     // -------------------------------------------------------------------------
     void onBroadcastMessageReceived(int message, Action f) {
-        int r = uBit.radio.enable();
-        if (r != MICROBIT_OK) return;
+        if (::touch_develop::micro_bit::radioEnable() != MICROBIT_OK) return;
 
         uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
@@ -786,6 +785,9 @@ namespace bitvm {
     // XXX re-enable once the calibration code is fixed and [editor/embedded.ts]
     // properly prepends a call to [internal_main].
     // ::touch_develop::internal_main();
+
+    //
+    ::touch_develop::micro_bit::radioDefaultGroup = programHash();
     
     uint32_t ver = *pc++;
     checkStr(ver == 0x4207, ":( Bad runtime version");

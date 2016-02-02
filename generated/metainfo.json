@@ -999,6 +999,12 @@
       "args": 2
     },
     {
+      "proto": "int            micro_bit::radioEnable        ();                                     ",
+      "name": "micro_bit::radioEnable",
+      "type": "F",
+      "args": 0
+    },
+    {
       "proto": "void           micro_bit::registerWithDal    (int id, int event, Action a);          ",
       "name": "micro_bit::registerWithDal",
       "type": "P",

@@ -148,6 +148,7 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::plotImage,  // P2 over {shim:micro_bit::plotImage}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::plotLeds,  // P1 over {shim:micro_bit::plotLeds}
 (uint32_t)(void*)::touch_develop::micro_bit::point,  // F2 {shim:micro_bit::point}
+(uint32_t)(void*)::touch_develop::micro_bit::radioEnable,  // F0 {shim:micro_bit::radioEnable}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::registerWithDal,  // P3 over {shim:micro_bit::registerWithDal}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::reset,  // P0 over {shim:micro_bit::reset}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::runInBackground,  // P1 over {shim:micro_bit::runInBackground}

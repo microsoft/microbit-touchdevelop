@@ -331,7 +331,10 @@ namespace touch_develop {
 
     // -------------------------------------------------------------------------
     // Radio
-    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------    
+    extern uint8_t radioDefaultGroup;
+    int radioEnable();
+    
     void setGroup(int id);
         
     void broadcastMessage(int message);

@@ -225,24 +225,33 @@ namespace touch_develop {
     // -------------------------------------------------------------------------
     // Radio
     // -------------------------------------------------------------------------    
-    void setGroup(int id) {
+    uint8_t radioDefaultGroup = MICROBIT_RADIO_DEFAULT_GROUP;
+    bool radioEnabled = false;
+    
+    int radioEnable() {
         int r = uBit.radio.enable();
-        if (r != MICROBIT_OK) return;
-            
+        if (r != MICROBIT_OK) return r;
+        if (!radioEnabled) {
+            if (radioDefaultGroup != MICROBIT_RADIO_DEFAULT_GROUP)
+                uBit.radio.setGroup(radioDefaultGroup);
+            radioEnabled = true;
+        }
+        return r;
+    }
+
+    void setGroup(int id) {
+        if (radioEnable() != MICROBIT_OK) return;
         uBit.radio.setGroup(id);
     }
         
     void broadcastMessage(int message) {
-        int r = uBit.radio.enable();
-        if (r != MICROBIT_OK) return;
+        if (radioEnable() != MICROBIT_OK) return;
 
-        uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
-        generate_event(MES_BROADCAST_GENERAL_ID, message);
+        uBit.radio.event.eventReceived(MicroBitEvent(MES_BROADCAST_GENERAL_ID, message));
     }
         
     void onBroadcastMessageReceived(int message, function<void()> f) {
-        int r = uBit.radio.enable();
-        if (r != MICROBIT_OK) return;
+        if (radioEnable() != MICROBIT_OK) return;
 
         uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
