@@ -573,7 +573,7 @@
       "full": "bitvm::bitvm_micro_bit::datagramReceive"
     },
     {
-      "proto": "void           micro_bit::datagramSend       (StringData *s);                        ",
+      "proto": "void           micro_bit::datagramSend       (StringData* msg);                      ",
       "name": "micro_bit::datagramSend",
       "type": "P",
       "args": 1,
@@ -951,6 +951,13 @@
       "type": "P",
       "args": 3,
       "full": "bitvm::bitvm_micro_bit::onButtonPressedExt"
+    },
+    {
+      "proto": "void           micro_bit::onDatagramReceived (Action f);                             ",
+      "name": "micro_bit::onDatagramReceived",
+      "type": "P",
+      "args": 1,
+      "full": "bitvm::bitvm_micro_bit::onDatagramReceived"
     },
     {
       "proto": "void           micro_bit::onDeviceInfo       (int event, Action a);                  ",

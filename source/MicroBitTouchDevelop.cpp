@@ -268,6 +268,12 @@ namespace touch_develop {
         return uBit.radio.datagram.recv();        
     }
     
+    void onDatagramReceived(function<void()> f) {
+        if (radioEnable() != MICROBIT_OK) return;
+        
+        registerWithDal(MICROBIT_ID_RADIO, MICROBIT_RADIO_EVT_DATAGRAM, f);    
+    }
+    
     // -------------------------------------------------------------------------
     // Sensors
     // -------------------------------------------------------------------------

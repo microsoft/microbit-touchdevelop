@@ -470,6 +470,10 @@ namespace touch_develop {
     void initSignalStrength();
     void signalStrengthHandler(MicroBitEvent ev);
     void onSignalStrengthChanged(function<void()> f);
+    
+    void datagramSend(ManagedString s);
+    ManagedString datagramReceive();
+    void onDatagramReceived(function<void()> f);
 
     namespace devices {
       void remote_control(int event);

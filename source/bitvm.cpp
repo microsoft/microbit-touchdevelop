@@ -497,7 +497,7 @@ namespace bitvm {
             ::touch_develop::micro_bit::initSignalStrength();    
             registerWithDal(MES_SIGNAL_STRENGTH_ID, MICROBIT_EVT_ANY, a);
         }
-    }
+    }       
 
     // -------------------------------------------------------------------------
     // Pins
@@ -530,12 +530,18 @@ namespace bitvm {
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
     }
     
-    void datagramSend(StringData *s) {
-      ::touch_develop::micro_bit::datagramSend(ManagedString(s));
+    void datagramSend(StringData* msg) {
+        ::touch_develop::micro_bit::datagramSend(ManagedString(msg));
     }
-
+    
     StringData* datagramReceive() {
-      return ::touch_develop::micro_bit::datagramReceive().leakData();
+        return ::touch_develop::micro_bit::datagramReceive().leakData();
+    }
+    
+    void onDatagramReceived(Action f) {
+        if (f != 0 && ::touch_develop::micro_bit::radioEnable() == MICROBIT_OK) {
+            registerWithDal(MICROBIT_ID_RADIO, MICROBIT_RADIO_EVT_DATAGRAM, f);    
+        }
     }
 
     // -------------------------------------------------------------------------
