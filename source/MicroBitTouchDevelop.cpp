@@ -630,6 +630,28 @@ namespace touch_develop {
     void onDeviceInfo(int event, function<void()> f) {
         registerWithDal(MES_DEVICE_INFO_ID, event, f);
     }
+    
+    int _signalStrength = -1;
+    void initSignalStrength() {
+        if (_signalStrength < 0) {
+            _signalStrength = 0;
+            uBit.MessageBus.listen(MES_SIGNAL_STRENGTH_ID, MICROBIT_EVT_ANY, signalStrengthHandler);
+        }        
+    }
+    
+    int signalStrength() { 
+        return _signalStrength;
+    }
+    
+    void signalStrengthHandler(MicroBitEvent ev) { 
+        // keep in sync with MESEvents.h
+        _signalStrength = ev.value - 1; 
+    }
+        
+    void onSignalStrengthChanged(function<void()> f) {
+        initSignalStrength();    
+        registerWithDal(MES_SIGNAL_STRENGTH_ID, MICROBIT_EVT_ANY, f);
+    }
 
     namespace devices {
       void remote_control(int event) {

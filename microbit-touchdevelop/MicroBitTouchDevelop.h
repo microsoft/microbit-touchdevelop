@@ -464,6 +464,12 @@ namespace touch_develop {
     void on_event(int id, function<void*(int)> f);
     
     void onDeviceInfo(int event, function<void()> f);
+    
+    extern int _signalStrength;
+    int signalStrength();
+    void initSignalStrength();
+    void signalStrengthHandler(MicroBitEvent ev);
+    void onSignalStrengthChanged(function<void()> f);
 
     namespace devices {
       void remote_control(int event);

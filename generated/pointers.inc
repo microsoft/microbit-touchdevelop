@@ -114,6 +114,7 @@
 (uint32_t)(void*)::touch_develop::micro_bit::i2c_write,  // P2 {shim:micro_bit::i2c_write}
 (uint32_t)(void*)::touch_develop::micro_bit::i2c_write2,  // P3 {shim:micro_bit::i2c_write2}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::imageClone,  // F1 over {shim:micro_bit::imageClone}
+(uint32_t)(void*)::touch_develop::micro_bit::initSignalStrength,  // P0 {shim:micro_bit::initSignalStrength}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::ioP0,  // F0 over {shim:micro_bit::ioP0}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::ioP1,  // F0 over {shim:micro_bit::ioP1}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::ioP10,  // F0 over {shim:micro_bit::ioP10}
@@ -142,6 +143,7 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onButtonPressedExt,  // P3 over {shim:micro_bit::onButtonPressedExt}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onDeviceInfo,  // P2 over {shim:micro_bit::onDeviceInfo}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onPinPressed,  // P2 over {shim:micro_bit::onPinPressed}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::onSignalStrengthChanged,  // P1 over {shim:micro_bit::onSignalStrengthChanged}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::on_event,  // P2 over {shim:micro_bit::on_event}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::panic,  // P1 over {shim:micro_bit::panic}
 (uint32_t)(void*)::touch_develop::micro_bit::pause,  // P1 {shim:micro_bit::pause}
@@ -175,6 +177,8 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::showImage,  // P2 over {shim:micro_bit::showImage}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::showLeds,  // P2 over {shim:micro_bit::showLeds}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::showLetter,  // P1 over {shim:micro_bit::showLetter}
+(uint32_t)(void*)::touch_develop::micro_bit::signalStrength,  // F0 {shim:micro_bit::signalStrength}
+(uint32_t)(void*)::touch_develop::micro_bit::signalStrengthHandler,  // P1 {shim:micro_bit::signalStrengthHandler}
 (uint32_t)(void*)::touch_develop::micro_bit::stopAnimation,  // P0 {shim:micro_bit::stopAnimation}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::thermometerGetTemperature,  // F0 over {shim:micro_bit::thermometerGetTemperature}
 (uint32_t)(void*)::touch_develop::micro_bit::unPlot,  // P2 {shim:micro_bit::unPlot}

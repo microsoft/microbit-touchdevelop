@@ -492,6 +492,13 @@ namespace bitvm {
       }
     }
 
+    void onSignalStrengthChanged(Action a) {
+        if (a != 0) {
+            ::touch_develop::micro_bit::initSignalStrength();    
+            registerWithDal(MES_SIGNAL_STRENGTH_ID, MICROBIT_EVT_ANY, a);
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Pins
     // -------------------------------------------------------------------------

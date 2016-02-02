@@ -768,6 +768,12 @@
       "full": "bitvm::bitvm_micro_bit::imageClone"
     },
     {
+      "proto": "void           micro_bit::initSignalStrength ();                                     ",
+      "name": "micro_bit::initSignalStrength",
+      "type": "P",
+      "args": 0
+    },
+    {
       "proto": "MicroBitPin*   micro_bit::ioP0               ();                                     ",
       "name": "micro_bit::ioP0",
       "type": "F",
@@ -959,6 +965,13 @@
       "type": "P",
       "args": 2,
       "full": "bitvm::bitvm_micro_bit::onPinPressed"
+    },
+    {
+      "proto": "void           micro_bit::onSignalStrengthChanged (Action a);                             ",
+      "name": "micro_bit::onSignalStrengthChanged",
+      "type": "P",
+      "args": 1,
+      "full": "bitvm::bitvm_micro_bit::onSignalStrengthChanged"
     },
     {
       "proto": "void           micro_bit::on_event           (int id, Action a);                     ",
@@ -1177,6 +1190,18 @@
       "type": "P",
       "args": 1,
       "full": "bitvm::bitvm_micro_bit::showLetter"
+    },
+    {
+      "proto": "int            micro_bit::signalStrength     ();                                     ",
+      "name": "micro_bit::signalStrength",
+      "type": "F",
+      "args": 0
+    },
+    {
+      "proto": "void           micro_bit::signalStrengthHandler (MicroBitEvent ev);                     ",
+      "name": "micro_bit::signalStrengthHandler",
+      "type": "P",
+      "args": 1
     },
     {
       "proto": "void           micro_bit::stopAnimation      ();                                     ",
