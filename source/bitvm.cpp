@@ -520,7 +520,6 @@ namespace bitvm {
     void onBroadcastMessageReceived(int message, Action f) {
         if (::touch_develop::micro_bit::radioEnable() != MICROBIT_OK) return;
 
-        uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
     }
     
