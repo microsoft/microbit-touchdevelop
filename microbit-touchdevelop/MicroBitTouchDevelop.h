@@ -339,7 +339,11 @@ namespace touch_develop {
         
     void broadcastMessage(int message);
 
-    void onBroadcastMessageReceived(int message, function<void()> f);    
+    void onBroadcastMessageReceived(int message, function<void()> f);
+    
+    void datagramSend(ManagedString msg);
+    
+    ManagedString datagramReceive();   
    
     // -------------------------------------------------------------------------
     // Buttons

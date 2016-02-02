@@ -83,6 +83,8 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createImage,  // F1 over {shim:micro_bit::createImage}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createImageFromString,  // F1 over {shim:micro_bit::createImageFromString}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createReadOnlyImage,  // F1 over {shim:micro_bit::createReadOnlyImage}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::datagramReceive,  // F0 over {shim:micro_bit::datagramReceive}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::datagramSend,  // P1 over {shim:micro_bit::datagramSend}
 (uint32_t)(void*)::touch_develop::micro_bit::devices::alert,  // P1 {shim:micro_bit::devices::alert}
 (uint32_t)(void*)::touch_develop::micro_bit::devices::camera,  // P1 {shim:micro_bit::devices::camera}
 (uint32_t)(void*)::touch_develop::micro_bit::devices::remote_control,  // P1 {shim:micro_bit::devices::remote_control}

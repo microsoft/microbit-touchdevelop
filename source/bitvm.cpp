@@ -523,6 +523,14 @@ namespace bitvm {
         uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
     }
+    
+    void datagramSend(StringData *s) {
+      ::touch_develop::micro_bit::datagramSend(ManagedString(s));
+    }
+
+    StringData* datagramReceive() {
+      return ::touch_develop::micro_bit::datagramReceive().leakData();
+    }
 
     // -------------------------------------------------------------------------
     // Buttons

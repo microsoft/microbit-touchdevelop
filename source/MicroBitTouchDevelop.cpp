@@ -247,14 +247,26 @@ namespace touch_develop {
     void broadcastMessage(int message) {
         if (radioEnable() != MICROBIT_OK) return;
 
-        uBit.radio.event.eventReceived(MicroBitEvent(MES_BROADCAST_GENERAL_ID, message));
+        uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
+        MicroBitEvent(MES_BROADCAST_GENERAL_ID, message);
     }
         
     void onBroadcastMessageReceived(int message, function<void()> f) {
         if (radioEnable() != MICROBIT_OK) return;
 
-        uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
+    }
+    
+    void datagramSend(ManagedString msg) {
+        if (radioEnable() != MICROBIT_OK) return;
+        
+        uBit.radio.datagram.send(msg);        
+    }
+    
+    ManagedString datagramReceive() {
+        if (radioEnable() != MICROBIT_OK) return ManagedString("");
+        
+        return uBit.radio.datagram.recv();        
     }
     
     // -------------------------------------------------------------------------

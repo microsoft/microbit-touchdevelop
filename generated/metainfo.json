@@ -566,6 +566,20 @@
       "full": "bitvm::bitvm_micro_bit::createReadOnlyImage"
     },
     {
+      "proto": "StringData*    micro_bit::datagramReceive    ();                                     ",
+      "name": "micro_bit::datagramReceive",
+      "type": "F",
+      "args": 0,
+      "full": "bitvm::bitvm_micro_bit::datagramReceive"
+    },
+    {
+      "proto": "void           micro_bit::datagramSend       (StringData *s);                        ",
+      "name": "micro_bit::datagramSend",
+      "type": "P",
+      "args": 1,
+      "full": "bitvm::bitvm_micro_bit::datagramSend"
+    },
+    {
       "proto": "void           micro_bit::devices::alert     (int event);                            ",
       "name": "micro_bit::devices::alert",
       "type": "P",
