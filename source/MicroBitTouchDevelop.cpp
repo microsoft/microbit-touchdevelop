@@ -640,6 +640,7 @@ namespace touch_develop {
     }
     
     int signalStrength() { 
+        initSignalStrength();
         return _signalStrength;
     }
     
