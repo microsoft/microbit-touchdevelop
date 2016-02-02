@@ -236,6 +236,7 @@ namespace touch_develop {
         int r = uBit.radio.enable();
         if (r != MICROBIT_OK) return;
 
+        uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
         generate_event(MES_BROADCAST_GENERAL_ID, message);
     }
         
@@ -243,9 +244,10 @@ namespace touch_develop {
         int r = uBit.radio.enable();
         if (r != MICROBIT_OK) return;
 
+        uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
     }
-           
+    
     // -------------------------------------------------------------------------
     // Sensors
     // -------------------------------------------------------------------------

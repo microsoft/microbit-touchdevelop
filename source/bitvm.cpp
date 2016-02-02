@@ -521,6 +521,7 @@ namespace bitvm {
         int r = uBit.radio.enable();
         if (r != MICROBIT_OK) return;
 
+        uBit.radio.event.listen(MES_BROADCAST_GENERAL_ID, message);
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
     }
 
