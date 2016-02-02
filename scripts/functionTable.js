@@ -27,7 +27,7 @@ process.argv.slice(2).forEach(function (fn) {
 
     var isInlude = /yotta_modules/.test(fn)
 
-
+    console.log("reading " + fn);
     fs.readFileSync(fn, "utf8").split(/\n/).forEach(function(ln) {
         lineNo++;
 

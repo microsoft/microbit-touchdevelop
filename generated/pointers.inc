@@ -76,6 +76,7 @@
 (uint32_t)(void*)::touch_develop::math::sqrt,  // F1 {shim:math::sqrt}
 (uint32_t)(void*)::touch_develop::micro_bit::analogReadPin,  // F1 {shim:micro_bit::analogReadPin}
 (uint32_t)(void*)::touch_develop::micro_bit::analogWritePin,  // P2 {shim:micro_bit::analogWritePin}
+(uint32_t)(void*)::touch_develop::micro_bit::broadcastMessage,  // P1 {shim:micro_bit::broadcastMessage}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::clearImage,  // P1 over {shim:micro_bit::clearImage}
 (uint32_t)(void*)::touch_develop::micro_bit::clearScreen,  // P0 {shim:micro_bit::clearScreen}
 (uint32_t)(void*)::touch_develop::micro_bit::compassHeading,  // F0 {shim:micro_bit::compassHeading}
@@ -133,6 +134,8 @@
 (uint32_t)(void*)::touch_develop::micro_bit::isButtonPressed,  // F1 {shim:micro_bit::isButtonPressed}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::isImageReadOnly,  // F1 over {shim:micro_bit::isImageReadOnly}
 (uint32_t)(void*)::touch_develop::micro_bit::isPinTouched,  // F1 {shim:micro_bit::isPinTouched}
+(uint32_t)(void*)::touch_develop::micro_bit::lightLevel,  // F0 {shim:micro_bit::lightLevel}
+(uint32_t)(void*)::bitvm::bitvm_micro_bit::onBroadcastMessageReceived,  // P2 over {shim:micro_bit::onBroadcastMessageReceived}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onButtonPressed,  // P2 over {shim:micro_bit::onButtonPressed}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onButtonPressedExt,  // P3 over {shim:micro_bit::onButtonPressedExt}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::onDeviceInfo,  // P2 over {shim:micro_bit::onDeviceInfo}
@@ -161,6 +164,7 @@
 (uint32_t)(void*)::touch_develop::micro_bit::setAnalogPeriodUs,  // P2 {shim:micro_bit::setAnalogPeriodUs}
 (uint32_t)(void*)::touch_develop::micro_bit::setBrightness,  // P1 {shim:micro_bit::setBrightness}
 (uint32_t)(void*)::touch_develop::micro_bit::setDisplayMode,  // P1 {shim:micro_bit::setDisplayMode}
+(uint32_t)(void*)::touch_develop::micro_bit::setGroup,  // P1 {shim:micro_bit::setGroup}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::setImagePixel,  // P4 over {shim:micro_bit::setImagePixel}
 (uint32_t)(void*)::touch_develop::micro_bit::setServoPulseUs,  // P2 {shim:micro_bit::setServoPulseUs}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::showAnimation,  // P2 over {shim:micro_bit::showAnimation}

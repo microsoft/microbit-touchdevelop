@@ -515,6 +515,16 @@ namespace bitvm {
     }
 
     // -------------------------------------------------------------------------
+    // Radio
+    // -------------------------------------------------------------------------
+    void onBroadcastMessageReceived(int message, Action f) {
+        int r = uBit.radio.enable();
+        if (r != MICROBIT_OK) return;
+
+        registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
+    }
+
+    // -------------------------------------------------------------------------
     // Buttons
     // -------------------------------------------------------------------------
 

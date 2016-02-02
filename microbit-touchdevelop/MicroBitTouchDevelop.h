@@ -316,6 +316,8 @@ namespace touch_develop {
     // -------------------------------------------------------------------------
 
     int compassHeading();
+    
+    int lightLevel();
 
     // in micro Tesla
     //  x = 0, y = 1, z = 2, strength = 3
@@ -327,6 +329,15 @@ namespace touch_develop {
     //  pitch = 0, roll = 1
     int getRotation(int dimension);
 
+    // -------------------------------------------------------------------------
+    // Radio
+    // -------------------------------------------------------------------------
+    void setGroup(int id);
+        
+    void broadcastMessage(int message);
+
+    void onBroadcastMessageReceived(int message, function<void()> f);    
+   
     // -------------------------------------------------------------------------
     // Buttons
     // -------------------------------------------------------------------------

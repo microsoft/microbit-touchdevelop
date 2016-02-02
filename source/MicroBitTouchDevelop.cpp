@@ -223,11 +223,39 @@ namespace touch_develop {
   namespace micro_bit {
 
     // -------------------------------------------------------------------------
+    // Radio
+    // -------------------------------------------------------------------------    
+    void setGroup(int id) {
+        int r = uBit.radio.enable();
+        if (r != MICROBIT_OK) return;
+            
+        uBit.radio.setGroup(id);
+    }
+        
+    void broadcastMessage(int message) {
+        int r = uBit.radio.enable();
+        if (r != MICROBIT_OK) return;
+
+        generate_event(MES_BROADCAST_GENERAL_ID, message);
+    }
+        
+    void onBroadcastMessageReceived(int message, function<void()> f) {
+        int r = uBit.radio.enable();
+        if (r != MICROBIT_OK) return;
+
+        registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
+    }
+           
+    // -------------------------------------------------------------------------
     // Sensors
     // -------------------------------------------------------------------------
 
     int compassHeading() {
       return uBit.compass.heading();
+    }
+    
+    int lightLevel() {
+        return uBit.display.readLightLevel();
     }
 
     int getMagneticForce(int dimension) {
