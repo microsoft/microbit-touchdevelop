@@ -268,9 +268,8 @@ namespace touch_develop {
         if (radioEnable() != MICROBIT_OK) return 0;
         
         datagramBuf[0] = 0;
-        if (uBit.radio.datagram.recv((uint8_t*)datagramBuf, 4) == 4)
-            return datagramBuf[0];
-        return 0;
+        uBit.radio.datagram.recv((uint8_t*)datagramBuf, 4);
+        return datagramBuf[0];
     }
     
     void datagramSend(ManagedString msg) {
