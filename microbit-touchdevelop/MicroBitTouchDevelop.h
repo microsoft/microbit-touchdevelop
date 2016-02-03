@@ -471,6 +471,8 @@ namespace touch_develop {
     void signalStrengthHandler(MicroBitEvent ev);
     void onSignalStrengthChanged(function<void()> f);
     
+    void datagramSendNumber(int value);
+    int datagramReceiveNumber();
     void datagramSend(ManagedString s);
     ManagedString datagramReceive();
     void onDatagramReceived(function<void()> f);

@@ -573,11 +573,23 @@
       "full": "bitvm::bitvm_micro_bit::datagramReceive"
     },
     {
+      "proto": "int            micro_bit::datagramReceiveNumber ();                                     ",
+      "name": "micro_bit::datagramReceiveNumber",
+      "type": "F",
+      "args": 0
+    },
+    {
       "proto": "void           micro_bit::datagramSend       (StringData* msg);                      ",
       "name": "micro_bit::datagramSend",
       "type": "P",
       "args": 1,
       "full": "bitvm::bitvm_micro_bit::datagramSend"
+    },
+    {
+      "proto": "void           micro_bit::datagramSendNumber (int value);                            ",
+      "name": "micro_bit::datagramSendNumber",
+      "type": "P",
+      "args": 1
     },
     {
       "proto": "void           micro_bit::devices::alert     (int event);                            ",
