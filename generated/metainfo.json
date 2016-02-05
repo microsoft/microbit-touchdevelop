@@ -979,6 +979,13 @@
       "full": "bitvm::bitvm_micro_bit::onDeviceInfo"
     },
     {
+      "proto": "void           micro_bit::onGamepadButton    (int id, Action a);                     ",
+      "name": "micro_bit::onGamepadButton",
+      "type": "P",
+      "args": 2,
+      "full": "bitvm::bitvm_micro_bit::onGamepadButton"
+    },
+    {
       "proto": "void           micro_bit::onPinPressed       (int pin, Action a);                    ",
       "name": "micro_bit::onPinPressed",
       "type": "P",

@@ -498,6 +498,13 @@ namespace bitvm {
             registerWithDal(MES_SIGNAL_STRENGTH_ID, MICROBIT_EVT_ANY, a);
         }
     }       
+    
+    void onGamepadButton(int id, Action a) {
+        if (a != 0) {
+            registerWithDal(MES_DPAD_CONTROLLER_ID, id, a);
+        }
+    }
+
 
     // -------------------------------------------------------------------------
     // Pins

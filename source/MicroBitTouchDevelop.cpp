@@ -675,6 +675,11 @@ namespace touch_develop {
         initSignalStrength();    
         registerWithDal(MES_SIGNAL_STRENGTH_ID, MICROBIT_EVT_ANY, f);
     }
+    
+    void onGamepadButton(int id, function<void()> a) {
+        registerWithDal(MES_DPAD_CONTROLLER_ID, id, a);
+    }
+    
 
     namespace devices {
       void remote_control(int event) {

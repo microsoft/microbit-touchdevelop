@@ -470,6 +470,7 @@ namespace touch_develop {
     void initSignalStrength();
     void signalStrengthHandler(MicroBitEvent ev);
     void onSignalStrengthChanged(function<void()> f);
+    void onGamepadButton(int id, function<void()> f);
     
     void datagramSendNumber(int value);
     int datagramReceiveNumber();
