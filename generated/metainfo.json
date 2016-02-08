@@ -592,6 +592,12 @@
       "args": 1
     },
     {
+      "proto": "void           micro_bit::datagramSendNumbers (int value0, int value1, int value2, int value3); ",
+      "name": "micro_bit::datagramSendNumbers",
+      "type": "P",
+      "args": 4
+    },
+    {
       "proto": "void           micro_bit::devices::alert     (int event);                            ",
       "name": "micro_bit::devices::alert",
       "type": "P",

@@ -473,6 +473,7 @@ namespace touch_develop {
     void onGamepadButton(int id, function<void()> f);
     
     void datagramSendNumber(int value);
+    void datagramSendNumbers(int value0, int value1, int value2, int value3);
     int datagramReceiveNumber();
     void datagramSend(ManagedString s);
     ManagedString datagramReceive();

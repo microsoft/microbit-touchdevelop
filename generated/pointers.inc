@@ -87,6 +87,7 @@
 (uint32_t)(void*)::touch_develop::micro_bit::datagramReceiveNumber,  // F0 {shim:micro_bit::datagramReceiveNumber}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::datagramSend,  // P1 over {shim:micro_bit::datagramSend}
 (uint32_t)(void*)::touch_develop::micro_bit::datagramSendNumber,  // P1 {shim:micro_bit::datagramSendNumber}
+(uint32_t)(void*)::touch_develop::micro_bit::datagramSendNumbers,  // P4 {shim:micro_bit::datagramSendNumbers}
 (uint32_t)(void*)::touch_develop::micro_bit::devices::alert,  // P1 {shim:micro_bit::devices::alert}
 (uint32_t)(void*)::touch_develop::micro_bit::devices::camera,  // P1 {shim:micro_bit::devices::camera}
 (uint32_t)(void*)::touch_develop::micro_bit::devices::remote_control,  // P1 {shim:micro_bit::devices::remote_control}

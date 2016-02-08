@@ -256,12 +256,22 @@ namespace touch_develop {
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
     }
     
-    static int datagramBuf[1];    
+    static int datagramBuf[4];    
     void datagramSendNumber(int value) {
         if (radioEnable() != MICROBIT_OK) return;
         
         datagramBuf[0] = value;
         uBit.radio.datagram.send((uint8_t*)datagramBuf, 4);        
+    }
+    
+    void datagramSendNumbers(int value0, int value1, int value2, int value3) {
+        if (radioEnable() != MICROBIT_OK) return;
+        
+        datagramBuf[0] = value0;
+        datagramBuf[1] = value1;
+        datagramBuf[2] = value2;
+        datagramBuf[3] = value3;
+        uBit.radio.datagram.send((uint8_t*)datagramBuf, 16);        
     }
     
     int datagramReceiveNumber() {
