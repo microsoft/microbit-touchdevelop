@@ -536,15 +536,7 @@ namespace bitvm {
 
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
     }
-    
-    void datagramSend(StringData* msg) {
-        ::touch_develop::micro_bit::datagramSend(ManagedString(msg));
-    }
-    
-    StringData* datagramReceive() {
-        return ::touch_develop::micro_bit::datagramReceive().leakData();
-    }
-    
+        
     void onDatagramReceived(Action f) {
         if (f != 0 && ::touch_develop::micro_bit::radioEnable() == MICROBIT_OK) {
             registerWithDal(MICROBIT_ID_RADIO, MICROBIT_RADIO_EVT_DATAGRAM, f);    
@@ -813,8 +805,11 @@ namespace bitvm {
     // properly prepends a call to [internal_main].
     // ::touch_develop::internal_main();
 
-    //
+    // unique group for radio based on source hash
     ::touch_develop::micro_bit::radioDefaultGroup = programHash();
+    
+    // repeat error 4 times and restart as needed
+    uBit.display.setErrorTimeout(4);
     
     uint32_t ver = *pc++;
     checkStr(ver == 0x4207, ":( Bad runtime version");

@@ -566,24 +566,10 @@
       "full": "bitvm::bitvm_micro_bit::createReadOnlyImage"
     },
     {
-      "proto": "StringData*    micro_bit::datagramReceive    ();                                     ",
-      "name": "micro_bit::datagramReceive",
-      "type": "F",
-      "args": 0,
-      "full": "bitvm::bitvm_micro_bit::datagramReceive"
-    },
-    {
       "proto": "int            micro_bit::datagramReceiveNumber ();                                     ",
       "name": "micro_bit::datagramReceiveNumber",
       "type": "F",
       "args": 0
-    },
-    {
-      "proto": "void           micro_bit::datagramSend       (StringData* msg);                      ",
-      "name": "micro_bit::datagramSend",
-      "type": "P",
-      "args": 1,
-      "full": "bitvm::bitvm_micro_bit::datagramSend"
     },
     {
       "proto": "void           micro_bit::datagramSendNumber (int value);                            ",
@@ -1607,8 +1593,10 @@
     "MICROBIT_ID_THERMOMETER": 28,
     "MICROBIT_ID_RADIO": 29,
     "MICROBIT_ID_RADIO_DATA_READY": 30,
-    "MICROBIT_ID_NOTIFY": 1023,
+    "MICROBIT_ID_MULTIBUTTON_ATTACH": 31,
+    "MICROBIT_ID_MESSAGE_BUS_LISTENER": 1021,
     "MICROBIT_ID_NOTIFY_ONE": 1022,
+    "MICROBIT_ID_NOTIFY": 1023,
     "MICROBIT_STACK_SIZE": 2048,
     "MICROBIT_HEAP_BLOCK_SIZE": 4,
     "MICROBIT_HEAP_REUSE_SD": 1,
@@ -1619,6 +1607,7 @@
     "MICROBIT_BLE_ENABLED": 1,
     "MICROBIT_BLE_PAIRING_MODE": 1,
     "MICROBIT_BLE_PRIVATE_ADDRESSES": 0,
+    "MICROBIT_BLE_OPEN": 0,
     "MICROBIT_BLE_WHITELIST": 1,
     "MICROBIT_BLE_ADVERTISING_TIMEOUT": 0,
     "MICROBIT_BLE_DEFAULT_TX_POWER": 0,
