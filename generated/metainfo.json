@@ -566,6 +566,18 @@
       "full": "bitvm::bitvm_micro_bit::createReadOnlyImage"
     },
     {
+      "proto": "int            micro_bit::datagramGetNumber  (int index);                            ",
+      "name": "micro_bit::datagramGetNumber",
+      "type": "F",
+      "args": 1
+    },
+    {
+      "proto": "int            micro_bit::datagramGetRSSI    ();                                     ",
+      "name": "micro_bit::datagramGetRSSI",
+      "type": "F",
+      "args": 0
+    },
+    {
       "proto": "int            micro_bit::datagramReceiveNumber ();                                     ",
       "name": "micro_bit::datagramReceiveNumber",
       "type": "F",

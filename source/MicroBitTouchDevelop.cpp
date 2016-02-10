@@ -227,13 +227,17 @@ namespace touch_develop {
     // -------------------------------------------------------------------------    
     uint8_t radioDefaultGroup = MICROBIT_RADIO_DEFAULT_GROUP;
     bool radioEnabled = false;
+    int datagramBuf[4];    
+    int datagramRSSI = -1;
     
     int radioEnable() {
         int r = uBit.radio.enable();
         if (r != MICROBIT_OK) return r;
         if (!radioEnabled) {
-            if (radioDefaultGroup != MICROBIT_RADIO_DEFAULT_GROUP)
+            if (radioDefaultGroup != MICROBIT_RADIO_DEFAULT_GROUP) {
                 uBit.radio.setGroup(radioDefaultGroup);
+            }
+            memset(datagramBuf, 4, 0);           
             radioEnabled = true;
         }
         return r;
@@ -256,12 +260,8 @@ namespace touch_develop {
         registerWithDal(MES_BROADCAST_GENERAL_ID, message, f);
     }
     
-    static int datagramBuf[4];    
     void datagramSendNumber(int value) {
-        if (radioEnable() != MICROBIT_OK) return;
-        
-        datagramBuf[0] = value;
-        uBit.radio.datagram.send((uint8_t*)datagramBuf, 4);        
+        datagramSendNumbers(value, 0, 0, 0);
     }
     
     void datagramSendNumbers(int value0, int value1, int value2, int value3) {
@@ -271,15 +271,35 @@ namespace touch_develop {
         datagramBuf[1] = value1;
         datagramBuf[2] = value2;
         datagramBuf[3] = value3;
-        uBit.radio.datagram.send((uint8_t*)datagramBuf, 16);        
+        uBit.radio.datagram.send((uint8_t*)datagramBuf, 16);
+        memset(datagramBuf, 4, 0);      
     }
     
     int datagramReceiveNumber() {
         if (radioEnable() != MICROBIT_OK) return 0;
         
-        datagramBuf[0] = 0;
-        uBit.radio.datagram.recv((uint8_t*)datagramBuf, 4);
+        memset(datagramBuf, 4, 0);
+
+        PacketBuffer packet = uBit.radio.datagram.recv();
+        uint8_t* buf = (uint8_t*)datagramBuf;
+        int n = min(16, packet.length());
+        for(int i = 0;i<n;++i) 
+            buf[i] = packet[i];
+        datagramRSSI = packet.getRSSI();
+        
         return datagramBuf[0];
+    }
+    
+    int datagramGetNumber(int index) {
+        if (radioEnable() != MICROBIT_OK) return 0;
+        if (index < 0 || index >= 4) return 0;
+        return datagramBuf[index];
+    }
+    
+    int datagramGetRSSI() {
+        if (radioEnable() != MICROBIT_OK) return 0;
+
+        return datagramRSSI;
     }
         
     void onDatagramReceived(function<void()> f) {

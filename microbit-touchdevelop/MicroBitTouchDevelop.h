@@ -470,6 +470,8 @@ namespace touch_develop {
     void datagramSendNumber(int value);
     void datagramSendNumbers(int value0, int value1, int value2, int value3);
     int datagramReceiveNumber();
+    int datagramGetNumber(int index);
+    int datagramGetRSSI();
     void onDatagramReceived(function<void()> f);
 
     namespace devices {

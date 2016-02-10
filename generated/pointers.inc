@@ -83,6 +83,8 @@
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createImage,  // F1 over {shim:micro_bit::createImage}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createImageFromString,  // F1 over {shim:micro_bit::createImageFromString}
 (uint32_t)(void*)::bitvm::bitvm_micro_bit::createReadOnlyImage,  // F1 over {shim:micro_bit::createReadOnlyImage}
+(uint32_t)(void*)::touch_develop::micro_bit::datagramGetNumber,  // F1 {shim:micro_bit::datagramGetNumber}
+(uint32_t)(void*)::touch_develop::micro_bit::datagramGetRSSI,  // F0 {shim:micro_bit::datagramGetRSSI}
 (uint32_t)(void*)::touch_develop::micro_bit::datagramReceiveNumber,  // F0 {shim:micro_bit::datagramReceiveNumber}
 (uint32_t)(void*)::touch_develop::micro_bit::datagramSendNumber,  // P1 {shim:micro_bit::datagramSendNumber}
 (uint32_t)(void*)::touch_develop::micro_bit::datagramSendNumbers,  // P4 {shim:micro_bit::datagramSendNumbers}
