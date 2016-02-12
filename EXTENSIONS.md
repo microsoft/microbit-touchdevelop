@@ -337,6 +337,34 @@ function read data() returns MyData
 
 Records always have all the reference type fields first, followed by all the primitive fields.
 
+### Calling back into Touch Develop
+
+You can have TD code register handlers to be called from your C++ code.
+
+```cpp
+uint32_t handler;
+
+GLUE void registerHandler(uint32_t a) {
+    decr(handler);
+    handler = a;
+    incr(a);
+}
+
+// call this from your event handler somewhere
+void triggerHandler() {
+    if (handler)
+        bitvm::action::run(handler);
+}
+```
+
+```js
+function register handler(handler:Action)
+{
+   // Call me later.
+   // {shim:coolwidget::registerHandler}
+}
+```
+
 ### Records with ref-fields
 
 TODO
