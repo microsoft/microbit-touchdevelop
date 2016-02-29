@@ -57,6 +57,18 @@ namespace coolwidget {
         res->st(1, 74);
         return res;
     }
+
+    uint32_t handler;
+    GLUE void registerHandler(uint32_t a) {
+        decr(handler);
+        handler = a;
+        incr(a);
+    }
+
+    void triggerHandler() {
+        if (handler)
+            bitvm::action::run(handler);
+    }
 }
 
 // vim: sw=4 ts=4 ai

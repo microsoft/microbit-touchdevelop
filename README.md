@@ -36,3 +36,15 @@ module.json. Always do `yotta clean` just to make sure. If you modified
 The cloud compile service seems unhappy if the project doesn't compile (even
 though main.cpp is meant to be always replaced). So make sure that the projects
 compiles from a fresh checkout before pushing.
+
+### Using local version of DAL in Touch Develop
+
+* make sure Touch Develop is in `TouchDevelop` directory parallel to
+  `microbit-touchdevelop` (for example, checkouts in `/c/microbit-touchdevelop`
+  and `/c/TouchDevelop`
+* in `TouchDevelop` build as usual and run `jake local`; then head to 
+  `http://localhost:4242/editor/local/mbit.html?lite=www.microbit.co.uk`
+* in `microbit-touchdevelop` do the yotta dance with GCC as described above
+* in `microbit-touchdevelop` run either `make run` or `./run.sh`
+* head to
+  `http://localhost:4242/editor/local/mbit.html?lite=www.microbit.co.uk&microbit=local`
