@@ -1,6 +1,6 @@
 {
   "name": "microbit-touchdevelop",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The glue layer that binds together Touch Develop programs compiled to C++ and the BBC micro:bit runtime system.",
   "keywords": [],
   "author": "Microsoft Corporation",
@@ -16,7 +16,7 @@
     }
   ],
   "dependencies": {
-    "microbit-dal": "lancaster-university/microbit-dal#v1.4.17"
+    "microbit-dal": "lancaster-university/microbit-dal#v1.4.20"
   },
   "targetDependencies": { },
   "bin": "./source",
